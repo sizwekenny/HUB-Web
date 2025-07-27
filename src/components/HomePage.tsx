@@ -46,7 +46,18 @@ const HomePage: React.FC<HomePageProps> = ({
   };
 
   const featuredServices = services.slice(0, 6);
-
+const departmentsRef = React.useRef<HTMLDivElement>(null);
+const servicesRef = React.useRef<HTMLDivElement>(null);
+const [showAllServices, setShowAllServices] = useState(false);
+const handleScrollTo = (section: 'departments' | 'services') => {
+  setExpandedSection(section);
+  if (section === 'departments' && departmentsRef.current) {
+    departmentsRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+  if (section === 'services' && servicesRef.current) {
+    servicesRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+};
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -69,20 +80,20 @@ const HomePage: React.FC<HomePageProps> = ({
               Your comprehensive guide to academic departments, student services, and essential information 
               for the Faculty of Information and Communication Technology.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => setExpandedSection('departments')}
-                className="px-8 py-4 bg-yellow-400 text-blue-900 font-semibold rounded-lg hover:bg-yellow-300 transform hover:scale-105 transition-all duration-300 shadow-lg"
-              >
-                Explore Departments
-              </button>
-              <button 
-                onClick={() => setExpandedSection('services')}
-                className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-900 transform hover:scale-105 transition-all duration-300"
-              >
-                Student Services
-              </button>
-            </div>
+           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+  <button 
+    onClick={() => handleScrollTo('departments')}
+    className="px-8 py-4 bg-yellow-400 text-blue-900 font-semibold rounded-lg hover:bg-yellow-300 transform hover:scale-105 transition-all duration-300 shadow-lg"
+  >
+    Explore Departments
+  </button>
+  <button 
+    onClick={() => handleScrollTo('services')}
+    className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-900 transform hover:scale-105 transition-all duration-300"
+  >
+    Student Services
+  </button>
+</div>
           </div>
         </div>
         
@@ -127,7 +138,7 @@ const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* Academic Departments */}
-      <section className="py-20 bg-gray-50">
+      <section ref={departmentsRef} className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Academic Departments</h2>
@@ -182,7 +193,7 @@ const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* Student Services */}
-      <section className="py-20 bg-white">
+      <section ref={servicesRef} className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Student Services</h2>
@@ -192,7 +203,7 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredServices.map((service, index) => (
+           {(showAllServices ? services : featuredServices).map((service, index) => (
               <div
                 key={service.id}
                 className={`group bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 hover:shadow-xl transform transition-all duration-500 hover:scale-105 cursor-pointer border border-blue-100 hover:border-blue-300 ${
@@ -222,12 +233,13 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
           
           <div className="text-center mt-12">
-                       <button 
-              onClick={() => setExpandedSection('services')}
-              className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
-            >
-              View All Services
-            </button>
+                    <button 
+  onClick={() => setShowAllServices(true)}
+  className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
+>
+  View All Services
+</button>
+
           </div>
         </div>
       </section>
