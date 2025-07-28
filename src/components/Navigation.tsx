@@ -9,7 +9,7 @@ import {
   Phone,
   Mail
 } from 'lucide-react';
-
+import logo from "../assets/TUT.png";
 interface NavigationProps {
   currentView: string;
   onNavigate: (view: 'home' | 'manual') => void;
@@ -28,7 +28,12 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onNavigate }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
+         
+
           <div className="flex items-center cursor-pointer" onClick={() => onNavigate('home')}>
+             <img src={logo} alt="ICT Faculty Logo"  style={{ width: "250px", height: "auto"}}
+      className="rounded-md"
+    />
             <div className="p-2 bg-blue-600 rounded-lg mr-3">
               <GraduationCap className="w-6 h-6 text-yellow-400" />
             </div>
