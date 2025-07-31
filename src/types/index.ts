@@ -3,6 +3,7 @@ export interface Department {
   name: string;
   codes: string[];
   description: string;
+  
 }
 
 export interface Service {

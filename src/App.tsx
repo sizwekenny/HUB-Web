@@ -89,6 +89,69 @@ const services: Service[] = [
     category: 'All Students',
     description: 'Access your class and test schedules.',
     details: 'Visit your Academic Department to obtain your timetables. If you experience clashes on the timetables, visit your Academic Department urgently.'
+  },
+  {
+    id: 'Subject additions and cancellations',
+    title: 'Subject additions and cancellations',
+    category: 'Senior Students',
+    description: 'Information about adding or cancelling subjects.',
+    details: 'Add or cancel modules from your registration'
+  },
+  {
+    id: 'NO WALK-INS Policy',
+    title: 'NO WALK-INS Policy',
+    category: 'Newcomer Students',
+    description: 'Important policy for new applicants.',
+    details: 'Important policy for new applicants.'
+  },
+  {
+    id: 'Intercampus Transfers',
+    title: 'Intercampus Transfers',
+    category: 'Senior Students',
+    description: 'Transfers between TUT campuses (Computer Science students only)',
+    details: 'Transfers between TUT campuses (Computer Science students only)'
+  },
+  {
+    id: 'Re-admission',
+    title: 'Re-admission',
+    category: 'Senior Students',
+    description: 'Re-admission after break in studies or exclusion.',
+    details: 'Re-admission after break in studies or exclusion.'
+  },
+  {
+    id: 'Special & Exit Examinations',
+    title: 'Special & Exit Examinations',
+    category: 'Senior Students',
+    description: 'Apply for special or exit examinations',
+    details: 'Apply for special or exit examinations'
+  },
+  {
+    id: 'Probation',
+    title: 'Probation',
+    category: 'Senior Students',
+    description: 'Handle probation notifications and requirements',
+    details: 'Handle probation notifications and requirementss'
+  },
+  {
+    id: 'Other Admission Enquiries',
+    title: 'Other Admission Enquiries',
+    category: 'Newcomer Students',
+    description: 'Get help with application status, documentation, and campus changes.',
+    details: 'Get help with application status, documentation, and campus changes.'
+  },
+  {
+    id: 'Resindence Administration',
+    title: 'Resindence Administration',
+    category: 'All Students',
+    description: 'Student accommodation and residence matters.',
+    details: 'Student accommodation and residence matters.'
+  },
+  {
+    id: 'Recognition / Examption (CAT)',
+    title: 'Recognition / Examption (CAT)',
+    category: 'All Students',
+    description: 'Get Accumulation and Transfer for previous qualifications',
+    details: 'Get Accumulation and Transfer for previous qualifications'
   }
 ];
 
@@ -118,10 +181,16 @@ function App() {
     setSelectedDepartment(null);
     setSelectedService(null);
   };
+const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcomer'>('all');
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navigation currentView={currentView} onNavigate={handleNavigate} />
+      <Navigation currentView={currentView}
+       onNavigate={handleNavigate}
+       departments={departments}
+       services={services}
+       onFilterChange={(filter) => setSelectedFilter(filter)}   />
       
       {currentView === 'home' && (
         <HomePage 

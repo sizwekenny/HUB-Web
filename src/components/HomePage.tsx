@@ -14,12 +14,19 @@ import {
   MapPin
 } from 'lucide-react';
 import { Department, Service } from '../types';
+import soshImg from '../assets/sosh.jpg';
+import mainImg from '../assets/MainT.jpg';
+import ruthImg from '../assets/ruth.jpg';
+import emalImg from '../assets/emal.jpg';
+import MainT from '../assets/MainT.jpg';
+
 
 interface HomePageProps {
   departments: Department[];
   services: Service[];
   onDepartmentClick: (department: Department) => void;
   onServiceClick: (service: Service) => void;
+  
 }
 
 const HomePage: React.FC<HomePageProps> = ({
@@ -74,6 +81,14 @@ const quickLinks = [
   const departmentsRef = React.useRef<HTMLDivElement>(null);
   const servicesRef = React.useRef<HTMLDivElement>(null);
   const [showAllServices, setShowAllServices] = useState(false);
+  useEffect(() => {
+  const shouldExpand = localStorage.getItem('expandServices');
+  if (shouldExpand === 'true') {
+    setShowAllServices(true);
+    localStorage.removeItem('expandServices');
+  }
+}, []);
+
   const handleScrollTo = (section: 'departments' | 'services') => {
     setExpandedSection(section);
     if (section === 'departments' && departmentsRef.current) {
@@ -137,56 +152,56 @@ const quickLinks = [
       </section>
 
       {/* Quick Stats */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              { icon: Users, label: 'Academic Departments', value: '4', color: 'blue' },
-              { icon: BookOpen, label: 'Course Codes', value: '15+', color: 'yellow' },
-              { icon: Award, label: 'Student Services', value: '20+', color: 'blue' },
-              { icon: GraduationCap, label: 'Years of Excellence', value: '25+', color: 'yellow' }
-            ].map((stat, index) => (
-              <div
-                key={index}
-                className={`text-center p-6 rounded-xl transform transition-all duration-500 hover:scale-105 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                  } ${stat.color === 'blue' ? 'bg-blue-50 hover:bg-blue-100' : 'bg-yellow-50 hover:bg-yellow-100'}`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                <div className={`inline-flex p-3 rounded-full mb-4 ${stat.color === 'blue' ? 'bg-blue-500' : 'bg-yellow-500'
-                  }`}>
-                  <stat.icon className="w-8 h-8 text-white" />
-                </div>
-                <div className={`text-3xl font-bold mb-2 ${stat.color === 'blue' ? 'text-blue-900' : 'text-yellow-700'
-                  }`}>
-                  {stat.value}
-                </div>
-                <div className="text-gray-600">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Animated Gallery Section */}
+<section className="relative py-20 bg-white overflow-hidden">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+    <h2 className="text-4xl font-bold text-gray-900 mb-4">Discover TUT at a Glance</h2>
+    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+      Explore our Campuse in the Meanwhile
+    </p>
+  </div>
+
+  <div className="flex justify-center flex-wrap gap-8">
+    {[
+      { src: soshImg, alt: 'Soshanguve Campus', section: 'departments' },
+      { src: mainImg, alt: 'Main Campus', section: 'departments' },
+      { src: ruthImg, alt: 'Ruth First Building', section: 'services' },
+      { src: emalImg, alt: 'Emalahleni Campus', section: 'services' },
+    ].map(({ src, alt, section }, i) => (
+      <img
+        key={i}
+        src={src}
+        alt={alt}
+        onClick={() => handleScrollTo(section as 'departments' | 'services')}
+        className="cursor-pointer w-[400px] h-[400px] object-cover rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-500"
+      />
+    ))}
+  </div>
+</section>
+
+
 
       {/* Academic Departments */}
-      <section ref={departmentsRef} className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Academic Departments</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover our specialized departments offering cutting-edge programs in technology and computing.
-            </p>
-          </div>
+     <section ref={departmentsRef} className="py-20 bg-gray-50">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center mb-16">
+      <h2 className="text-4xl font-bold text-gray-900 mb-4">Academic Departments</h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        Discover our specialized departments offering cutting-edge programs in technology and computing.
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {departments.map((department, index) => {
-              const IconComponent = getDepartmentIcon(department.id);
-              return (
-                <div
-                  key={department.id}
-                  className={`group bg-white rounded-xl shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                    }`}
-                  style={{ transitionDelay: `${index * 150}ms` }}
-                  onClick={() => onDepartmentClick(department)}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {departments.map((department, index) => {
+        const IconComponent = getDepartmentIcon(department.id);
+        return (
+          <div
+            id={`department-${department.id}`}  
+            key={department.id}
+            className={`group bg-white rounded-xl shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`}
+            style={{ transitionDelay: `${index * 150}ms` }}
+            onClick={() => onDepartmentClick(department)}
                 >
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
@@ -222,138 +237,122 @@ const quickLinks = [
       </section>
 
       {/* Student Services */}
-      <section ref={servicesRef} className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Student Services</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive support services to help you succeed throughout your academic journey.
-            </p>
-          </div>
+   
+<section ref={servicesRef} className="py-20 bg-white">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center mb-16">
+      <h2 className="text-4xl font-bold text-gray-900 mb-4">Student Services</h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        Comprehensive support services to help you succeed throughout your academic journey.
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(showAllServices ? services : featuredServices).map((service, index) => (
-              <div
-                key={service.id}
-                className={`group bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 hover:shadow-xl transform transition-all duration-500 hover:scale-105 cursor-pointer border border-blue-100 hover:border-blue-300 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                  }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-                onClick={() => onServiceClick(service)}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center mb-2">
-                      <span className="px-3 py-1 bg-yellow-400 text-blue-900 text-xs font-semibold rounded-full">
-                        {service.category}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
-                      {service.title}
-                    </h3>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all duration-300 flex-shrink-0 ml-2" />
-                </div>
-                <p className="text-gray-600 text-sm">
-                  {service.description}
-                </p>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {services.map((service, index) => (
+        <div
+          id={`service-${service.id}`}  
+          key={service.id}
+          className={`group bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 hover:shadow-xl transform transition-all duration-500 hover:scale-105 cursor-pointer border border-blue-100 hover:border-blue-300 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+            }`}
+          style={{ transitionDelay: `${index * 100}ms` }}
+          onClick={() => onServiceClick(service)}
+        >
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex-1">
+              <div className="flex items-center mb-2">
+                <span className="px-3 py-1 bg-yellow-400 text-blue-900 text-xs font-semibold rounded-full">
+                  {service.category}
+                </span>
               </div>
-            ))}
+              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                {service.title}
+              </h3>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all duration-300 flex-shrink-0 ml-2" />
           </div>
-
-          <div className="mt-12 flex justify-end">
-            {!showAllServices && (
-              <button
-                onClick={() => setShowAllServices(true)}
-                className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
-              >
-                View All Services
-              </button>
-            )}
-            {showAllServices && (
-              <button
-                onClick={() => setShowAllServices(false)}
-                className="px-8 py-4 bg-gray-300 text-blue-900 font-semibold rounded-lg hover:bg-gray-400 transform hover:scale-105 transition-all duration-300 shadow-lg"
-              >
-                Show Less
-              </button>
-            )}
-          </div>
-        </div>
-      </section>
-           {/* Footer */}
-      <footer className="text-center md:text-left py-12 bg-gray-900 text-gray-200 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Top Section */}
-          <p className="mb-6 text-center">
-            © {new Date().getFullYear()} Tshwane University of Technology. All rights reserved.
+          <p className="text-gray-600 text-sm">
+            {service.description}
           </p>
-
-          <h4 className="mb-4 text-center text-xl font-semibold">Quick Links</h4>
-          <hr className="border-gray-700 mb-6" />
-
-          {/* Quick Links */}
-          <div className="flex flex-wrap justify-center gap-4 mb-6">
-            {quickLinks.map((link, i) => (
-              <a
-                key={i}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-gray-200 hover:text-yellow-400 transition-colors"
-              >
-                {link.icon} {link.name}
-              </a>
-            ))}
-          </div>
-
-          <hr className="border-gray-700 mb-6" />
-
-          {/* About TUT and Contact Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-            <div>
-              <h5 className="text-lg font-semibold mb-3">About TUT</h5>
-              <ul className="space-y-2 text-sm">
-                {[
-                  ['Council', 'https://www.tut.ac.za/council'],
-                  ['Executive Management Committee', 'https://www.tut.ac.za/executive-management-committee'],
-                  ['Executive Deans', 'https://www.tut.ac.za/executive-deans'],
-                  ['Campus Rectors', 'https://www.tut.ac.za/campus-rectors'],
-                  ['Vacancies', 'https://www.tut.ac.za/vacancies/list/1'],
-                  ['Tenders', 'https://www.tut.ac.za/tender'],
-                  ['Research, Innovation & Engagement', 'https://www.tut.ac.za/research-innovation-engagement'],
-                ].map(([name, url]) => (
-                  <li key={name}>
-                    <a href={url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400">
-                      {name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h5 className="text-lg font-semibold mb-3">Contact</h5>
-              <p className="text-sm">Tel: 086 110 2421</p>
-              <p className="text-sm">
-                Email:{' '}
-                <a href="mailto:general@tut.ac.za" className="hover:text-yellow-400">
-                  general@tut.ac.za
-                </a>
-              </p>
-
-              <h6 className="text-md font-semibold mt-4 mb-1">Ethics Hotline</h6>
-              <p className="text-sm">Toll-Free: 0800 006 924</p>
-              <p className="text-sm">
-                Email:{' '}
-                <a href="mailto:reportit@ethicshelpdesk.com" className="hover:text-yellow-400">
-                  reportit@ethicshelpdesk.com
-                </a>
-              </p>
-            </div>
-          </div>
         </div>
-      </footer>
+      ))}
+    </div>
+    {/* Removed Show More / Show Less buttons */}
+  </div>
+</section>
 
+           {/* Footer */}
+      <footer className="text-center md:text-left py-12 bg-white text-black mt-16">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {/* Top Section */}
+    <p className="mb-6 text-center">
+      © {new Date().getFullYear()} Tshwane University of Technology. All rights reserved.
+    </p>
+
+    <h4 className="mb-4 text-center text-xl font-semibold">Quick Links</h4>
+    <hr className="border-gray-300 mb-6" />
+
+    {/* Quick Links */}
+    <div className="flex flex-wrap justify-center gap-4 mb-6">
+      {quickLinks.map((link, i) => (
+        <a
+          key={i}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-black hover:text-yellow-500 transition-colors"
+        >
+          {link.icon} {link.name}
+        </a>
+      ))}
+    </div>
+
+    <hr className="border-gray-300 mb-6" />
+
+    {/* About TUT and Contact Info */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+      <div>
+        <h5 className="text-lg font-semibold mb-3">About TUT</h5>
+        <ul className="space-y-2 text-sm">
+          {[
+            ['Council', 'https://www.tut.ac.za/council'],
+            ['Executive Management Committee', 'https://www.tut.ac.za/executive-management-committee'],
+            ['Executive Deans', 'https://www.tut.ac.za/executive-deans'],
+            ['Campus Rectors', 'https://www.tut.ac.za/campus-rectors'],
+            ['Vacancies', 'https://www.tut.ac.za/vacancies/list/1'],
+            ['Tenders', 'https://www.tut.ac.za/tender'],
+            ['Research, Innovation & Engagement', 'https://www.tut.ac.za/research-innovation-engagement'],
+          ].map(([name, url]) => (
+            <li key={name}>
+              <a href={url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-500">
+                {name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h5 className="text-lg font-semibold mb-3">Contact</h5>
+        <p className="text-sm">Tel: 086 110 2421</p>
+        <p className="text-sm">
+          Email:{' '}
+          <a href="mailto:general@tut.ac.za" className="hover:text-yellow-500">
+            admission@tut.ac.za
+          </a>
+        </p>
+
+        <h6 className="text-md font-semibold mt-4 mb-1">Ethics Hotline</h6>
+        <p className="text-sm">Toll-Free: 0800 006 924</p>
+        <p className="text-sm">
+          Email:{' '}
+          <a href="mailto:reportit@ethicshelpdesk.com" className="hover:text-yellow-500">
+            reportit@ethicshelpdesk.com
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
       
     </div>
   );

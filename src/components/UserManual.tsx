@@ -30,74 +30,63 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
   const steps = [
     {
       id: 1,
-      title: 'Getting Started',
+      title: 'Step 1: Land on Homepage',
       icon: Play,
-      description: 'Learn how to navigate the ICT Faculty Information Hub',
+      description: 'Start your journey from the homepage',
       content: [
         'Welcome to the ICT Faculty Information Application',
-        'Use the navigation bar at the top to move between sections',
-        'Click on the logo to return to the homepage anytime',
-        'The website is fully responsive and works on all devices'
+        'This is your starting point to explore the system'
       ]
     },
     {
       id: 2,
-      title: 'Exploring Departments',
-      icon: BookOpen,
-      description: 'Discover academic departments and their programs',
+      title: 'Step 2: Select Your Level of Study',
+      icon: Users,
+      description: 'Use the navigation bar to filter services',
       content: [
-        'Browse the 4 main academic departments on the homepage',
-        'Click on any department card to view detailed information',
-        'Each department shows available course codes and descriptions',
-        'Use the expandable sections to learn more about specific programs'
+        'Use the burger menu on the top left of the navigation bar',
+        'Select your level of study: Senior Students, Newcomer Students, or All Students',
+        'This will filter the services relevant to you'
       ]
     },
     {
       id: 3,
-      title: 'Finding Student Services',
-      icon: Users,
-      description: 'Access support services for your academic journey',
+      title: 'Step 3: Search for a Topic or Service',
+      icon: Search,
+      description: 'Use the search bar to find what you need',
       content: [
-        'Student services are categorized by student type (Senior, Newcomer, All)',
-        'Click on any service card to view detailed instructions',
-        'Follow the step-by-step processes provided',
-        'Contact information is available for additional support'
+        'Type a department or service name into the search bar in the navigation',
+        'Search results will appear below the bar as interactive cards'
       ]
     },
     {
       id: 4,
-      title: 'Using Interactive Features',
-      icon: Mouse,
-      description: 'Make the most of the website\'s interactive elements',
+      title: 'Step 4: Select a Topic or Card',
+      icon: BookOpen,
+      description: 'Click a result card to view more information',
       content: [
-        'Hover over cards and buttons to see smooth animations',
-        'Click on expandable sections to reveal more information',
-        'Use the search functionality to quickly find what you need',
-        'All animations are designed to enhance your experience'
+        'After searching, click on the card that best matches your topic',
+        'You will be directed to a detailed page or view with more information'
       ]
     },
     {
       id: 5,
-      title: 'Mobile Experience',
-      icon: Smartphone,
-      description: 'Access the website seamlessly on mobile devices',
+      title: 'Step 5: Explore Quick Links for Help',
+      icon: Mouse,
+      description: 'Use quick links and additional resources',
       content: [
-        'The website automatically adapts to your screen size',
-        'Use the hamburger menu on mobile for navigation',
-        'All features work perfectly on tablets and smartphones',
-        'Touch-friendly interface for easy mobile interaction'
+        'Scroll down or check quick links for external websites and further resources',
+        'These links provide direct access to forms, registration, and more'
       ]
     },
     {
       id: 6,
-      title: 'Getting Help',
+      title: 'Step 6: Contact Us',
       icon: HelpCircle,
-      description: 'Find support when you need it most',
+      description: 'Get in touch with support for more help',
       content: [
-        'Contact information is always visible in the navigation bar',
-        'Each service page includes specific contact details',
-        'Use the provided phone numbers and email addresses',
-        'Visit the specified office locations for in-person assistance'
+        'Use the contact details listed on the website for email or phone support',
+        'Our support team is available during working hours to assist you'
       ]
     }
   ];
@@ -131,7 +120,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
             <ChevronLeft className="w-5 h-5 mr-2" />
             Back to Home
           </button>
-          
+
           <div className={`transform transition-all duration-1000 ${
             isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}>
@@ -144,7 +133,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
                 <p className="text-xl text-gray-600">Learn how to navigate and use the ICT Faculty Information Hub</p>
               </div>
             </div>
-            
+
             {/* Progress Bar */}
             <div className="bg-gray-200 rounded-full h-2 mb-8">
               <div 
@@ -152,7 +141,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
                 style={{ width: `${(completedSteps.length / steps.length) * 100}%` }}
               ></div>
             </div>
-            
+
             <div className="flex items-center justify-between text-sm text-gray-600">
               <span>Progress: {completedSteps.length} of {steps.length} steps completed</span>
               <span className="flex items-center">
@@ -174,13 +163,13 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
             }`} style={{ transitionDelay: '200ms' }}>
               <div className="p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-8">Step-by-Step Guide</h2>
-                
+
                 <div className="space-y-4">
                   {steps.map((step, index) => {
                     const IconComponent = step.icon;
                     const isActive = activeStep === step.id;
                     const isCompleted = completedSteps.includes(step.id);
-                    
+
                     return (
                       <div
                         key={step.id}
@@ -214,7 +203,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
                             isActive ? 'rotate-90' : ''
                           }`} />
                         </div>
-                        
+
                         <div className={`overflow-hidden transition-all duration-500 ${
                           isActive ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}>
@@ -228,7 +217,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
                                   </li>
                                 ))}
                               </ul>
-                              
+
                               {!isCompleted && (
                                 <button
                                   onClick={() => markStepComplete(step.id)}
@@ -251,10 +240,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            {/* Quick Tips */}
-            <div className={`bg-white rounded-xl shadow-lg p-6 mb-6 transform transition-all duration-1000 ${
-              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`} style={{ transitionDelay: '400ms' }}>
+            <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Tips</h3>
               <div className="space-y-3">
                 {quickTips.map((tip, index) => (
@@ -266,37 +252,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
               </div>
             </div>
 
-            {/* Navigation Overview */}
-            <div className={`bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white transform transition-all duration-1000 ${
-              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`} style={{ transitionDelay: '600ms' }}>
-              <h3 className="text-xl font-bold mb-4">Navigation Overview</h3>
-              <div className="space-y-3">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-blue-900 font-bold text-sm">1</span>
-                  </div>
-                  <span className="text-sm">Use the top navigation bar</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-blue-900 font-bold text-sm">2</span>
-                  </div>
-                  <span className="text-sm">Click on cards to explore</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-blue-900 font-bold text-sm">3</span>
-                  </div>
-                  <span className="text-sm">Use back buttons to return</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Support */}
-            <div className={`bg-yellow-400 rounded-xl shadow-lg p-6 mt-6 text-blue-900 transform transition-all duration-1000 ${
-              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`} style={{ transitionDelay: '800ms' }}>
+            <div className="bg-yellow-400 rounded-xl shadow-lg p-6 mt-6 text-blue-900">
               <h3 className="text-xl font-bold mb-4">Need More Help?</h3>
               <p className="mb-4 text-sm">
                 If you're still having trouble navigating the website, don't hesitate to contact our support team.
@@ -313,6 +269,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>

@@ -47,7 +47,54 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Cancel your current course first',
         'Register for the new course',
         'Visit Academic Department for module credits'
-      ]
+      ],
+      'Subject additions and cancellations': [
+        'Obtain the form from OneStop.',
+        'Obtain approval from your Academic Department.'
+      ],
+      'NO WALK-INS Policy': [
+        'NO HUMANITIES ENQUIRIES at ICT Faculty offices',
+        'Do not ask staff to screen grade 12 certificate',
+        'Must apply online only',
+        'Check www.tut.ac.za daily for available courses'
+      ],
+      'Intercampus Transfers': [
+        'Must be registered Computer Science Student',
+        'Apply via EC (electronic Campus)',
+        'Available end of October to mid-November only',
+        'One intake per year only'
+      ],
+      'Re-admission': [
+        'Had a break in studies? Get form from OneStop',
+        'Returning after exclusion? Get Form from OneStop',
+        'Get approval from Academic Department',
+        
+      ],
+      'Special & Exit Examinations': [
+        'Visit Examination Administration Office for all enquiries',
+      ],
+      'Probation': [
+        'Refer to ITS notification',
+        'Sign probation form via SASO electronically',
+      ],
+      'Other Admission Enquiries': [
+        'Application status enquiries',
+        'Documentation upload assistance',
+        'Campus change (Admission Transfer)',
+        'Contact via email: admission@tut.ac.za',
+        'Phone: 0861102421',
+        'Visit OneStop or Admissions Lab in Building 10',
+      ],
+      'Resindence Administration': [
+        'Contact Solly Sekgalabje',
+        'Phone: 012 382 9500 or ',
+        'Email: sekgalabjesb@tut.ac.za ',
+        
+      ],
+      'Recognition / Examption (CAT)': [
+        'Obtain form from OneStop',
+        'Get approvals from Academic Department',
+      ],
     };
     return steps[serviceId] || [];
   };
