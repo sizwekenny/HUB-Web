@@ -196,6 +196,7 @@ const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcome
         <HomePage 
           departments={departments}
           services={services}
+          selectedFilter={selectedFilter}
           onDepartmentClick={handleDepartmentClick}
           onServiceClick={handleServiceClick}
         />

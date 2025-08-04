@@ -21,6 +21,7 @@ import emalImg from '../assets/emal.jpg';
 interface HomePageProps {
   departments: Department[];
   services: Service[];
+  selectedFilter: 'all' | 'senior' | 'newcomer';
   onDepartmentClick: (department: Department) => void;
   onServiceClick: (service: Service) => void;
 }
@@ -28,6 +29,7 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({
   departments,
   services,
+  selectedFilter,
   onDepartmentClick,
   onServiceClick
 }) => {
@@ -72,7 +74,6 @@ const HomePage: React.FC<HomePageProps> = ({
     },
   ];
 
-  const featuredServices = services.slice(0, 6);
   const departmentsRef = React.useRef<HTMLDivElement>(null);
   const servicesRef = React.useRef<HTMLDivElement>(null);
   const [showAllServices, setShowAllServices] = useState(false);
@@ -95,7 +96,15 @@ const HomePage: React.FC<HomePageProps> = ({
     }
   };
 
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcomer'>('all');
+  // Filter services based on selectedFilter prop
+const filteredServices = selectedFilter === 'all'
+  ? services
+  : services.filter(service => {
+      if (selectedFilter === 'senior') return service.category === 'Senior Students';
+      if (selectedFilter === 'newcomer') return service.category === 'Newcomer Students';
+      return true; // fallback
+    });
+
 
   return (
     <div className="min-h-screen">
@@ -150,7 +159,7 @@ const HomePage: React.FC<HomePageProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Discover TUT at a Glance</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Explore our Campuse in the Meanwhile
+            Explore our Campus in the Meanwhile
           </p>
         </div>
 
@@ -237,7 +246,7 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
+            {filteredServices.map((service, index) => (
               <div
                 id={`service-${service.id}`}
                 key={service.id}
