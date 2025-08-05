@@ -76,3 +76,20 @@ export interface Report {
 
   registerPdfUrl?: string;
 }
+
+export interface NewsItem {
+  id: string;
+  title: string;
+  summary: string;
+  content: string;
+  date: string;
+  category: 'Registration' | 'Academic' | 'Announcement' | 'Deadline' | 'Event' | 'WIL';
+  priority: 'high' | 'medium' | 'low';
+  isUrgent?: boolean;
+  downloadFile?: {
+    filename: string;
+    url: string;
+    type: 'pdf' | 'png' | 'jpg' | 'jpeg';
+    size?: string;
+  };
+}
