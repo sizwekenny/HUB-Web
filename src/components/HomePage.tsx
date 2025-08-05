@@ -17,6 +17,7 @@ import soshImg from '../assets/sosh.jpg';
 import mainImg from '../assets/MainT.jpg';
 import ruthImg from '../assets/ruth.jpg';
 import emalImg from '../assets/emal.jpg';
+import Chatbot from './Chatbot';
 
 interface HomePageProps {
   departments: Department[];
@@ -349,6 +350,9 @@ const filteredServices = selectedFilter === 'all'
           </div>
         </div>
       </footer>
+     <div>
+      <Chatbot />
+    </div>
     </div>
   );
 };
