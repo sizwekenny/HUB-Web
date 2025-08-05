@@ -278,7 +278,7 @@ const filteredServices = selectedFilter === 'all'
       </section>
 
       {/* Footer */}
-      <footer className="text-center md:text-left py-12 bg-white text-black mt-16">
+      <footer className="text-center md:text-left py-12 blue text-black mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Top Section */}
           <p className="mb-6 text-center">
