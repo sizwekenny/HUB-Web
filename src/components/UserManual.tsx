@@ -13,6 +13,7 @@ import {
   Star,
   Navigation as NavigationIcon
 } from 'lucide-react';
+import MainT from '../assets/UserJourney.jpeg'; 
 
 interface UserManualProps {
   onBack: () => void;
@@ -240,35 +241,51 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Tips</h3>
-              <div className="space-y-3">
-                {quickTips.map((tip, index) => (
-                  <div key={index} className="flex items-start p-3 bg-blue-50 rounded-lg">
-                    <Star className="w-4 h-4 text-yellow-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <span className="text-sm text-gray-700">{tip}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+  {/* User Journey Button */}
+  <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+    {/* <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Link</h3> */}
+    <a
+      href={MainT}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block text-center px-4 py-2 bg-blue-600 font-mid bold text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
+    >
+      View User Journey
+    </a>
+  </div>
 
-            <div className="bg-yellow-400 rounded-xl shadow-lg p-6 mt-6 text-blue-900">
-              <h3 className="text-xl font-bold mb-4">Need More Help?</h3>
-              <p className="mb-4 text-sm">
-                If you're still having trouble navigating the website, don't hesitate to contact our support team.
-              </p>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center">
-                  <span className="font-medium">Phone:</span>
-                  <span className="ml-2">012 382 9500</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-medium">Email:</span>
-                  <span className="ml-2">admission@tut.ac.za</span>
-                </div>
-              </div>
-            </div>
-          </div>
+  {/* Quick Tips */}
+  <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+    <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Tips</h3>
+    <div className="space-y-3">
+      {quickTips.map((tip, index) => (
+        <div key={index} className="flex items-start p-3 bg-blue-50 rounded-lg">
+          <Star className="w-4 h-4 text-yellow-500 mt-0.5 mr-2 flex-shrink-0" />
+          <span className="text-sm text-gray-700">{tip}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* Support */}
+  <div className="bg-yellow-400 rounded-xl shadow-lg p-6 mt-6 text-blue-900">
+    <h3 className="text-xl font-bold mb-4">Need More Help?</h3>
+    <p className="mb-4 text-sm">
+      If you're still having trouble navigating the website, don't hesitate to contact our support team.
+    </p>
+    <div className="space-y-2 text-sm">
+      <div className="flex items-center">
+        <span className="font-medium">Phone:</span>
+        <span className="ml-2">012 382 9500</span>
+      </div>
+      <div className="flex items-center">
+        <span className="font-medium">Email:</span>
+        <span className="ml-2">admission@tut.ac.za</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 
         </div>
       </div>
