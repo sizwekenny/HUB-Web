@@ -3,6 +3,7 @@ import {
   GraduationCap,
   BookOpen,
   ChevronRight,
+  ChevronLeft,
   Monitor,
   Database,
   Cpu,
@@ -28,6 +29,22 @@ interface HomePageProps {
 import Footer from './Footer';
 // Hardcoded news data from EC portal - to be replaced with EC API later
 const latestNews: NewsItem[] = [
+  {
+    id: '0',
+    title: 'Kindly venues for today\'s test for Java PPB, PPG as detailed in the D2L',
+    summary: 'Venue information for today\'s Java PPB and PPG tests is now available. Please check the details in D2L for your specific test venue and time.',
+    content: 'Important update regarding today\'s Java Programming (PPB) and Programming Principles (PPG) tests. All venue information and specific details have been posted in the D2L system. Students are advised to check their D2L accounts immediately to confirm their assigned test venue and time. Please arrive at least 15 minutes before your scheduled test time.',
+    date: '2025-08-06',
+    category: 'Academic',
+    priority: 'high',
+    isUrgent: true,
+    downloadFile: {
+      filename: 'Programming_B_CT2_Venues3_vs2.docx',
+      url: '/downloads/Programming_B_CT2_Venues3_vs2.docx',
+      type: 'docx',
+      size: '12.3 KB'
+    }
+  },
   {
     id: '1',
     title: 'Huawei ICT Competition',
@@ -541,14 +558,23 @@ const filteredServices = selectedFilter === 'all'
 
       {/* All News View */}
       {showAllNews && (
-        <div className="fixed inset-0 bg-white z-50 overflow-y-auto animate-in fade-in duration-300">
+        <div className="fixed inset-x-0 top-16 bottom-0 bg-white z-40 overflow-y-auto animate-in fade-in duration-300">
           <div className="min-h-screen py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-in slide-in-from-bottom duration-500">
               {/* Header */}
-              <div className="mb-8">
-                <div>
-                  <h1 className="text-4xl font-bold text-gray-900 mb-2">All News & Updates</h1>
-                  <p className="text-lg text-gray-600">Complete list of ICT Faculty announcements and updates</p>
+              <div className="mb-8 pt-4">
+                <div className="flex items-center mb-6">
+                  <button
+                    onClick={handleBackToHome}
+                    className="mr-6 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
+                    disabled={isExiting}
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <div className="flex-1 text-center">
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">All News & Updates</h1>
+                    <p className="text-lg text-gray-600">Complete list of ICT Faculty announcements and updates</p>
+                  </div>
                 </div>
               </div>
 
@@ -658,22 +684,11 @@ const filteredServices = selectedFilter === 'all'
                   );
                 })}
               </div>
-
-              {/* Footer in All News View */}
-              <div className="text-center mt-12 pt-8 border-t border-gray-200">
-                <p className="text-gray-600 mb-4">
-                  Showing all {latestNews.length} news articles from the ICT Faculty
-                </p>
-                <button
-                  onClick={handleBackToHome}
-                  className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                  disabled={isExiting}
-                >
-                  Back to Home
-                </button>
-              </div>
             </div>
           </div>
+          
+          {/* Full Footer Component - Outside container for full width */}
+          <Footer/>
         </div>
       )}
 

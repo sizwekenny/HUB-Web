@@ -91,7 +91,7 @@ export interface NewsItem {
   downloadFile?: {
     filename: string;
     url: string;
-    type: 'pdf' | 'png' | 'jpg' | 'jpeg';
+    type: 'pdf' | 'png' | 'jpg' | 'jpeg' | 'docx';
     size?: string;
   };
 }
