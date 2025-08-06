@@ -51,8 +51,8 @@ const Chatbot: React.FC = () => {
       },
       timetables: "Visit your Academic Department. If there are clashes, visit urgently.",
       readmissions: [
-        "Break in studies: Get form from OneStop, get Academic Department approval.",
-        "Returning after exclusion: Same process via OneStop + Academic Department."
+        "Break in studies: Get form from OneStop building 7, get Academic Department approval.",
+        "Returning after exclusion: Same process via OneStop building 7 + Academic Department."
       ],
       intercampusTransfer: [
         "Registered Computer Science student: Apply via EC during late Oct to mid-Nov.",
@@ -63,7 +63,7 @@ const Chatbot: React.FC = () => {
         "After applying: check status, upload documents, request campus transfer via:",
         "Email: admission@tut.ac.za",
         "Phone: 0861102421",
-        "Visit OneStop or Admissions Lab in building 10"
+        "Visit OneStop building 7 or Admissions Lab in building 10"
       ],
       newcomers: [
         "NO humanities queries at ICT offices.",
@@ -72,7 +72,7 @@ const Chatbot: React.FC = () => {
       ],
       bursaries: "Visit FUNDI office, building 12, ground floor.",
       residence: "Contact Solly Sekgalabje (012 382 9500) or sekgalabjesb@tut.ac.za",
-      cat: "Get CAT form from OneStop. Approval needed from your Academic Department."
+      cat: "Get CAT form from OneStop building 7. Approval needed from your Academic Department."
     };
 
     let response = "Sorry, I couldn't find info for that. Try asking about exclusions, departments, NSFAS, etc.";
@@ -85,9 +85,14 @@ const Chatbot: React.FC = () => {
       response = ictData.exclusions.academic.join("\n");
     } else if (lower.includes("financial exclusion")) {
       response = ictData.exclusions.financial.join("\n");
+    }
+     else if (lower.includes("exclusion")) {
+      response = ictData.exclusions.financial.join("\n");
     } else if (lower.includes("nsfas")) {
       response = ictData.nsfas.join("\n");
     } else if (lower.includes("change of course")) {
+      response = ictData.courseChange.join("\n");
+    }else if (lower.includes("course")) {
       response = ictData.courseChange.join("\n");
     } else if (lower.includes("special exam") || lower.includes("exit exam")) {
       response = ictData.exams.specialExit;
@@ -134,7 +139,7 @@ const Chatbot: React.FC = () => {
       {/* Toggle button */}
       <button
         onClick={toggleChatbot}
-        className="bg-blue-600 text-white p-4 rounded-full shadow-xl hover:bg-blue-700 transition duration-300"
+        className="bg-blue-600 text-white p-4 rounded-full shadow-xl hover:bg-blue-700 transition duration-300" style={{border: "2px solid white"}}
       >
         <MessageSquare size={24} />
       </button>
