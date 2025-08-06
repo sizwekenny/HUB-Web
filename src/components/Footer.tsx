@@ -26,7 +26,7 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="relative overflow-hidden text-center md:text-left py-12 bg-blue-600 text-white mt-16">
+    <footer className="relative overflow-hidden text-center md:text-left py-12 bg-blue-600 text-white mt-16" style={{marginTop:'0px'}}>
       {/* Floating Background Elements */}
       <div className="absolute top-20 left-10 w-16 h-16 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute bottom-20 right-10 w-24 h-24 bg-blue-300 rounded-full opacity-20 animate-bounce"></div>
