@@ -254,8 +254,8 @@ const filteredServices = selectedFilter === 'all'
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-              ICT Faculty
-              <span className="block text-yellow-400">Information Hub</span>
+              FoICT
+              {/* <span className="block text-yellow-400">Information Hub</span> */}
             </h1>
             <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
               Your comprehensive guide to academic departments, student services, and essential information
