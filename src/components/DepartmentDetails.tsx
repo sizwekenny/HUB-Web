@@ -6,13 +6,14 @@ interface DepartmentDetailsProps {
   department: Department;
   onBack: () => void;
 }
-
+import Footer from './Footer';
 const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBack }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [expandedCode, setExpandedCode] = useState<string | null>(null);
 
   useEffect(() => {
     setIsLoaded(true);
+    window.scrollTo(0, 0);
   }, []);
 
   const getDepartmentIcon = (departmentId: string) => {
@@ -193,6 +194,7 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

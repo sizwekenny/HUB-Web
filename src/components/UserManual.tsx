@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ChevronLeft, 
-  Play, 
-  CheckCircle, 
-  ArrowRight, 
-  Mouse, 
-  Smartphone, 
+import {
+  ChevronLeft,
+  Play,
+  CheckCircle,
+  ArrowRight,
+  Mouse,
   Search,
   BookOpen,
   Users,
@@ -13,12 +12,12 @@ import {
   Star,
   Navigation as NavigationIcon
 } from 'lucide-react';
-import MainT from '../assets/UserJourney.jpeg'; 
+import MainT from '../assets/UserJourney.jpeg';
 
 interface UserManualProps {
   onBack: () => void;
 }
-
+import Footer from './Footer';
 const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeStep, setActiveStep] = useState<number | null>(null);
@@ -26,6 +25,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
 
   useEffect(() => {
     setIsLoaded(true);
+    window.scrollTo(0, 0);
   }, []);
 
   const steps = [
@@ -122,9 +122,8 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
             Back to Home
           </button>
 
-          <div className={`transform transition-all duration-1000 ${
-            isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-          }`}>
+          <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+            }`}>
             <div className="flex items-center mb-6">
               <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl mr-6">
                 <NavigationIcon className="w-12 h-12 text-yellow-400" />
@@ -137,7 +136,7 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
 
             {/* Progress Bar */}
             <div className="bg-gray-200 rounded-full h-2 mb-8">
-              <div 
+              <div
                 className="bg-gradient-to-r from-blue-600 to-yellow-400 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${(completedSteps.length / steps.length) * 100}%` }}
               ></div>
@@ -159,9 +158,8 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className={`bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-1000 ${
-              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`} style={{ transitionDelay: '200ms' }}>
+            <div className={`bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+              }`} style={{ transitionDelay: '200ms' }}>
               <div className="p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-8">Step-by-Step Guide</h2>
 
@@ -174,9 +172,8 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
                     return (
                       <div
                         key={step.id}
-                        className={`border rounded-xl overflow-hidden transition-all duration-500 ${
-                          isActive ? 'border-blue-300 shadow-lg' : 'border-gray-200 hover:border-blue-200'
-                        } ${isCompleted ? 'bg-green-50' : 'bg-white'}`}
+                        className={`border rounded-xl overflow-hidden transition-all duration-500 ${isActive ? 'border-blue-300 shadow-lg' : 'border-gray-200 hover:border-blue-200'
+                          } ${isCompleted ? 'bg-green-50' : 'bg-white'}`}
                         style={{ transitionDelay: `${index * 100}ms` }}
                       >
                         <div
@@ -184,15 +181,13 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
                           onClick={() => handleStepClick(step.id)}
                         >
                           <div className="flex items-center">
-                            <div className={`p-3 rounded-lg mr-4 transition-all duration-300 ${
-                              isCompleted ? 'bg-green-500' : isActive ? 'bg-blue-500' : 'bg-gray-100'
-                            }`}>
+                            <div className={`p-3 rounded-lg mr-4 transition-all duration-300 ${isCompleted ? 'bg-green-500' : isActive ? 'bg-blue-500' : 'bg-gray-100'
+                              }`}>
                               {isCompleted ? (
                                 <CheckCircle className="w-6 h-6 text-white" />
                               ) : (
-                                <IconComponent className={`w-6 h-6 ${
-                                  isActive ? 'text-white' : 'text-gray-600'
-                                }`} />
+                                <IconComponent className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-600'
+                                  }`} />
                               )}
                             </div>
                             <div>
@@ -200,14 +195,12 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
                               <p className="text-sm text-gray-600">{step.description}</p>
                             </div>
                           </div>
-                          <ArrowRight className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${
-                            isActive ? 'rotate-90' : ''
-                          }`} />
+                          <ArrowRight className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${isActive ? 'rotate-90' : ''
+                            }`} />
                         </div>
 
-                        <div className={`overflow-hidden transition-all duration-500 ${
-                          isActive ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                        }`}>
+                        <div className={`overflow-hidden transition-all duration-500 ${isActive ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                          }`}>
                           <div className="px-6 pb-6 border-t border-gray-100">
                             <div className="pt-4">
                               <ul className="space-y-3">
@@ -241,54 +234,55 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-  {/* User Journey Button */}
-  <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-    {/* <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Link</h3> */}
-    <a
-      href={MainT}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block text-center px-4 py-2 bg-blue-600 font-mid bold text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
-    >
-      View User Journey
-    </a>
-  </div>
+            {/* User Journey Button */}
+            <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+              {/* <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Link</h3> */}
+              <a
+                href={MainT}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-center px-4 py-2 bg-blue-600 font-mid bold text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
+              >
+                View User Journey
+              </a>
+            </div>
 
-  {/* Quick Tips */}
-  <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-    <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Tips</h3>
-    <div className="space-y-3">
-      {quickTips.map((tip, index) => (
-        <div key={index} className="flex items-start p-3 bg-blue-50 rounded-lg">
-          <Star className="w-4 h-4 text-yellow-500 mt-0.5 mr-2 flex-shrink-0" />
-          <span className="text-sm text-gray-700">{tip}</span>
+            {/* Quick Tips */}
+            <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Tips</h3>
+              <div className="space-y-3">
+                {quickTips.map((tip, index) => (
+                  <div key={index} className="flex items-start p-3 bg-blue-50 rounded-lg">
+                    <Star className="w-4 h-4 text-yellow-500 mt-0.5 mr-2 flex-shrink-0" />
+                    <span className="text-sm text-gray-700">{tip}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Support */}
+            <div className="bg-yellow-400 rounded-xl shadow-lg p-6 mt-6 text-blue-900">
+              <h3 className="text-xl font-bold mb-4">Need More Help?</h3>
+              <p className="mb-4 text-sm">
+                If you're still having trouble navigating the website, don't hesitate to contact our support team.
+              </p>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center">
+                  <span className="font-medium">Phone:</span>
+                  <span className="ml-2">012 382 9500</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="font-medium">Email:</span>
+                  <span className="ml-2">admission@tut.ac.za</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </div>
-      ))}
-    </div>
-  </div>
-
-  {/* Support */}
-  <div className="bg-yellow-400 rounded-xl shadow-lg p-6 mt-6 text-blue-900">
-    <h3 className="text-xl font-bold mb-4">Need More Help?</h3>
-    <p className="mb-4 text-sm">
-      If you're still having trouble navigating the website, don't hesitate to contact our support team.
-    </p>
-    <div className="space-y-2 text-sm">
-      <div className="flex items-center">
-        <span className="font-medium">Phone:</span>
-        <span className="ml-2">012 382 9500</span>
       </div>
-      <div className="flex items-center">
-        <span className="font-medium">Email:</span>
-        <span className="ml-2">admission@tut.ac.za</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 };

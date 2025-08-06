@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, HelpCircle, Clock, MapPin, Phone, Mail, AlertCircle, CheckCircle } from 'lucide-react';
 import { Service } from '../types';
+import Footer from './Footer';
 
 interface ServiceDetailsProps {
   service: Service;
@@ -13,6 +14,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
 
   useEffect(() => {
     setIsLoaded(true);
+    window.scrollTo(0, 0);
   }, []);
 
   const getCategoryColor = (category: string) => {
@@ -250,6 +252,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

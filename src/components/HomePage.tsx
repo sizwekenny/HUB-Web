@@ -7,8 +7,6 @@ import {
   Database,
   Cpu,
   Globe,
-  Mail,
-  MapPin,
   Clock,
   AlertTriangle,
   Calendar,
@@ -213,30 +211,6 @@ const HomePage: React.FC<HomePageProps> = ({
       default: return BookOpen;
     }
   };
-
-  // Updated quickLinks with Student Portal replacing Phone
-  const quickLinks = [
-    {
-      name: 'TUT Website',
-      url: 'https://www.tut.ac.za/',
-      icon: <Globe className="w-4 h-4" />,
-    },
-    {
-      name: 'Student Portal',
-      url: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login',
-      icon: <Monitor className="w-4 h-4" />,
-    },
-    {
-      name: 'Contact Us',
-      url: 'mailto:general@tut.ac.za',
-      icon: <Mail className="w-4 h-4" />,
-    },
-    {
-      name: 'Location',
-      url: 'https://www.google.com/maps/place/TUT/',
-      icon: <MapPin className="w-4 h-4" />,
-    },
-  ];
 
   const departmentsRef = React.useRef<HTMLDivElement>(null);
   const servicesRef = React.useRef<HTMLDivElement>(null);
