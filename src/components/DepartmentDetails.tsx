@@ -31,22 +31,43 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
   const getCodeDescription = (code: string) => {
     const descriptions: Record<string, string> = {
       'DPMCF0': 'Diploma in Computer Science - Foundation',
-      'DPMC20': 'Diploma in Computer Science - 2nd Year',
+      'DPMC20': 'Diploma in Computer Science - MainStream',
       'ADMC20': 'Advanced Diploma in Computer Science',
       'DPRSF0': 'Diploma in Computer Science (Research) - Foundation',
-      'DPRS20': 'Diploma in Computer Science (Research) - 2nd Year',
+      'DPRS20': 'Diploma in Computer Science (Research) - MainStream',
       'ADRS20': 'Advanced Diploma in Computer Science (Research)',
       'DPYEF0': 'Diploma in Computer Systems Engineering - Foundation',
-      'DPYE20': 'Diploma in Computer Systems Engineering - 2nd Year',
+      'DPYE20': 'Diploma in Computer Systems Engineering - MainStream',
       'ADYE20': 'Advanced Diploma in Computer Systems Engineering',
       'DPIFF0': 'Diploma in Informatics - Foundation',
-      'DPIF20': 'Diploma in Informatics - 2nd Year',
+      'DPIF20': 'Diploma in Informatics - MainStream',
       'ADIF20': 'Advanced Diploma in Informatics',
       'DPITF0': 'Diploma in Information Technology - Foundation',
-      'DPIT20': 'Diploma in Information Technology - 2nd Year',
+      'DPIT20': 'Diploma in Information Technology - MainStream',
       'ADIT21': 'Advanced Diploma in Information Technology'
     };
     return descriptions[code] || 'Program description not available';
+  };
+
+  const getProgramDuration = (code: string) => {
+    const programDurations: Record<string, string> = {
+      'DPMCF0': '4 Years (Foundation)',
+      'DPMC20': '3 Years',
+      'ADMC20': '2 Years',
+      'DPRSF0': '4 Years (Foundation)',
+      'DPRS20': '3 Years',
+      'ADRS20': '2 Years',
+      'DPYEF0': '4 Years (Foundation)',
+      'DPYE20': '3 Years',
+      'ADYE20': '2 Years',
+      'DPIFF0': '4 Years (Foundation)',
+      'DPIF20': '3 Years',
+      'ADIF20': '2 Years',
+      'DPITF0': '4 Years (Foundation)',
+      'DPIT20': '3 Years',
+      'ADIT21': '2 Years'
+    };
+    return programDurations[code] || 'Varies';
   };
 
   return (
@@ -61,7 +82,7 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
             <ChevronLeft className="w-5 h-5 mr-2" />
             Back to Home
           </button>
-          
+
           <div className={`flex items-center transform transition-all duration-1000 ${
             isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}>
@@ -76,16 +97,14 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
         </div>
       </div>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-2">
             <div className={`bg-white rounded-xl shadow-lg p-8 transform transition-all duration-1000 ${
               isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`} style={{ transitionDelay: '200ms' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Programs</h2>
-              
+
               <div className="space-y-4">
                 {department.codes.map((code, index) => (
                   <div
@@ -114,7 +133,7 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
                         }`} 
                       />
                     </div>
-                    
+
                     <div className={`overflow-hidden transition-all duration-500 ${
                       expandedCode === code ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                     }`}>
@@ -122,15 +141,11 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
                         <div className="pt-4">
                           <h4 className="font-semibold text-gray-900 mb-2">Program Description</h4>
                           <p className="text-gray-700 mb-4">{getCodeDescription(code)}</p>
-                          
+
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="bg-white p-4 rounded-lg border border-gray-100">
                               <h5 className="font-medium text-gray-900 mb-2">Duration</h5>
-                              <p className="text-gray-600">
-                                {code.includes('F0') ? '1 Year (Foundation)' : 
-                                 code.includes('20') ? '2-3 Years' : 
-                                 code.includes('21') ? '1 Year (Advanced)' : 'Varies'}
-                              </p>
+                              <p className="text-gray-600">{getProgramDuration(code)}</p>
                             </div>
                             <div className="bg-white p-4 rounded-lg border border-gray-100">
                               <h5 className="font-medium text-gray-900 mb-2">Level</h5>
@@ -148,37 +163,22 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className={`bg-white rounded-xl shadow-lg p-6 transform transition-all duration-1000 ${
-              isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-            }`} style={{ transitionDelay: '400ms' }}>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Information</h3>
-              
-              <div className="space-y-4">
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 mb-2">Total Programs</h4>
-                  <p className="text-2xl font-bold text-blue-600">{department.codes.length}</p>
-                </div>
-                
-                <div className="p-4 bg-yellow-50 rounded-lg">
-                  <h4 className="font-semibold text-yellow-900 mb-2">Department Focus</h4>
-                  <p className="text-yellow-800">
-                    {department.id === 'cs' ? 'Software Development & Algorithms' :
-                     department.id === 'cse' ? 'Hardware & Software Integration' :
-                     department.id === 'informatics' ? 'Data Management & Systems' :
-                     'Technology Implementation'}
-                  </p>
-                </div>
-                
-                <div className="p-4 bg-green-50 rounded-lg">
-                  <h4 className="font-semibold text-green-900 mb-2">Career Opportunities</h4>
-                  <p className="text-green-800">
-                    Excellent job prospects in technology sector with high demand for graduates.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+  <h2 className="text-lg font-semibold text-gray-700 dark:text-white mb-4">Quick Information</h2>
+  <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+    <li>
+      <span className="font-medium text-gray-900 dark:text-white">Building Number:</span> {department.buildingNumber}
+    </li>
+    <li>
+      <span className="font-medium text-gray-900 dark:text-white">Email:</span> {department.email}
+    </li>
+    <li>
+      <span className="font-medium text-gray-900 dark:text-white">Contact Number:</span> {department.contactNumber}
+    </li>
+  </ul>
+</div>
+
 
             <div className={`bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 mt-6 text-white transform transition-all duration-1000 ${
               isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'

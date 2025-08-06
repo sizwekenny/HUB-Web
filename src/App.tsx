@@ -7,30 +7,46 @@ import Navigation from './components/Navigation';
 import { Department, Service } from './types';
 
 const departments: Department[] = [
+ {
+  id: 'cs',
+  name: 'Computer Science',
+  codes: ['DPMCF0', 'DPMC20', 'ADMC20', 'DPRSF0', 'DPRS20', 'ADRS20'],
+  description: 'Comprehensive computer science programs.',
+  buildingNumber: 'BUILDING 12 ROOM 132 AND 134',
+  email: 'mollymoche@tut.ac.za',
+  contactNumber: '+27 12 382 9938'
+}
+,
   {
-    id: 'cs',
-    name: 'Computer Science',
-    codes: ['DPMCF0', 'DPMC20', 'ADMC20', 'DPRSF0', 'DPRS20', 'ADRS20'],
-    description: 'Comprehensive computer science programs covering software development, algorithms, and theoretical foundations.'
-  },
-  {
-    id: 'cse',
-    name: 'Computer Systems Engineering',
-    codes: ['DPYEF0', 'DPYE20', 'ADYE20'],
-    description: 'Engineering-focused programs combining hardware and software systems design.'
-  },
-  {
-    id: 'informatics',
-    name: 'Informatics',
-    codes: ['DPIFF0', 'DPIF20', 'ADIF20'],
-    description: 'Information systems and data management programs for modern digital solutions.'
-  },
-  {
-    id: 'it',
-    name: 'Information Technology',
-    codes: ['DPITF0', 'DPIT20', 'ADIT21'],
-    description: 'Practical IT programs focusing on technology implementation and management.'
-  }
+  id: 'cse',
+  name: 'Computer Systems Engineering',
+  codes: ['DPYEF0', 'DPYE20', 'ADYE20'],
+  description: 'Engineering-focused computer systems programs.',
+  buildingNumber: 'BUILDING 12 ROOM 205',
+  email: 'matimake@tut.ac.za',
+  contactNumber: '+27 12 382 9812'
+}
+,
+ {
+  id: 'informatics',
+  name: 'infromatics',
+  codes: ['DPIFF0', 'DPIF20', 'ADIF20'],
+  description: 'Information systems and data management programs.',
+  buildingNumber: 'BUILDING 5 2ND FLOOR',
+  email: 'vanrooyenm@tut.ac.za',
+  contactNumber: '+27 12 382 9027'
+}
+,
+ {
+  id: 'it',
+  name: 'Information Technology',
+  codes: ['DPITF0', 'DPIT20', 'ADIT21'],
+  description: 'Practical IT programs focusing on technology and systems.',
+  buildingNumber: 'BUILDING 12 ROOM 162',
+  email: 'chokoepn@tut.ac.za',
+  contactNumber: '+27 12 382 9041'
+}
+
 ];
 
 const services: Service[] = [

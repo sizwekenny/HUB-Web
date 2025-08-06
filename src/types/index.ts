@@ -3,7 +3,9 @@ export interface Department {
   name: string;
   codes: string[];
   description: string;
-  
+  buildingNumber: string;
+  email: string;
+  contactNumber: string;
 }
 
 export interface Service {
