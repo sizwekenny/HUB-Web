@@ -29,7 +29,7 @@ const departments: Department[] = [
 ,
  {
   id: 'informatics',
-  name: 'infromatics',
+  name: 'Infromatics',
   codes: ['DPIFF0', 'DPIF20', 'ADIF20'],
   description: 'Information systems and data management programs.',
   buildingNumber: 'BUILDING 5 2ND FLOOR',
@@ -156,7 +156,7 @@ const services: Service[] = [
     details: 'Get help with application status, documentation, and campus changes.'
   },
   {
-    id: 'Resindence Administration',
+    id: 'Residence Administration',
     title: 'Resindence Administration',
     category: 'All Students',
     description: 'Student accommodation and residence matters.',
