@@ -169,7 +169,7 @@ const services: Service[] = [
   },
   {
     id: 'Residence Administration',
-    title: 'Resindence Administration',
+    title: 'Residence Administration',
     category: 'All Students',
     description: 'Student accommodation and residence matters.',
     details: 'Student accommodation and residence matters.'
