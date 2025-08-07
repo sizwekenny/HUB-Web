@@ -178,7 +178,7 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
             </div>
 
             {/* Quick Information */}
-            <div className={`bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '500ms' }}>
+            <div className={`bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg p-6 mt-6 text-blue-900 transform transition-all duration-1000${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '500ms' }}>
               <h2 className="text-lg font-semibold text-gray-700 dark:text-white mb-4">Quick Information</h2>
               <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                 <li><span className="font-medium text-gray-900 dark:text-white">Building Number:</span> {department.buildingNumber}</li>

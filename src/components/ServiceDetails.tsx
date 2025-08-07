@@ -28,6 +28,9 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
 
   const getServiceSteps = (serviceId: string) => {
     const steps: Record<string, string[]> = {
+      'mark-enquiries': [
+        'Contact your Academic Department directly for all Marks and predicate enquiries ',
+      ],
       'academic-exclusions': [
         'Refer to the ITS notification',
         'Apply for an appeal against exclusion via EC (Electronic Campus)',
@@ -96,6 +99,18 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
       'Recognition / Examption (CAT)': [
         'Obtain form from OneStop',
         'Get approvals from Academic Department',
+      ],
+    
+      'admissions': [
+        'Visit www.tut.ac.za to check application closing dates',
+      ],
+      'timetables': [
+        'Visit Academic Department for timetables',
+        'Report clashes to Academic Department urgently',
+      ],
+      'financial-exclusion': [
+        'Refer to ITS notification',
+        'Visits Mr Lebelo at Students Accounts',
       ],
     };
     return steps[serviceId] || [];
@@ -204,10 +219,26 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
                   Get Help
                 </button>
                 
-                <button className="w-full bg-yellow-400 text-blue-900 font-semibold py-3 px-4 rounded-lg hover:bg-yellow-300 transition-colors duration-300 flex items-center justify-center">
-                  <Clock className="w-5 h-5 mr-2" />
-                  Check Status
-                </button>
+               {service.statusLink ? (
+  <a
+    href={service.statusLink}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="w-full bg-yellow-400 text-blue-900 font-semibold py-3 px-4 rounded-lg hover:bg-yellow-300 transition-colors duration-300 flex items-center justify-center"
+  >
+    <Clock className="w-5 h-5 mr-2" />
+    Quick Link
+  </a>
+) : (
+  <button
+    disabled
+    className="w-full bg-gray-300 text-gray-600 font-semibold py-3 px-4 rounded-lg cursor-not-allowed flex items-center justify-center"
+  >
+    <Clock className="w-5 h-5 mr-2" />
+    No Link Available
+  </button>
+)}
+
               </div>
             </div>
 
@@ -232,7 +263,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
               </div>
             </div>
 
-            <div className={`bg-white rounded-xl shadow-lg p-6 mt-6 transform transition-all duration-1000 ${
+            {/* <div className={`bg-white rounded-xl shadow-lg p-6 mt-6 transform transition-all duration-1000 ${
               isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`} style={{ transitionDelay: '800ms' }}>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Related Services</h3>
@@ -248,7 +279,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
                   <p className="text-sm font-medium text-gray-900">Student Registration</p>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

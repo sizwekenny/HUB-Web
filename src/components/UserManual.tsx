@@ -237,6 +237,8 @@ const UserManual: React.FC<UserManualProps> = ({ onBack }) => {
             {/* User Journey Button */}
             <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
               {/* <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Link</h3> */}
+               <h3 className="text-lg font-bold text-gray-900 mb-4">Extras</h3>
+              <p className="text-gray-700 mb-4">View PDF format.</p>
               <a
                 href={MainT}
                 target="_blank"

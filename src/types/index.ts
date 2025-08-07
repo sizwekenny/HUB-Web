@@ -14,6 +14,7 @@ export interface Service {
   category: 'Senior Students' | 'Newcomer Students' | 'All Students';
   description: string;
   details: string;
+  statusLink?: string;
 }
 
 export interface Comment {
