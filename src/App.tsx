@@ -29,7 +29,7 @@ const departments: Department[] = [
 ,
  {
   id: 'informatics',
-  name: 'Infromatics',
+  name: 'Informatics',
   codes: ['DPIFF0', 'DPIF20', 'ADIF20'],
   description: 'Information systems and data management programs.',
   buildingNumber: 'BUILDING 5 2ND FLOOR',
