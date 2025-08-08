@@ -178,6 +178,11 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
             </div>
 
             {/* Quick Information */}
+            <div className={`bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '600ms' }}>
+              <h3 className="text-xl font-bold mb-4">Need Help?</h3>
+              <p className="mb-4 opacity-90">Contact your Academic Department for more information about these programs.</p>
+              
+            </div>
             <div className={`bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg p-6 mt-6 text-blue-900 transform transition-all duration-1000${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '500ms' }}>
               <h2 className="text-lg font-semibold text-gray-700 dark:text-white mb-4">Quick Information</h2>
               <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -188,13 +193,7 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
             </div>
 
             {/* Help Card */}
-            <div className={`bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '600ms' }}>
-              <h3 className="text-xl font-bold mb-4">Need Help?</h3>
-              <p className="mb-4 opacity-90">Contact your Academic Department for more information about these programs.</p>
-              <button className="w-full bg-yellow-400 text-blue-900 font-semibold py-3 px-4 rounded-lg hover:bg-yellow-300 transition-colors duration-300">
-                Contact Department
-              </button>
-            </div>
+            
           </div>
         </div>
       </div>
