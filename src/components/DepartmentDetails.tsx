@@ -184,11 +184,11 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
               
             </div>
             <div className={`bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg p-6 mt-6 text-blue-900 transform transition-all duration-1000${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '500ms' }}>
-              <h2 className="text-lg font-semibold text-gray-700 dark:text-white mb-4">Quick Information</h2>
-              <ul className="space-y-2 text-sm text-gray-900 dark:text-gray-600">
-                <li><span className="font-medium text-gray-900 dark:text-white">Building Number:</span> {department.buildingNumber}</li>
-                <li><span className="font-medium text-gray-900 dark:text-white">Email:</span> {department.email}</li>
-                <li><span className="font-medium text-gray-900 dark:text-white">Contact Number:</span> {department.contactNumber}</li>
+              <h2 className="text-lg font-semibold text-gray-700 dark:text-black mb-4">Quick Information</h2>
+              <ul className="space-y-2 text-sm text-gray-900 dark:text-gray-900">
+                <li><span className="font-medium text-gray-900 dark:text-gray">Building Number:</span> {department.buildingNumber}</li>
+                <li><span className="font-medium text-gray-900 dark:text-gray">Email:</span> {department.email}</li>
+                <li><span className="font-medium text-gray-900 dark:text-gray">Contact Number:</span> {department.contactNumber}</li>
               </ul>
             </div>
 
