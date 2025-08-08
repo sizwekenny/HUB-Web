@@ -103,6 +103,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
     
       'admissions': [
         'Visit www.tut.ac.za to check application closing dates',
+        'Use the Quick link provided to apply online',
       ],
       'timetables': [
         'Visit Academic Department for timetables',
