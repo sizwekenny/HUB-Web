@@ -90,7 +90,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Phone: 0861102421',
         'Visit OneStop or Admissions Lab in Building 10',
       ],
-      'Resindence Administration': [
+      'Residence Administration': [
         'Contact Solly Sekgalabje',
         'Phone: 012 382 9500 or ',
         'Email: sekgalabjesb@tut.ac.za ',
