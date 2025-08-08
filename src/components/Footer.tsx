@@ -20,7 +20,7 @@ const Footer: React.FC = () => {
     },
     {
       name: 'Location',
-      url: 'https://www.google.com/maps/place/TUT/',
+      url: 'https://maps.app.goo.gl/AxX3briwfHFjXuAL6',
       icon: <MapPin className="w-4 h-4" />,
     },
   ];
