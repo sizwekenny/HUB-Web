@@ -89,7 +89,7 @@ const Footer: React.FC = () => {
 
           <div>
             <h5 className="text-lg font-semibold mb-3">Contact</h5>
-            <p className="text-sm">Tel: 086 110 2421</p>
+            <p className="text-sm">Tel: <a href="tel:+27861102421" className="hover:text-yellow-500">086 110 2421</a></p>
             <p className="text-sm">
               Email:{' '}
               <a href="mailto:general@tut.ac.za" className="hover:text-yellow-500">
@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
             </p>
 
             <h6 className="text-md font-semibold mt-4 mb-1">Ethics Hotline</h6>
-            <p className="text-sm">Toll-Free: 0800 006 924</p>
+            <p className="text-sm">Toll-Free: <a href="tel:+27800006924" className="hover:text-yellow-500">0800 006 924</a></p>
             <p className="text-sm">
               Email:{' '}
               <a href="mailto:reportit@ethicshelpdesk.com" className="hover:text-yellow-500">
