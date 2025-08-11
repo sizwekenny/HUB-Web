@@ -88,7 +88,7 @@ const services: Service[] = [
     category: 'Senior Students',
     description: 'Process for changing your academic course (not admission related).',
     details: 'Change your course if you were registered the previous year.',
-    statusLink: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login'
+    statusLink: 'https://ec.tut.ac.za/'
   },
   {
     id: 'admissions',
