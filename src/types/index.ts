@@ -92,7 +92,7 @@ export interface NewsItem {
   downloadFile?: {
     filename: string;
     url: string;
-    type: 'pdf' | 'png' | 'jpg' | 'jpeg' | 'docx';
+    type: 'pdf' | 'png' | 'jpg' | 'jpeg' | 'docx' | 'xlsx';
     size?: string;
   };
 }
