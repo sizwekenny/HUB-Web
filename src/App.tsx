@@ -103,7 +103,7 @@ const services: Service[] = [
     title: 'Bursaries',
     category: 'All Students',
     description: 'Financial assistance and bursary information.',
-    details: 'Visit the FUNDI office in building 12 on the ground floor.'
+    details: 'Financial assistance and bursary information.'
   },
   {
     id: 'timetables',
