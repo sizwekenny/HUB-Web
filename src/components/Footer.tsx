@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-black hover:text-yellow-500 transition-colors"
+              className="flex items-center gap-2 text-white hover:text-yellow-500 transition-colors"
             >
               {link.icon} {link.name}
             </a>
