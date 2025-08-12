@@ -8,12 +8,14 @@
     transform: translateX(0);
   }
   100% {
+    /* Move exactly 50% to show all unique cards before repeating */
     transform: translateX(-50%);
   }
 }
 
 .animate-scroll {
-  animation: scroll 30s linear infinite;
+  /* Increased duration to ensure all 11 cards are visible before restart */
+  animation: scroll 55s linear infinite;
 }
 
 /* Pause animation on hover */
