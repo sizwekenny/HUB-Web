@@ -127,17 +127,23 @@ const handleResultClick = (result: { id: string; type: string; name: string }) =
         const isActive = currentView === item.id;
         return (
           <button
-            key={item.id}
-            onClick={() => onNavigate(item.id as 'home' | 'manual')}
-            className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${
-              isActive
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
-            }`}
-          >
-            <IconComponent className="w-5 h-5 mr-2" />
-            {item.label}
-          </button>
+  key={item.id}
+  onClick={() => {
+    if (item.id === 'home') {
+      window.location.href = '/'; // Navigate to landing page
+    } else {
+      onNavigate(item.id as 'home' | 'manual');
+    }
+  }}
+  className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${
+    isActive
+      ? 'bg-blue-600 text-white shadow-lg'
+      : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+  }`}
+>
+  <IconComponent className="w-5 h-5 mr-2" />
+  {item.label}
+</button>
         );
       })}
       {/* Filter Button */}

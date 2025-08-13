@@ -5,6 +5,8 @@ import ServiceDetails from './components/ServiceDetails';
 import UserManual from './components/UserManual';
 import Navigation from './components/Navigation';
 import { Department, Service } from './types';
+import LandingPage from './components/LandingPage';
+
 
 const departments: Department[] = [
  {
@@ -185,7 +187,9 @@ const services: Service[] = [
 ];
 
 function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'department' | 'service' | 'manual'>('home');
+  const [currentView, setCurrentView] = useState<'landing' | 'home' | 'department' | 'service' | 'manual'>('landing');
+
+
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
@@ -210,19 +214,47 @@ function App() {
     setSelectedDepartment(null);
     setSelectedService(null);
   };
+  const handleSelectService = (key: string) => {
+    if (key === 'login') {
+      handleLogin();
+    } else {
+      setSelectedFilter(key as 'all' | 'senior' | 'newcomer');
+      setCurrentView('home'); // old homepage
+    }
+  };
+
+ const handleLogin = () => {
+    console.log('Login clicked');
+    setCurrentView('manual'); // or your login view
+  };
+
 const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcomer'>('all');
 
 
-  return (
+ return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navigation currentView={currentView}
-       onNavigate={handleNavigate}
-       departments={departments}
-       services={services}
-       onFilterChange={(filter) => setSelectedFilter(filter)}   />
-      
+      {/* Only show full Navigation for views other than landing */}
+      {currentView !== 'landing' && (
+        <Navigation
+          currentView={currentView}
+          onNavigate={handleNavigate}
+          departments={departments}
+          services={services}
+          onFilterChange={(filter) => setSelectedFilter(filter)}
+        />
+      )}
+
+      {/* Landing Page */}
+      {currentView === 'landing' && (
+        <LandingPage
+          onSelect={(page: 'home' | 'manual') => setCurrentView(page)}
+          onLogin={handleLogin}
+        />
+      )}
+
+      {/* Main Home Page */}
       {currentView === 'home' && (
-        <HomePage 
+        <HomePage
           departments={departments}
           services={services}
           selectedFilter={selectedFilter}
@@ -230,18 +262,24 @@ const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcome
           onServiceClick={handleServiceClick}
         />
       )}
+
+      {/* Department View */}
       {currentView === 'department' && selectedDepartment && (
-        <DepartmentDetails 
+        <DepartmentDetails
           department={selectedDepartment}
           onBack={handleBackToHome}
         />
       )}
+
+      {/* Service View */}
       {currentView === 'service' && selectedService && (
-        <ServiceDetails 
+        <ServiceDetails
           service={selectedService}
           onBack={handleBackToHome}
         />
       )}
+
+      {/* User Manual / Login view */}
       {currentView === 'manual' && (
         <UserManual onBack={handleBackToHome} />
       )}
