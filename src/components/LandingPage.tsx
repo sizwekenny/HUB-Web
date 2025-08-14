@@ -1,9 +1,10 @@
-import LandingNav from './LandingNav';
 import Footer from './Footer';
 import React, { useState, useEffect } from 'react';
 import campus1 from '../assets/emalahleni.jpg';
 import campus2 from '../assets/polokwane.png';
 import campus3 from '../assets/south.jpg';
+import logo from '../assets/TUT.png';
+import LandingNav from './LandingNav';
 
 interface LandingPageProps {
   onSelect: (page: 'home' | 'manual') => void;
@@ -20,7 +21,7 @@ const questions = [
 const images = [campus1, campus2, campus3];
 
 const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
-  const heroHeight = 'calc(100vh - 80px)';
+  const heroHeight = '100vh';
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [currentImage, setCurrentImage] = useState(0);
 
@@ -28,69 +29,77 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
     const qInterval = setInterval(() => {
       setCurrentQuestion((prev) => (prev + 1) % questions.length);
     }, 4000);
-
     return () => clearInterval(qInterval);
   }, []);
 
   useEffect(() => {
     const imgInterval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % images.length);
-    }, 7000); // 7 seconds per background
-
+    }, 7000);
     return () => clearInterval(imgInterval);
   }, []);
 
   return (
     <div className="relative min-h-screen bg-blue-900 overflow-hidden">
-      <LandingNav onLogin={onLogin} />
 
-      {/* Background Slideshow */}
-      {/* Background Slideshow */}
-<div
-  className="absolute top-[80px] left-0 right-0 z-0 overflow-hidden"
-  style={{ height: heroHeight }}
->
-  {images.map((img, index) => (
-    <img
-      key={index}
-      src={img}
-      alt={`Campus ${index + 1}`}
-      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out 
-        ${index === currentImage ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`}
-      style={{ height: heroHeight }}
-    />
-  ))}
-
-  {/* Strong top & side gradient */}
-  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/40 pointer-events-none" />
-  <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50 pointer-events-none" />
-
-  {/* Floating bubbles */}
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {[...Array(10)].map((_, i) => (
-      <div
-        key={i}
-        className="absolute bg-white/20 rounded-full animate-bubble"
-        style={{
-          width: `${Math.random() * 20 + 10}px`,
-          height: `${Math.random() * 20 + 10}px`,
-          left: `${Math.random() * 100}%`,
-          bottom: `-${Math.random() * 20}px`,
-          animationDelay: `${Math.random() * 5}s`,
-          animationDuration: `${Math.random() * 10 + 5}s`,
-        }}
+      {/* Logo on top-left */}
+      <img
+        src={logo}
+        alt="ICT Faculty Logo"
+        className="absolute top-2 left-4 z-30"
+        style={{ width: '400px', height: 'auto' }}
       />
-    ))}
-  </div>
-</div>
+      <button
+        onClick={onLogin}
+        className="absolute top-12 right-10 z-30 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition"
+      >
+        Admin
+      </button>
+      {/* Background Slideshow */}
+      <div
+        className="absolute top-0 left-0 right-0 z-0 overflow-hidden"
+        style={{ height: heroHeight }}
+      >
 
+        {images.map((img, index) => (
+          <img
+            key={index}
+            src={img}
+            alt={`Campus ${index + 1}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out 
+              ${index === currentImage ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`}
+            style={{ height: heroHeight }}
+          />
+        ))}
+
+        {/* Strong top & side gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30 pointer-events-none" />
+
+        {/* Floating bubbles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(10)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute bg-white/20 rounded-full animate-bubble"
+              style={{
+                width: `${Math.random() * 20 + 10}px`,
+                height: `${Math.random() * 20 + 10}px`,
+                left: `${Math.random() * 100}%`,
+                bottom: `-${Math.random() * 20}px`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${Math.random() * 10 + 5}s`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
 
       {/* Content */}
       <div
         className="relative z-20 flex flex-col items-center justify-center text-center px-4"
         style={{ height: heroHeight }}
       >
-        {/* Title */}
         <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-5 animate-fade-in">
           Welcome to Our Faculty of ICT Hub Guide
         </h1>
