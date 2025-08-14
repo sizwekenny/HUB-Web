@@ -1,7 +1,6 @@
 import LandingNav from './LandingNav';
 import Footer from './Footer';
 import React, { useState, useEffect } from 'react';
-// Import images from assets
 import campus1 from '../assets/emalahleni.jpg';
 import campus2 from '../assets/polokwane.png';
 import campus3 from '../assets/south.jpg';
@@ -18,84 +17,110 @@ const questions = [
   "Your journey to success starts here!",
 ];
 
-const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
-  const heroHeight = 'calc(100vh - 80px)'; // 80px for nav
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+const images = [campus1, campus2, campus3];
 
-  // Adjust this value to control blur amount
-  const blurAmount = 4; // in pixels
+const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
+  const heroHeight = 'calc(100vh - 80px)';
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const qInterval = setInterval(() => {
       setCurrentQuestion((prev) => (prev + 1) % questions.length);
-    }, 4000); // 4 seconds per question
-    return () => clearInterval(interval);
+    }, 4000);
+
+    return () => clearInterval(qInterval);
+  }, []);
+
+  useEffect(() => {
+    const imgInterval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % images.length);
+    }, 7000); // 7 seconds per background
+
+    return () => clearInterval(imgInterval);
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
+    <div className="relative min-h-screen bg-blue-900 overflow-hidden">
       <LandingNav onLogin={onLogin} />
 
-      {/* Background images side by side, normal (no skew) with blur */}
-      <div
-        className="absolute top-[80px] left-0 right-0 flex z-0 overflow-hidden"
-        style={{ height: heroHeight }}
-      >
-        {[campus1, campus2, campus3].map((imgSrc, index) => (
-          <div className="w-1/3" key={index}>
-            <img
-              src={imgSrc}
-              alt={`Campus ${index + 1}`}
-              className="w-full h-full object-cover"
-              style={{ filter: `blur(${blurAmount}px)` }}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Background Slideshow */}
+      {/* Background Slideshow */}
+<div
+  className="absolute top-[80px] left-0 right-0 z-0 overflow-hidden"
+  style={{ height: heroHeight }}
+>
+  {images.map((img, index) => (
+    <img
+      key={index}
+      src={img}
+      alt={`Campus ${index + 1}`}
+      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out 
+        ${index === currentImage ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`}
+      style={{ height: heroHeight }}
+    />
+  ))}
 
-      {/* Content overlay */}
+  {/* Strong top & side gradient */}
+  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/40 pointer-events-none" />
+  <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50 pointer-events-none" />
+
+  {/* Floating bubbles */}
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    {[...Array(10)].map((_, i) => (
       <div
-        className="relative z-20 flex flex-col items-center justify-center"
+        key={i}
+        className="absolute bg-white/20 rounded-full animate-bubble"
+        style={{
+          width: `${Math.random() * 20 + 10}px`,
+          height: `${Math.random() * 20 + 10}px`,
+          left: `${Math.random() * 100}%`,
+          bottom: `-${Math.random() * 20}px`,
+          animationDelay: `${Math.random() * 5}s`,
+          animationDuration: `${Math.random() * 10 + 5}s`,
+        }}
+      />
+    ))}
+  </div>
+</div>
+
+
+      {/* Content */}
+      <div
+        className="relative z-20 flex flex-col items-center justify-center text-center px-4"
         style={{ height: heroHeight }}
       >
         {/* Title */}
-        <div className="text-center mb-6 animate-fade-in">
-          <h1 className="text-6xl font-extrabold text-gray-900 mb-5">
-            Welcome to Our Faculty of ICT Hub Guide
-          </h1>
-          <p className="text-2xl text-black-900 max-w-3xl mx-auto">
-            Discover excellence across our four distinctive campuses, each offering unique opportunities for learning, growth, and innovation.
-          </p>
-        </div>
+        <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-5 animate-fade-in">
+          Welcome to Our Faculty of ICT Hub Guide
+        </h1>
+        <p className="text-lg md:text-2xl text-blue-100 max-w-3xl mb-10 animate-fade-in-up">
+          Discover excellence across our four distinctive campuses, each offering unique opportunities for learning, growth, and innovation.
+        </p>
 
-        {/* Campus buttons on top of images */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full max-w-5xl px-4">
+        {/* Campus Buttons */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full max-w-4xl">
           <button
             onClick={() => onSelect('home')}
-            className="bg-indigo-600 text-white px-10 py-5 text-lg font-semibold rounded-lg hover:bg-indigo-700 transition shadow-lg"
+            className="bg-indigo-600 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md hover:bg-indigo-700 transform hover:scale-105 transition"
           >
             South Campus
           </button>
-          <button
-            className="bg-red-600 text-white px-10 py-5 text-lg font-semibold rounded-lg hover:bg-red-700 transition shadow-lg"
-          >
+          <button className="bg-red-600 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md hover:bg-red-700 transform hover:scale-105 transition">
             eMalahleni Campus
           </button>
-          <button
-            className="bg-yellow-600 text-white px-10 py-5 text-lg font-semibold rounded-lg hover:bg-yellow-700 transition shadow-lg"
-          >
+          <button className="bg-yellow-600 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md hover:bg-yellow-700 transform hover:scale-105 transition">
             Polokwane Campus
           </button>
         </div>
 
-        {/* Rotating questions */}
-        <div className="h-12 overflow-hidden mb-12 text-xl font-medium text-black-800">
+        {/* Rotating Questions */}
+        <div className="relative h-12 w-full max-w-2xl overflow-hidden">
           {questions.map((q, index) => (
             <p
               key={index}
-              className={`text-center transition-opacity duration-700 ${
-                index === currentQuestion ? 'opacity-100 animate-fade-slide' : 'opacity-0 pointer-events-none'
-              }`}
+              className={`absolute inset-0 text-xl font-medium text-white transition-opacity duration-700 ease-in-out
+                ${index === currentQuestion ? 'opacity-100' : 'opacity-0'}`}
             >
               {q}
             </p>

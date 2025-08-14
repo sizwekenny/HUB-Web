@@ -1,28 +1,32 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+module.exports = {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}"
+  ],
   theme: {
     extend: {
+      colors: {
+        // Add any custom colors here if needed
+        'blue-primary': '#1E40AF', // Example primary blue
+      },
       keyframes: {
-        scroll: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-33.333%)' },
+        bubble: {
+          '0%': { transform: 'translateY(0) scale(1)', opacity: '0.5' },
+          '50%': { opacity: '0.8' },
+          '100%': { transform: 'translateY(-100vh) scale(1.5)', opacity: '0' },
         },
-        'slow-zoom': {
-          '0%': { transform: 'scale(1)' },
-          '100%': { transform: 'scale(1.1)' },
-        },
-        'fade-in': {
-          '0%': { opacity: 0 },
-          '100%': { opacity: 1 },
+        'fade-slide': {
+          '0%': { opacity: 0, transform: 'translateY(10px)' },
+          '50%': { opacity: 1, transform: 'translateY(0)' },
+          '100%': { opacity: 0, transform: 'translateY(-10px)' },
         },
       },
       animation: {
-        scroll: 'scroll 20s linear infinite',
-        'slow-zoom': 'slow-zoom 20s ease-in-out infinite alternate',
-        'fade-in': 'fade-in 1s ease-out forwards',
+        bubble: 'bubble linear infinite',
+        'fade-slide': 'fade-slide 6s infinite',
       },
     },
   },
   plugins: [],
-};
+}

@@ -211,7 +211,7 @@ function App() {
   };
 
   const handleBackToHome = () => {
-    setCurrentView('landing');
+    setCurrentView('home');
     setSelectedDepartment(null);
     setSelectedService(null);
   };
