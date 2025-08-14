@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import HomePage from './components/HomePage';
 import DepartmentDetails from './components/DepartmentDetails';
 import ServiceDetails from './components/ServiceDetails';
 import UserManual from './components/UserManual';
 import Navigation from './components/Navigation';
+import AdminLogin from './components/AdminLogin';
+import AdminDashboard from './components/AdminDashboard';
 import { Department, Service } from './types';
 import LandingPage from './components/LandingPage';
 
@@ -187,11 +189,10 @@ const services: Service[] = [
 ];
 
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'home' | 'department' | 'service' | 'manual'>('landing');
-
-
+  const [currentView, setCurrentView] = useState<'landing' | 'home' | 'department' | 'service' | 'manual' | 'adminLogin' | 'adminDashboard'>('landing');
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcomer'>('all');
 
   const handleDepartmentClick = (department: Department) => {
     setSelectedDepartment(department);
@@ -210,31 +211,34 @@ function App() {
   };
 
   const handleBackToHome = () => {
-    setCurrentView('home');
+    setCurrentView('landing');
     setSelectedDepartment(null);
     setSelectedService(null);
   };
-  const handleSelectService = (key: string) => {
-    if (key === 'login') {
-      handleLogin();
-    } else {
-      setSelectedFilter(key as 'all' | 'senior' | 'newcomer');
-      setCurrentView('home'); // old homepage
-    }
+
+  const handleLogin = () => {
+    setCurrentView('adminLogin');
   };
 
- const handleLogin = () => {
-    console.log('Login clicked');
-    setCurrentView('manual'); // or your login view
+  const handleAdminLoginSuccess = () => {
+    setCurrentView('adminDashboard');
   };
 
-const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcomer'>('all');
+  const handleAdminLogout = () => {
+    setCurrentView('landing');
+  };
+
+  const handleBackToLanding = () => {
+    setCurrentView('landing');
+    setSelectedDepartment(null);
+    setSelectedService(null);
+  };
 
 
  return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Only show full Navigation for views other than landing */}
-      {currentView !== 'landing' && (
+      {/* Only show full Navigation for views other than landing, adminLogin, and adminDashboard */}
+      {!['landing', 'adminLogin', 'adminDashboard'].includes(currentView) && (
         <Navigation
           currentView={currentView}
           onNavigate={handleNavigate}
@@ -249,6 +253,22 @@ const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcome
         <LandingPage
           onSelect={(page: 'home' | 'manual') => setCurrentView(page)}
           onLogin={handleLogin}
+        />
+      )}
+
+      {/* Admin Login */}
+      {currentView === 'adminLogin' && (
+        <AdminLogin
+          onBack={handleBackToLanding}
+          onLoginSuccess={handleAdminLoginSuccess}
+        />
+      )}
+
+      {/* Admin Dashboard */}
+      {currentView === 'adminDashboard' && (
+        <AdminDashboard
+          onLogout={handleAdminLogout}
+          onBackToHome={() => setCurrentView('landing')}
         />
       )}
 
@@ -279,7 +299,7 @@ const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcome
         />
       )}
 
-      {/* User Manual / Login view */}
+      {/* User Manual */}
       {currentView === 'manual' && (
         <UserManual onBack={handleBackToHome} />
       )}
