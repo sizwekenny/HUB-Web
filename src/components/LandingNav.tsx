@@ -8,7 +8,7 @@ interface LandingNavProps {
 
 const LandingNav: React.FC<LandingNavProps> = ({ onLogin }) => {
   return (
-    <nav className="w-full flex items-center justify-between px-8 py-4 bg-white shadow-md" style={{ height: "60px" }}>
+   <nav className="w-full flex items-center justify-between px-8 py-4 bg-white shadow-md" style={{ height: "80px" }}>
       <div className="flex items-center space-x-2">
        <img
         src={logo}

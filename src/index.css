@@ -156,3 +156,38 @@
   50% { transform: translateY(-6px); }
 }
 .animate-bounce { animation: bounceIcon 1s infinite; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-in-left {
+    from { transform: translateX(-100%) skewX(-6deg) scale(1.1); }
+    to { transform: translateX(0) skewX(-6deg) scale(1.1); }
+  }
+  @keyframes slide-in-up {
+    from { transform: translateY(100%) skewX(-6deg) scale(1.1); }
+    to { transform: translateY(0) skewX(-6deg) scale(1.1); }
+  }
+  @keyframes slide-in-right {
+    from { transform: translateX(100%) skewX(-6deg) scale(1.1); }
+    to { transform: translateX(0) skewX(-6deg) scale(1.1); }
+  }
+
+  .animate-fade-in { animation: fade-in 0.8s ease-out forwards; }
+  .animate-fade-in-delay { animation: fade-in 1.2s ease-out forwards; }
+  .animate-fade-in-up { animation: fade-in-up 1s ease-out forwards; }
+  .animate-fade-in-up-delay { animation: fade-in-up 1.4s ease-out forwards; }
+  .animate-fade-in-up-delay-2 { animation: fade-in-up 1.8s ease-out forwards; }
+  .animate-slide-in-left { animation: slide-in-left 1.2s ease-out forwards; }
+  .animate-slide-in-up { animation: slide-in-up 1.2s ease-out forwards; }
+  .animate-slide-in-right { animation: slide-in-right 1.2s ease-out forwards; }
+}
