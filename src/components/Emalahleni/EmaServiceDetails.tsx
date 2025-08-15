@@ -108,7 +108,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
       'Recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
       admissions: ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
       timetables: ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
-      'financial-exclusion': ['Refer to ITS notification', 'Visits Mr Lebelo at Students Accounts'],
+      'financial-exclusion': ['coming soon',],
     };
     return steps[serviceId] || [];
   };

@@ -291,7 +291,7 @@ const filteredServices = selectedFilter === 'all'
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600">
+      <section className="relative overflow-hidden bg-gradient-to-r from-red-600 via-red-500 to-red-600">
         <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className={`text-center transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
