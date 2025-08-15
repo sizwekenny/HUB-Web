@@ -16,8 +16,8 @@ import {
   X,
   Download
 } from 'lucide-react';
-import { Department, Service, NewsItem } from '../types';
-import Chatbot from './Chatbot';
+import { Department, Service, NewsItem } from '../../types';
+import Chatbot from '../Chatbot';
 
 interface HomePageProps {
   departments: Department[];
@@ -26,7 +26,7 @@ interface HomePageProps {
   onDepartmentClick: (department: Department) => void;
   onServiceClick: (service: Service) => void;
 }
-import Footer from './Footer';
+import Footer from '../Footer';
 // Hardcoded news data from EC portal - to be replaced with EC API later
 const latestNews: NewsItem[] = [
   {
@@ -254,9 +254,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const getDepartmentIcon = (departmentId: string) => {
     switch (departmentId) {
       case 'cs': return Monitor;
-      case 'cse': return Cpu;
-      case 'informatics': return Database;
-      case 'it': return Globe;
+  
       default: return BookOpen;
     }
   };
@@ -303,7 +301,7 @@ const filteredServices = selectedFilter === 'all'
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-              FoICT(south Campus)
+              FoICT(eMalahleni Campus)
               {/* <span className="block text-yellow-400">Information Hub</span> */}
             </h1>
             <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">

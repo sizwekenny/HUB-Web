@@ -3,13 +3,14 @@ import React, { useState, useEffect } from 'react';
 import campus1 from '../assets/emalahleni.jpg';
 import campus2 from '../assets/polokwane.png';
 import campus3 from '../assets/south.jpg';
-import logo from '../assets/TUT.png';
+import logo from '../assets/TUT2.png';
 import LandingNav from './LandingNav';
 
 interface LandingPageProps {
-  onSelect: (page: 'home' | 'manual') => void;
+  onSelect: (page: 'home' | 'manual' | 'emaHome') => void;
   onLogin: () => void;
 }
+
 
 const questions = [
   "Need assistance with registration or student services?",
@@ -46,8 +47,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
       <img
         src={logo}
         alt="ICT Faculty Logo"
-        className="absolute top-2 left-4 z-30"
-        style={{ width: '400px', height: 'auto' }}
+        className="absolute top-7 left-4 z-30"
+        style={{ width: '300px', height: 'auto' }}
       />
       <button
         onClick={onLogin}
@@ -115,9 +116,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
           >
             South Campus
           </button>
-          <button className="bg-red-600 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md hover:bg-red-700 transform hover:scale-105 transition">
-            eMalahleni Campus
-          </button>
+          <button
+  onClick={() => onSelect('emaHome')}
+  className="bg-red-600 text-white px-10 py-5 text-lg font-semibold rounded-lg hover:bg-red-700 transition shadow-lg"
+>
+  eMalahleni Campus
+</button>
           <button className="bg-yellow-600 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md hover:bg-yellow-700 transform hover:scale-105 transition">
             Polokwane Campus
           </button>
