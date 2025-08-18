@@ -12,7 +12,7 @@ import {
   Star,
   Navigation as NavigationIcon
 } from 'lucide-react';
-import MainT from '../assets/UserJourney.jpeg';
+import MainT from '../../assets/UserJourney.jpeg';
 
 interface UserManualProps {
   onBack: () => void;

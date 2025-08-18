@@ -10,7 +10,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { Service } from '../../types';
-import Footer from '../Footer';
+import Footer from '../Emalahleni/EmaFooter';
 
 interface ServiceDetailsProps {
   service: Service;

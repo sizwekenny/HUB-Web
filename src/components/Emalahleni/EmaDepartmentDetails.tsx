@@ -9,7 +9,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { Department } from '../../types';
-import Footer from '../Footer';
+import Footer from '../Emalahleni/EmaFooter';
 
 interface DepartmentDetailsProps {
   department: Department;
