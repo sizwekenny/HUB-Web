@@ -4,15 +4,15 @@ import DepartmentDetails from './components/DepartmentDetails';
 import ServiceDetails from './components/ServiceDetails';
 import UserManual from './components/UserManual';
 import Navigation from './components/Navigation';
-import AdminLogin from './components/AdminLogin';
-import AdminDashboard from './components/AdminDashboard';
+import AdminLogin from './components/Admin/AdminLogin.tsx';
+import AdminDashboard from './components/Admin/AdminDashboard.tsx';
 import { Department, Service } from './types';
 import LandingPage from './components/LandingPage';
 import EmaHomePage from './components/Emalahleni/EmaHomePage';
 import EmaDepartmentDetails from './components/Emalahleni/EmaDepartmentDetails';
 import EmaNavigation from './components/Emalahleni/EmaNavigation';
 import EmaServiceDetails from './components/Emalahleni/EmaServiceDetails';
-import EmaUserManual from './components/Emalahleni/EmaUserManual';
+import EmaUserManual from './components/Emalahleni/emaUserManual';
 
 
 const departments: Department[] = [
@@ -348,7 +348,7 @@ function App() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcomer'>('all');
   const [isEmaService, setIsEmaService] = useState(false); // Flag for Emalahleni services
-  const [manualSource, setManualSource] = useState<'home' | 'emaHome'>('home');
+  // Removed unused manualSource state after refactor
 
 
   // Regular Home navigation
@@ -363,12 +363,7 @@ function App() {
     setCurrentView(isEma ? 'emaService' : 'service');
   };
 
-  const handleNavigate = (view: 'home' | 'manual') => {
-    setCurrentView(view);
-    setSelectedDepartment(null);
-    setSelectedService(null);
-    setIsEmaService(false);
-  };
+  // Removed unused handleNavigate (navigation handled inline via setCurrentView)
 
   const handleBackToHome = () => {
     setCurrentView('home');
@@ -413,8 +408,8 @@ function App() {
       <EmaNavigation
         currentView={currentView}
         onNavigate={(view) => setCurrentView(view as any)}
-        onManual={() => setCurrentView('emaManual')}
-        
+        departments={emaDepartments}
+        services={emaServices}
         onFilterChange={(f) => setSelectedFilter(f)}
       />
     ) : (

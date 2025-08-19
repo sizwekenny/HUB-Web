@@ -17,6 +17,7 @@ import {
   Download
 } from 'lucide-react';
 import { Department, Service, NewsItem } from '../types';
+import { newsStore } from '../utils/newsStore';
 import Chatbot from './Chatbot';
 
 interface HomePageProps {
@@ -27,173 +28,9 @@ interface HomePageProps {
   onServiceClick: (service: Service) => void;
 }
 import Footer from './Footer';
-// Hardcoded news data from EC portal - to be replaced with EC API later
-const latestNews: NewsItem[] = [
-  {
-    id: '0',
-    title: 'WIL opportunity with Noko Entertainment Studio',
-    summary: 'Noko Entertainment Studio is offering WIL opportunity to Multimedia students. Kindly download the attachment for further details.',
-    content: 'Noko Entertainment Studio is offering Work Integrated Learning (WIL) opportunities to Multimedia students. This is an excellent opportunity to gain hands-on experience in the entertainment industry. Please download the attachment for complete details and application procedures.',
-    date: '2025-08-09',
-    category: 'WIL',
-    priority: 'high',
-    isUrgent: false,
-    downloadFile: {
-      filename: 'Wil_Poster.png',
-      url: '/downloads/Wil_Poster.png',
-      type: 'png',
-      size: '1.2 MB'
-    }
-  },
-  {
-    id: '1',
-    title: 'Faculty or ICT Semester Tests Week 1 timetables (Preliminary) - Diploma&P&CDip courses',
-    summary: 'Kindly keep an eye here to know when the final version is published. Thank you.',
-    content: 'Preliminary timetables for Faculty of ICT Semester Tests Week 1 are now available for Diploma and P&CDip courses. Please note that this is a preliminary version and the final timetables will be published soon. Students are advised to keep checking for updates.',
-    date: '2025-08-07',
-    category: 'Academic',
-    priority: 'high',
-    isUrgent: true,
-    downloadFile: {
-      filename: 'Faculty_of_ICT_Semester_Test_1_2025_S2_(ALL)_Preliminary.xlsx',
-      url: '/downloads/Faculty_of_ICT_Semester_Test_1_2025_S2_(ALL)_Preliminary.xlsx',
-      type: 'xlsx',
-      size: '15.2 KB'
-    }
-  },
-  {
-    id: '2',
-    title: 'Kindly venues for today\'s test for Java PPB, PPG as detailed in the D2L',
-    summary: 'Venue information for today\'s Java PPB and PPG tests is now available. Please check the details in D2L for your specific test venue and time.',
-    content: 'Important update regarding today\'s Java Programming (PPB) and Programming Principles (PPG) tests. All venue information and specific details have been posted in the D2L system. Students are advised to check their D2L accounts immediately to confirm their assigned test venue and time. Please arrive at least 15 minutes before your scheduled test time.',
-    date: '2025-08-06',
-    category: 'Academic',
-    priority: 'high',
-    isUrgent: true,
-    downloadFile: {
-      filename: 'Programming_B_CT2_Venues3_vs2.docx',
-      url: '/downloads/Programming_B_CT2_Venues3_vs2.docx',
-      type: 'docx',
-      size: '12.3 KB'
-    }
-  },
-  {
-    id: '3',
-    title: 'Huawei ICT Competition',
-    summary: 'Huawei is calling on ICT students to participate in their 2025-2026 ICT Competition. Kindly download the attachment for details.',
-    content: 'Huawei is calling on ICT students to participate in their 2025-2026 ICT Competition. This is a great opportunity for students to showcase their technical skills and compete globally. Please download the attachment for complete details and registration information.',
-    date: '2025-08-05',
-    category: 'Event',
-    priority: 'high',
-    isUrgent: false,
-    downloadFile: {
-      filename: 'Huawei_ICT_Competition.pdf',
-      url: '/downloads/Huawei_ICT_Competition.pdf',
-      type: 'pdf',
-      size: '2.1 MB'
-    }
-  },
-  {
-    id: '4',
-    title: 'IBM Z Datathon',
-    summary: 'IBM Z Datathon is a 24-hour global student technology event. Registration and over 5000 participants. Theme: Tech For Good Total Prize: $30,000',
-    content: 'IBM Z Datathon 2025 Date: October 11, 2025 Theme: Tech For Good Total Prize: $30,000. Registration Link: https://www.starrhacks.org/ibm-z-datathon-2025. Please also see the event flyer and additional information in the attached document.',
-    date: '2025-08-01',
-    category: 'Event',
-    priority: 'high',
-    isUrgent: false,
-    downloadFile: {
-      filename: 'IBM_Z_Datathon.pdf',
-      url: '/downloads/IBM_Z_Datathon.pdf',
-      type: 'pdf',
-      size: '1.8 MB'
-    }
-  },
-  {
-    id: '5',
-    title: 'WIL opportunity with Sithembilungelo Projects and Services',
-    summary: 'Sithembilungelo Projects and Services is offering WIL opportunity to ICT students. Kindly download the attachment for further details.',
-    content: 'Sithembilungelo Projects and Services is offering Work Integrated Learning (WIL) opportunities specifically for ICT students. This is an excellent chance to gain practical experience in the industry. Please download the attachment for application requirements and further details.',
-    date: '2025-08-01',
-    category: 'WIL',
-    priority: 'medium',
-    isUrgent: false,
-    downloadFile: {
-      filename: 'Sithembilungelo.jpg',
-      url: '/downloads/Sithembilungelo.jpg',
-      type: 'jpg',
-      size: '850 KB'
-    }
-  },
-  {
-    id: '6',
-    title: 'WIL opportunity with Moepi Publishing',
-    summary: 'Moepi Publishing is offering WIL opportunity to Multimedia students. Kindly download the attachment for further details.',
-    content: 'Moepi Publishing is offering Work Integrated Learning (WIL) opportunities to Multimedia students. This opportunity provides hands-on experience in the publishing and multimedia industry. Please download the attachment for application procedures and requirements.',
-    date: '2025-07-30',
-    category: 'WIL',
-    priority: 'medium',
-    isUrgent: false,
-    downloadFile: {
-      filename: 'job_recruitment_multimedia.png',
-      url: '/downloads/job_recruitment_multimedia.png',
-      type: 'png',
-      size: '1.2 MB'
-    }
-  },
-  {
-    id: '7',
-    title: 'Email Verification Reminder',
-    summary: 'For those that have not yet verified your Email with EC, please do so when you get a chance.',
-    content: 'Important reminder: Students who have not yet verified their email addresses with the Electronic Campus (EC) system are urged to do so as soon as possible. Email verification is essential for receiving important academic communications and updates.',
-    date: '2025-07-30',
-    category: 'Announcement',
-    priority: 'medium',
-    isUrgent: true
-  },
-  {
-    id: '8',
-    title: 'WIL opportunity with Spiral8Studio',
-    summary: 'Spiral8Studio is offering WIL opportunity to Multimedia and Computer Science students. Kindly download the attachment for further details.',
-    content: 'Spiral8Studio is offering Work Integrated Learning (WIL) opportunities to both Multimedia and Computer Science students. This is a great opportunity to gain industry experience in a dynamic studio environment. Please download the attachment for complete details and application process.',
-    date: '2025-07-27',
-    category: 'WIL',
-    priority: 'medium',
-    isUrgent: false,
-    downloadFile: {
-      filename: 'New-Gen_WIL_Programme.pdf',
-      url: '/downloads/New-Gen_WIL_Programme.pdf',
-      type: 'pdf',
-      size: '1.5 MB'
-    }
-  },
-  {
-    id: '9',
-    title: 'WIL registration forms: Sosh students (Computer Science and Multimedia)',
-    summary: 'Kindly find attached the registration forms for WIL.',
-    content: 'Work Integrated Learning (WIL) registration forms are now available for Soshanguve campus students studying Computer Science and Multimedia. Students must complete these forms to participate in WIL programs. Please find the attached registration forms and submit them according to the specified deadlines.',
-    date: '2025-07-24',
-    category: 'Registration',
-    priority: 'high',
-    isUrgent: false,
-    downloadFile: {
-      filename: 'WIL_registration_forms.pdf',
-      url: '/downloads/WIL_registration_forms.pdf',
-      type: 'pdf',
-      size: '980 KB'
-    }
-  },
-  {
-    id: '10',
-    title: 'Class group based on ITS group codes',
-    summary: 'Class group based on ITS group codes is now an option for those who would like to give it a test run.',
-    content: 'A new feature has been implemented allowing class grouping based on ITS (Information Technology Services) group codes. This is currently available as a test option for students who would like to try this new organizational system for their classes.',
-    date: '2025-07-24',
-    category: 'Announcement',
-    priority: 'low',
-    isUrgent: false
-  }
-];
+// Dynamic news items fetched from in-memory store (campus: south + global)
+// TODO: Replace with API integration when backend available
+
 
 const HomePage: React.FC<HomePageProps> = ({
   departments,
@@ -206,6 +43,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [showAllNews, setShowAllNews] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const [latestNews, setLatestNews] = useState<NewsItem[]>([]);
 
   // Handle transition to all news view
   const handleViewAllNews = () => {
@@ -223,6 +61,12 @@ const HomePage: React.FC<HomePageProps> = ({
 
   useEffect(() => {
     setIsLoaded(true);
+    // initial load of south campus + global
+    setLatestNews(newsStore.list('south'));
+    const interval = setInterval(()=>{
+      setLatestNews(newsStore.list('south'));
+    }, 30000); // refresh every 30s for demo
+    return ()=> clearInterval(interval);
   }, []);
 
   // Close modal on Escape key press and handle body scroll

@@ -41,6 +41,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
   };
 
   const getServiceSteps = (serviceId: string) => {
+    if (service.steps && service.steps.length) return service.steps;
     const steps: Record<string, string[]> = {
       'mark-enquiries': [
         'Contact your Academic Department directly for all Marks and predicate enquiries ',
@@ -114,7 +115,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
       timetables: ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
       'financial-exclusion': ['Refer to ITS notification', 'Visits Mr Lebelo at Students Accounts'],
     };
-    return steps[serviceId] || [];
+  return steps[serviceId] || [];
   };
 
   const steps = getServiceSteps(service.id);

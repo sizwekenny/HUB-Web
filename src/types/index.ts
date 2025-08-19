@@ -15,6 +15,8 @@ export interface Service {
   description: string;
   details: string;
   statusLink?: string;
+  // Ordered procedural steps for this service (editable by admins)
+  steps?: string[];
 }
 
 export interface Comment {
@@ -89,6 +91,18 @@ export interface NewsItem {
   category: 'Registration' | 'Academic' | 'Announcement' | 'Deadline' | 'Event' | 'WIL';
   priority: 'high' | 'medium' | 'low';
   isUrgent?: boolean;
+  /**
+   * Visibility flag. When false the item is considered disabled/hidden from public views
+   * but still appears in the admin panel for re‑activation. Undefined defaults to true.
+   */
+  isVisible?: boolean;
+  /**
+   * Campus tag identifies which campus the news item applies to.
+   * If omitted, item is considered global (all campuses).
+   * Values should align with internal campus ids used in landing page.
+   */
+  // Supported campuses currently: Soshanguve South (south), eMalahleni (emalahleni), Polokwane (polokwane)
+  campus?: 'south' | 'emalahleni' | 'polokwane';
   downloadFile?: {
     filename: string;
     url: string;
