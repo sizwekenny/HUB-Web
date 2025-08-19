@@ -7,13 +7,15 @@ import {
   Phone,
   Mail
 } from 'lucide-react';
-import logo from "../assets/TUT.png";
+import logo from "../../assets/TUT.png";
 
 interface NavigationProps {
   currentView: string;
   onNavigate: (view: 'home' | 'manual') => void;
   departments: { id: string; name: string; description: string }[];
+  
   services: { id: string; title: string; description: string }[];
+  
   onFilterChange: (filter: 'all' | 'newcomer' | 'senior') => void;
 }
 
@@ -126,13 +128,15 @@ const handleResultClick = (result: { id: string; type: string; name: string }) =
         const IconComponent = item.icon;
         const isActive = currentView === item.id;
         return (
-          <button
+     <button
   key={item.id}
   onClick={() => {
     if (item.id === 'home') {
       window.location.href = '/'; // Navigate to landing page
-    } else {
-      onNavigate(item.id as 'home' | 'manual');
+    } else if (item.id === 'manual') {
+      // Go to the eMalahleni manual instead of the default one
+      
+      onNavigate('emaManual' as any);
     }
   }}
   className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${

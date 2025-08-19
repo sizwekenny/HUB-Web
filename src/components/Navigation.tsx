@@ -14,6 +14,7 @@ interface NavigationProps {
   onNavigate: (view: 'home' | 'manual') => void;
   departments: { id: string; name: string; description: string }[];
   services: { id: string; title: string; description: string }[];
+  
   onFilterChange: (filter: 'all' | 'newcomer' | 'senior') => void;
 }
 

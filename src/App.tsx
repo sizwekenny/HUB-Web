@@ -342,7 +342,7 @@ const emaServices: Service[] = [
   }
 ];
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'home' | 'department' | 'service' | 'manual' | 'adminLogin' | 'adminDashboard' | 'emaHome' | 'emaService'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'home' | 'department' | 'service' | 'manual' | 'adminLogin' | 'adminDashboard' | 'emaHome' | 'emaService'| 'emaManual'>('landing');
   
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -408,14 +408,25 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Navigation */}
       {!['landing', 'adminLogin', 'adminDashboard'].includes(currentView) && (
-        <Navigation
-          currentView={currentView}
-          onNavigate={handleNavigate}
-          departments={departments}
-          services={services}
-          onFilterChange={(filter) => setSelectedFilter(filter)}
-        />
-      )}
+  currentView.startsWith('ema')
+    ? (
+      <EmaNavigation
+        currentView={currentView}
+        onNavigate={(view) => setCurrentView(view as any)}
+        onManual={() => setCurrentView('emaManual')}
+        
+        onFilterChange={(f) => setSelectedFilter(f)}
+      />
+    ) : (
+      <Navigation
+        currentView={currentView}
+        onNavigate={(view) => setCurrentView(view)}
+        departments={departments}
+        services={services}
+        onFilterChange={(f) => setSelectedFilter(f)}
+      />
+    )
+)}
 
       {/* Landing Page */}
       {currentView === 'landing' && (
@@ -486,9 +497,14 @@ function App() {
       )}
 
       {/* User Manual */}
-      {currentView === 'manual' && (
-        <UserManual onBack={handleBackToHome} />
-      )}
+     {currentView === 'manual' && (
+  <UserManual onBack={handleBackToHome} />
+)}
+
+{currentView === 'emaManual' && (
+  <EmaUserManual onBack={handleBackToEmaHome} />
+)}
+
 
       {/* Emalahleni Home Page */}
       {currentView === 'emaHome' && (
