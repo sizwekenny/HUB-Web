@@ -11,7 +11,8 @@ import logo from "../../assets/TUT.png";
 
 interface NavigationProps {
   currentView: string;
-  onNavigate: (view: 'home' | 'manual') => void;
+  
+onNavigate: (view: 'home' | 'manual' | 'emaHome') => void;
   departments: { id: string; name: string; description: string }[];
   
   services: { id: string; title: string; description: string }[];
@@ -88,14 +89,15 @@ const handleResultClick = (result: { id: string; type: string; name: string }) =
       <div className="w-full px-4">
   <div className="flex items-center h-16">
     {/* Logo on far left */}
-    <div className="cursor-pointer mr-4" onClick={() => onNavigate('home')}>
-      <img
-        src={logo}
-        alt="ICT Faculty Logo"
-        className="rounded-md"
-        style={{ width: "280px", height: "auto" }}
-      />
-    </div>
+     <div className="cursor-pointer mr-4" onClick={() => onNavigate('emaHome' as any)}>
+  <img
+    src={logo}
+    alt="ICT Faculty Logo"
+    className="rounded-md"
+    style={{ width: "280px", height: "auto" }}
+  />
+</div>
+
     {/* Search bar, spaced from logo, shrinks on small screens */}
     <div className="flex-1 flex justify-center">
       <div className="w-full max-w-lg relative">
