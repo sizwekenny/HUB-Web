@@ -12,49 +12,49 @@ import EmaHomePage from './components/Emalahleni/EmaHomePage';
 import EmaDepartmentDetails from './components/Emalahleni/EmaDepartmentDetails';
 import EmaNavigation from './components/Emalahleni/EmaNavigation';
 import EmaServiceDetails from './components/Emalahleni/EmaServiceDetails';
-import EmaUserManual from './components/Emalahleni/emaUserManual';
-
+import EmaUserManual from './components/Emalahleni/EmaUserManual';
+import PolHomePage from './components/Polokwane/PolHomePage';
 
 const departments: Department[] = [
- {
-  id: 'cs',
-  name: 'Computer Science',
-  codes: ['DPMCF0', 'DPMC20', 'ADMC20', 'DPRSF0', 'DPRS20', 'ADRS20'],
-  description: 'Comprehensive computer science programs.',
-  buildingNumber: 'BUILDING 12 ROOM 132 AND 134',
-  email: 'mollymoche@tut.ac.za',
-  contactNumber: '+27 12 382 9938'
-}
-,
   {
-  id: 'cse',
-  name: 'Computer Systems Engineering',
-  codes: ['DPYEF0', 'DPYE20', 'ADYE20'],
-  description: 'Engineering-focused computer systems programs.',
-  buildingNumber: 'BUILDING 12 ROOM 205',
-  email: 'matimake@tut.ac.za',
-  contactNumber: '+27 12 382 9812'
-}
-,
- {
-  id: 'informatics',
-  name: 'Informatics',
-  codes: ['DPIFF0', 'DPIF20', 'ADIF20'],
-  description: 'Information systems and data management programs.',
-  buildingNumber: 'BUILDING 5 2ND FLOOR',
-  email: 'vanrooyenm@tut.ac.za',
-  contactNumber: '+27 12 382 9027'
-}
-,
- {
-  id: 'it',
-  name: 'Information Technology',
-  codes: ['DPITF0', 'DPIT20', 'ADIT21'],
-  description: 'Practical IT programs focusing on technology and systems.',
-  buildingNumber: 'BUILDING 12 ROOM 162',
-  email: 'chokoepn@tut.ac.za',
-  contactNumber: '+27 12 382 9041'
-}
+    id: 'cs',
+    name: 'Computer Science',
+    codes: ['DPMCF0', 'DPMC20', 'ADMC20', 'DPRSF0', 'DPRS20', 'ADRS20'],
+    description: 'Comprehensive computer science programs.',
+    buildingNumber: 'BUILDING 12 ROOM 132 AND 134',
+    email: 'mollymoche@tut.ac.za',
+    contactNumber: '+27 12 382 9938'
+  }
+  ,
+  {
+    id: 'cse',
+    name: 'Computer Systems Engineering',
+    codes: ['DPYEF0', 'DPYE20', 'ADYE20'],
+    description: 'Engineering-focused computer systems programs.',
+    buildingNumber: 'BUILDING 12 ROOM 205',
+    email: 'matimake@tut.ac.za',
+    contactNumber: '+27 12 382 9812'
+  }
+  ,
+  {
+    id: 'informatics',
+    name: 'Informatics',
+    codes: ['DPIFF0', 'DPIF20', 'ADIF20'],
+    description: 'Information systems and data management programs.',
+    buildingNumber: 'BUILDING 5 2ND FLOOR',
+    email: 'vanrooyenm@tut.ac.za',
+    contactNumber: '+27 12 382 9027'
+  }
+  ,
+  {
+    id: 'it',
+    name: 'Information Technology',
+    codes: ['DPITF0', 'DPIT20', 'ADIT21'],
+    description: 'Practical IT programs focusing on technology and systems.',
+    buildingNumber: 'BUILDING 12 ROOM 162',
+    email: 'chokoepn@tut.ac.za',
+    contactNumber: '+27 12 382 9041'
+  }
 
 ];
 // Emalahleni-specific departments
@@ -62,16 +62,43 @@ const emaDepartments: Department[] = [
   {
     id: 'ema-cs',
     name: 'Computer Science',
-  codes: ['DPMCF0', 'DPMC20', 'ADMC20',],
-  description: 'Comprehensive computer science programs.',
-  buildingNumber: 'BUILDING 14',
-  email: 'NONe',
-  contactNumber: 'NONE'
+    codes: ['DPMCF0', 'DPMC20', 'ADMC20',],
+    description: 'Comprehensive computer science programs.',
+    buildingNumber: 'BUILDING 14',
+    email: 'NONe',
+    contactNumber: 'NONE'
   },
- 
+
 ];
+// Polokwane-specific departments
+const polDepartments: Department[] = [
+  {
+    id: 'pol-cs',
+    name: 'Computer Science',
+    codes: ['DPMCF0', 'DPMC20', 'ADMC20',],
+    description: 'Comprehensive computer science programs.',
+    buildingNumber: 'none',
+    email: 'NONe',
+    contactNumber: 'NONE'
+  },
 
-
+];
+const polServices: Service[] = [
+  {
+    id: 'nsfas-enquiries',
+    title: 'nsfas-enquiries',
+    category: 'Senior Students',
+    description: 'Registration support for Polokwane students.',
+    details: 'Get assistance with course registration at Polokwane Campus.'
+  },
+  {
+    id: 'Subject additions and cancellations',
+    title: 'Subject additions and cancellations',
+    category: 'Senior Students',
+    description: 'Access to Polokwane ICT labs and resources.',
+    details: 'Lab opening hours, resources and booking process.'
+  }
+];
 const services: Service[] = [
   {
     id: 'mark-enquiries',
@@ -103,7 +130,7 @@ const services: Service[] = [
     category: 'Senior Students',
     description: 'National Student Financial Aid Scheme support and information.',
     details: 'NSFAS application and funding enquiries.',
-  statusLink: 'https://www.nsfas.org.za/content/' 
+    statusLink: 'https://www.nsfas.org.za/content/'
   },
   {
     id: 'change-of-course',
@@ -119,7 +146,7 @@ const services: Service[] = [
     category: 'Newcomer Students',
     description: 'Information about application processes and deadlines.',
     details: 'Application information and deadlines.',
-     statusLink:'https://applications-prod.tut.ac.za/'
+    statusLink: 'https://applications-prod.tut.ac.za/'
   },
   {
     id: 'bursaries',
@@ -134,7 +161,7 @@ const services: Service[] = [
     category: 'All Students',
     description: 'Access your class and test schedules.',
     details: 'Get your class and test schedules.',
-    statusLink:'https://www.tut.ac.za/timetables'
+    statusLink: 'https://www.tut.ac.za/timetables'
   },
   {
     id: 'Subject additions and cancellations',
@@ -150,7 +177,7 @@ const services: Service[] = [
     category: 'Newcomer Students',
     description: 'Important policy for new applicants.',
     details: 'Important policy for new applicants.',
-    statusLink:'https://applications-prod.tut.ac.za/'
+    statusLink: 'https://applications-prod.tut.ac.za/'
   },
   {
     id: 'Intercampus Transfers',
@@ -166,7 +193,7 @@ const services: Service[] = [
     category: 'Senior Students',
     description: 'Re-admission after break in studies or exclusion.',
     details: 'Re-admission after break in studies or exclusion.',
-     statusLink: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login'
+    statusLink: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login'
   },
   {
     id: 'Special & Exit Examinations',
@@ -174,7 +201,7 @@ const services: Service[] = [
     category: 'Senior Students',
     description: 'Apply for special or exit examinations',
     details: 'Apply for special or exit examinations',
-     statusLink: 'https://www.tut.ac.za/exit-examination'
+    statusLink: 'https://www.tut.ac.za/exit-examination'
   },
   {
     id: 'Probation',
@@ -203,7 +230,33 @@ const services: Service[] = [
     category: 'All Students',
     description: 'Get Accumulation and Transfer for previous qualifications',
     details: 'Get Accumulation and Transfer for previous qualifications'
-   
+
+  }
+  ,
+  {
+    id: 'WIL For Compuer Science',
+    title: 'WIL For Compuer Science',
+    category: 'Senior Students',
+    description: 'Get your WIL placement and requirements.',
+    details: 'Get your WIL placement and requirements.'
+
+  }
+  ,
+  {
+    id: 'Mentorship',
+    title: 'Mentorship program',
+    category: 'All Students',
+    description: 'Mentorship program for guidance and support.',
+    details: 'Mentorship program for guidance and support.'
+
+  },
+  {
+    id: 'Tutoring',
+    title: 'Tutoring program',
+    category: 'All Students',
+    description: 'Tutoring program for academic support.',
+    details: 'Tutoring program for academic support.'
+
   }
 ];
 
@@ -238,7 +291,7 @@ const emaServices: Service[] = [
     category: 'Senior Students',
     description: 'National Student Financial Aid Scheme support and information.',
     details: 'NSFAS application and funding enquiries.',
-  statusLink: 'https://www.nsfas.org.za/content/' 
+    statusLink: 'https://www.nsfas.org.za/content/'
   },
   {
     id: 'change-of-course',
@@ -254,7 +307,7 @@ const emaServices: Service[] = [
     category: 'Newcomer Students',
     description: 'Information about application processes and deadlines.',
     details: 'Application information and deadlines.',
-     statusLink:'https://applications-prod.tut.ac.za/'
+    statusLink: 'https://applications-prod.tut.ac.za/'
   },
   {
     id: 'bursaries',
@@ -269,7 +322,7 @@ const emaServices: Service[] = [
     category: 'All Students',
     description: 'Access your class and test schedules.',
     details: 'Get your class and test schedules.',
-    statusLink:'https://www.tut.ac.za/timetables'
+    statusLink: 'https://www.tut.ac.za/timetables'
   },
   {
     id: 'Subject additions and cancellations',
@@ -285,7 +338,7 @@ const emaServices: Service[] = [
     category: 'Newcomer Students',
     description: 'Important policy for new applicants.',
     details: 'Important policy for new applicants.',
-    statusLink:'https://applications-prod.tut.ac.za/'
+    statusLink: 'https://applications-prod.tut.ac.za/'
   },
   {
     id: 'Intercampus Transfers',
@@ -301,7 +354,7 @@ const emaServices: Service[] = [
     category: 'Senior Students',
     description: 'Re-admission after break in studies or exclusion.',
     details: 'Re-admission after break in studies or exclusion.',
-     statusLink: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login'
+    statusLink: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login'
   },
   {
     id: 'Special & Exit Examinations',
@@ -309,7 +362,7 @@ const emaServices: Service[] = [
     category: 'Senior Students',
     description: 'Apply for special or exit examinations',
     details: 'Apply for special or exit examinations',
-     statusLink: 'https://www.tut.ac.za/exit-examination'
+    statusLink: 'https://www.tut.ac.za/exit-examination'
   },
   {
     id: 'Probation',
@@ -338,12 +391,12 @@ const emaServices: Service[] = [
     category: 'All Students',
     description: 'Get Accumulation and Transfer for previous qualifications',
     details: 'Get Accumulation and Transfer for previous qualifications'
-   
+
   }
 ];
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'home' | 'department' | 'service' | 'manual' | 'adminLogin' | 'adminDashboard' | 'emaHome' | 'emaService'| 'emaManual'>('landing');
-  
+  const [currentView, setCurrentView] = useState<'landing' | 'home' | 'department' | 'service' | 'manual' | 'adminLogin' | 'adminDashboard' | 'emaHome' | 'emaService' | 'emaManual' | 'polHome' | 'polManual'>('landing');
+
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcomer'>('all');
@@ -398,38 +451,45 @@ function App() {
     setSelectedService(null);
     setIsEmaService(false);
   };
-
+  const handleBackToPolHome = () => {
+    setCurrentView('polHome');
+    setSelectedDepartment(null);
+    setSelectedService(null);
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Navigation */}
       {!['landing', 'adminLogin', 'adminDashboard'].includes(currentView) && (
-  currentView.startsWith('ema')
-    ? (
-      <EmaNavigation
-        currentView={currentView}
-        onNavigate={(view) => setCurrentView(view as any)}
-        departments={emaDepartments}
-        services={emaServices}
-        onFilterChange={(f) => setSelectedFilter(f)}
-      />
-    ) : (
-      <Navigation
-        currentView={currentView}
-        onNavigate={(view) => setCurrentView(view)}
-        departments={departments}
-        services={services}
-        onFilterChange={(f) => setSelectedFilter(f)}
-      />
-    )
-)}
+        currentView.startsWith('ema')
+          ? (
+            <EmaNavigation
+              currentView={currentView}
+              onNavigate={(view) => setCurrentView(view as any)}
+              departments={emaDepartments}
+              services={emaServices}
+              onFilterChange={(f) => setSelectedFilter(f)}
+            />
+          ) : (
+            <Navigation
+              currentView={currentView}
+              onNavigate={(view) => setCurrentView(view)}
+              departments={departments}
+              services={services}
+              onFilterChange={(f) => setSelectedFilter(f)}
+            />
+          )
+      )}
+
 
       {/* Landing Page */}
       {currentView === 'landing' && (
         <LandingPage
-          onSelect={(page: 'home' | 'manual' | 'emaHome') => setCurrentView(page)}
+          onSelect={(page: 'home' | 'manual' | 'emaHome' | 'polHome') => setCurrentView(page)}
           onLogin={handleLogin}
         />
       )}
+
+
 
       {/* Admin Login */}
       {currentView === 'adminLogin' && (
@@ -458,31 +518,43 @@ function App() {
         />
       )}
 
-     
+
       {/* Department View */}
-{currentView === 'department' && selectedDepartment && selectedDepartment.id.startsWith('ema-') && (
-  <EmaDepartmentDetails
-    department={selectedDepartment}
-    onBack={handleBackToEmaHome} // EMA-specific back
-  />
-)}
+      {currentView === 'department' && selectedDepartment && selectedDepartment.id.startsWith('ema-') && (
+        <EmaDepartmentDetails
+          department={selectedDepartment}
+          onBack={handleBackToEmaHome}
+        />
+      )}
 
-{currentView === 'department' && selectedDepartment && !selectedDepartment.id.startsWith('ema-') && (
-  <DepartmentDetails
-    department={selectedDepartment}
-    onBack={handleBackToHome} // regular campus back
-  />
-)}
-      
+      {currentView === 'department' && selectedDepartment && selectedDepartment.id.startsWith('pol-') && (
+        <DepartmentDetails
+          department={selectedDepartment}
+          onBack={handleBackToPolHome}
+        />
+      )}
 
-      {/* Service View */}
-      {currentView === 'service' && selectedService && !isEmaService && (
-        <ServiceDetails
-          service={selectedService}
+      {currentView === 'department' && selectedDepartment && !selectedDepartment.id.startsWith('ema-') && !selectedDepartment.id.startsWith('pol-') && (
+        <DepartmentDetails
+          department={selectedDepartment}
           onBack={handleBackToHome}
         />
       )}
 
+
+      {/* Service View */}
+      {currentView === 'service' && selectedService && !isEmaService && !selectedService.id.startsWith('pol-') && (
+  <ServiceDetails
+    service={selectedService}
+    onBack={handleBackToHome}
+  />
+)}
+    {currentView === 'service' && selectedService && selectedService.id.startsWith('pol-') && (
+  <ServiceDetails
+    service={selectedService}
+    onBack={handleBackToPolHome}
+  />
+)}
       {/* Ema Service View */}
       {currentView === 'emaService' && selectedService && isEmaService && (
         <EmaServiceDetails
@@ -491,15 +563,19 @@ function App() {
         />
       )}
 
+  
+
       {/* User Manual */}
-     {currentView === 'manual' && (
-  <UserManual onBack={handleBackToHome} />
-)}
+      {currentView === 'manual' && (
+        <UserManual onBack={handleBackToHome} />
+      )}
 
-{currentView === 'emaManual' && (
-  <EmaUserManual onBack={handleBackToEmaHome} />
-)}
-
+      {currentView === 'emaManual' && (
+        <EmaUserManual onBack={handleBackToEmaHome} />
+      )}
+      {currentView === 'polManual' && (
+        <UserManual onBack={handleBackToPolHome} />
+      )}
 
       {/* Emalahleni Home Page */}
       {currentView === 'emaHome' && (
@@ -511,6 +587,17 @@ function App() {
           onServiceClick={(service) => handleServiceClick(service, true)}
         />
       )}
+
+      {currentView === 'polHome' && (
+        <PolHomePage
+          departments={polDepartments}
+          services={polServices}
+          selectedFilter={selectedFilter}
+          onDepartmentClick={handleDepartmentClick}
+          onServiceClick={(service) => handleServiceClick(service, false)}
+        />
+      )}
+
     </div>
   );
 }

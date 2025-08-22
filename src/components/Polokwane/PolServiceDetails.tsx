@@ -9,8 +9,8 @@ import {
   CheckCircle,
   ArrowRight,
 } from 'lucide-react';
-import { Service } from '../types';
-import Footer from './Footer';
+import { Service } from '../../types';
+import Footer from './PolFooter';
 
 interface ServiceDetailsProps {
   service: Service;
@@ -54,11 +54,9 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Follow conditions if block is lifted, or wait 1 year if not lifted',
       ],
       'nsfas-enquiries': [
-        'Visit the Financial Aid Office for enquiries',
-        'Find your propensity letter form from Financial Aid Office',
-        'Take form to your Academic Department',
-        'Get signatures from OneStop',
-        'Visit NSFAS website for other issues',
+       'Coming Soon',
+        'Coming Soon',
+        'comming Soon'
       ],
       'change-of-course': [
         'Confirm you were registered the previous academic year',
@@ -69,8 +67,9 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Visit Academic Department for module credits',
       ],
       'Subject additions and cancellations': [
-        'Obtain the form from OneStop.',
-        'Obtain approval from your Academic Department.',
+        'Coming Soon',
+        'Coming Soon',
+        'comming Soon',
       ],
       'NO WALK-INS Policy': [
         'NO HUMANITIES ENQUIRIES at ICT Faculty offices',
@@ -85,29 +84,28 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'One intake per year only',
       ],
       'Re-admission': [
-        'Had a break in studies? Get form from OneStop',
-        'Returning after exclusion? Get Form from OneStop',
-        'Get approval from Academic Department',
+        'Coming Soon',
+        'Coming Soon',
+        'comming Soon',
       ],
       'Special & Exit Examinations': [
         'Visit Examination Administration Office for all enquiries',
       ],
       'Probation': ['Refer to ITS notification', 'Sign probation form via SASO electronically'],
       'Other Admission Enquiries': [
-        'Application status enquiries',
-        'Documentation upload assistance',
-        'Campus change (Admission Transfer)',
-        'Contact via email: admission@tut.ac.za',
-        'Phone: 0861102421',
-        'Visit OneStop or Admissions Lab in Building 10',
+        'Coming Soon',
+        'Coming Soon',
+        'comming Soon'
       ],
       'Residence Administration': [
-        'Contact Solly Sekgalabje',
-        'Phone: 012 382 9500 or ',
-        'Email: sekgalabjesb@tut.ac.za ',
+        'Coming Soon',
+        'Coming Soon',
+        'comming Soon'
       ],
       'bursaries': [
-        'Visit the FUNDI office in building 12 on the ground floor.',
+        'Coming Soon',
+        'Coming Soon',
+        'comming Soon'
         
       ],
       'Recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],

@@ -7,7 +7,7 @@ import logo from '../assets/TUT2.png';
 import LandingNav from './LandingNav';
 
 interface LandingPageProps {
-  onSelect: (page: 'home' | 'manual' | 'emaHome') => void;
+  onSelect: (page: 'home' | 'manual' | 'emaHome' | 'polHome') => void;
   onLogin: () => void;
 }
 
@@ -117,12 +117,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
             South Campus
           </button>
           <button
-  onClick={() => onSelect('emaHome')}
-  className="bg-red-600 text-white px-10 py-5 text-lg font-semibold rounded-lg hover:bg-red-700 transition shadow-lg"
->
-  eMalahleni Campus
-</button>
-          <button className="bg-yellow-600 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md hover:bg-yellow-700 transform hover:scale-105 transition">
+            onClick={() => onSelect('emaHome')}
+            className="bg-red-600 text-white px-10 py-5 text-lg font-semibold rounded-lg hover:bg-red-700 transition shadow-lg"
+          >
+            eMalahleni Campus
+          </button>
+          <button 
+          onClick={() => onSelect('polHome')}
+          className="bg-yellow-600 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md hover:bg-yellow-700 transform hover:scale-105 transition">
             Polokwane Campus
           </button>
         </div>
