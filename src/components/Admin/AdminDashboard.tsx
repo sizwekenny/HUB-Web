@@ -21,7 +21,11 @@ import {
 	BookOpen
 } from 'lucide-react';
 import { adminStore } from '../../utils/adminStore';
-import { newsStore } from '../../utils/newsStore';
+import { newsStore } from '../../utils/newsStore'; // kept only as a fallback if API fails
+// Using direct axios calls (consistent with AdminLogin pattern)
+import { http } from '../../utils/http';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { NewsItem, Service } from '../../types';
 import { serviceStore } from '../../utils/serviceStore';
 
@@ -41,20 +45,22 @@ interface Admin {
 	lastLogin: string;
 }
 
+// Using relative /api base via http instance to avoid CORS in dev (proxied by Vite)
+
 const AdminUserManagement: React.FC = () => {
 	const [showAddAdminForm, setShowAddAdminForm] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [admins, setAdmins] = useState<Admin[]>([]);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		setAdmins(adminStore.getAllAdmins());
 	}, []);
 
 	const [newAdmin, setNewAdmin] = useState({
-		name: '',
+		initials: '',
 		surname: '',
 		email: '',
-		phone: '',
 		password: '',
 		confirmPassword: ''
 	});
@@ -64,12 +70,10 @@ const AdminUserManagement: React.FC = () => {
 
 	const validateForm = () => {
 		const newErrors: Record<string, string> = {};
-		if (!newAdmin.name.trim()) newErrors.name = 'Name is required';
+		if (!newAdmin.initials.trim()) newErrors.initials = 'Initials are required';
 		if (!newAdmin.surname.trim()) newErrors.surname = 'Surname is required';
 		if (!newAdmin.email.trim()) newErrors.email = 'Email is required';
 		else if (!/\S+@\S+\.\S+/.test(newAdmin.email)) newErrors.email = 'Email is invalid';
-		if (!newAdmin.phone.trim()) newErrors.phone = 'Phone is required';
-		else if (!/^\+?[0-9]{10,}$/.test(newAdmin.phone.replace(/\s/g, ''))) newErrors.phone = 'Phone number is invalid';
 		if (!newAdmin.password) newErrors.password = 'Password is required';
 		else if (newAdmin.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
 		if (newAdmin.password !== newAdmin.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
@@ -83,19 +87,27 @@ const AdminUserManagement: React.FC = () => {
 		if (!validateForm()) return;
 		setIsSubmitting(true);
 		try {
-			await new Promise(resolve => setTimeout(resolve, 1000));
-			adminStore.addAdmin({
-				name: newAdmin.name,
+			// Use direct axios call to backend via Vite proxy (/api prefix) as requested
+			await axios.post(`/api/admin/addAdmin`, {
+				initials: newAdmin.initials,
 				surname: newAdmin.surname,
 				email: newAdmin.email,
-				phone: newAdmin.phone,
+				password: newAdmin.password
+			});
+			// Add to local store for immediate UI feedback (using initials as name)
+			adminStore.addAdmin({
+				name: newAdmin.initials,
+				surname: newAdmin.surname,
+				email: newAdmin.email,
+				phone: '',
 				password: newAdmin.password,
 				role: 'Admin'
 			});
 			setAdmins(adminStore.getAllAdmins());
-			setNewAdmin({ name: '', surname: '', email: '', phone: '', password: '', confirmPassword: '' });
+			setNewAdmin({ initials: '', surname: '', email: '', password: '', confirmPassword: '' });
 			setShowAddAdminForm(false);
 			setErrors({});
+			navigate('/admin/dashboard');
 		} catch (error) {
 			console.error('Error adding admin:', error);
 		} finally { setIsSubmitting(false); }
@@ -188,16 +200,16 @@ const AdminUserManagement: React.FC = () => {
 									<div className="p-2 bg-blue-100 rounded-lg"><UserPlus className="w-6 h-6 text-blue-600" /></div>
 									<h2 className="text-xl font-semibold text-gray-900">Add New Admin</h2>
 								</div>
-								<button onClick={() => { setShowAddAdminForm(false); setErrors({}); setNewAdmin({ name: '', surname: '', email: '', phone: '', password: '', confirmPassword: '' }); }} className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+								<button onClick={() => { setShowAddAdminForm(false); setErrors({}); setNewAdmin({ initials: '', surname: '', email: '', password: '', confirmPassword: '' }); }} className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
 									<Edit className="w-5 h-5 text-gray-400 transform rotate-45" />
 								</button>
 							</div>
 							<form onSubmit={handleSubmit} className="space-y-4">
 								<div className="grid grid-cols-2 gap-4">
 									<div>
-										<label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
-										<input type="text" value={newAdmin.name} onChange={e => setNewAdmin({ ...newAdmin, name: e.target.value })} className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name ? 'border-red-300' : 'border-gray-300'}`} placeholder="Enter name" />
-										{errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+										<label className="block text-sm font-medium text-gray-700 mb-2">Initials *</label>
+										<input type="text" value={newAdmin.initials} onChange={e => setNewAdmin({ ...newAdmin, initials: e.target.value })} className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.initials ? 'border-red-300' : 'border-gray-300'}`} placeholder="e.g. LW" />
+										{errors.initials && <p className="text-red-500 text-xs mt-1">{errors.initials}</p>}
 									</div>
 									<div>
 										<label className="block text-sm font-medium text-gray-700 mb-2">Surname *</label>
@@ -211,9 +223,7 @@ const AdminUserManagement: React.FC = () => {
 									{errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
 								</div>
 								<div>
-									<label className="block text-sm font-medium text-gray-700 mb-2">Phone *</label>
-									<input type="tel" value={newAdmin.phone} onChange={e => setNewAdmin({ ...newAdmin, phone: e.target.value })} className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.phone ? 'border-red-300' : 'border-gray-300'}`} placeholder="+27123456789" />
-									{errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+									{/* Phone removed - not required by endpoint */}
 								</div>
 								<div>
 									<label className="block text-sm font-medium text-gray-700 mb-2">Password *</label>
@@ -243,7 +253,7 @@ const AdminUserManagement: React.FC = () => {
 									</div>
 								</div>
 								<div className="flex justify-end space-x-3 pt-4">
-									<button type="button" onClick={() => { setShowAddAdminForm(false); setErrors({}); setNewAdmin({ name: '', surname: '', email: '', phone: '', password: '', confirmPassword: '' }); }} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">Cancel</button>
+									<button type="button" onClick={() => { setShowAddAdminForm(false); setErrors({}); setNewAdmin({ initials: '', surname: '', email: '', password: '', confirmPassword: '' }); }} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200">Cancel</button>
 									<button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">{isSubmitting ? 'Adding...' : 'Add Admin'}</button>
 								</div>
 							</form>
@@ -257,6 +267,7 @@ const AdminUserManagement: React.FC = () => {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome }) => {
 	const [activeTab, setActiveTab] = useState('overview');
+	const navigate = useNavigate();
 	const stats = [
 		{ label: 'Total Students', value: '12,450', icon: Users, color: 'bg-blue-500' },
 		{ label: 'News Articles', value: '47', icon: FileText, color: 'bg-blue-600' },
@@ -275,6 +286,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 	const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
 	const [showNewsForm, setShowNewsForm] = useState(false);
 	const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
+	const [newsLoading, setNewsLoading] = useState(false);
+	const [newsError, setNewsError] = useState<string>('');
 	const [services, setServices] = useState<Service[]>(serviceStore.list());
 	const [serviceSearch, setServiceSearch] = useState('');
 	const [serviceCategoryFilter, setServiceCategoryFilter] = useState<'All' | Service['category']>('All');
@@ -282,10 +295,79 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 	const [editingService, setEditingService] = useState<Service | null>(null);
 	const [serviceForm, setServiceForm] = useState<Omit<Service, 'id'>>({ title: '', category: 'All Students', description: '', details: '', statusLink: '', steps: [] });
 	const [newStep, setNewStep] = useState('');
-	const blankNews: Omit<NewsItem, 'id' | 'date'> = { title: '', summary: '', content: '', category: 'Announcement', priority: 'medium', campus: 'south' } as any;
+	const blankNews: Omit<NewsItem, 'id' | 'date'> = { title: '', summary: '', content: '', category: 'Announcement', priority: 'medium', campus: 'south', department: '' } as any;
 	const [newsForm, setNewsForm] = useState<Omit<NewsItem, 'id' | 'date'>>(blankNews);
+	const [selectedCampuses, setSelectedCampuses] = useState<string[]>([]); // for multi-campus create
+	const campusOptions = [
+		{ key: 'south', label: 'South' },
+		{ key: 'emalahleni', label: 'eMalahleni' },
+		{ key: 'polokwane', label: 'Polokwane' }
+	];
+	const toggleCampus = (key: string) => {
+		setSelectedCampuses(prev => prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]);
+	};
 
-	useEffect(() => { const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch)); }, [newsCampusFilter, newsSearch, activeTab]);
+	// Utility: safe ID generation (older browsers may lack crypto.randomUUID)
+	const genId = () => {
+		try { const c:any = crypto; if (c?.randomUUID) return c.randomUUID(); } catch {}
+		return Math.random().toString(36).slice(2, 11);
+	};
+
+	// Fetch news from backend (with fallback to local store) when filters or tab change
+	useEffect(() => {
+		if (activeTab !== 'news' && activeTab !== 'overview') return;
+		const fetchNews = async () => {
+			setNewsLoading(true); setNewsError('');
+			try {
+				const res = await http.get(`/news/getAllNews`);
+				let raw = Array.isArray(res.data) ? res.data : [];
+				// Normalize backend DTO -> UI NewsItem
+				const campusIdToSlug: Record<number,string> = {1:'south',2:'emalahleni',3:'polokwane',4:'all'};
+				let list: NewsItem[] = raw.map((n:any) => ({
+					id: (n.newsId ?? n.id ?? genId()).toString(),
+					title: n.title ?? '',
+					summary: n.description ?? n.summary ?? '',
+					content: n.description ?? n.content ?? '',
+					category: n.category ?? 'Announcement',
+					priority: n.priority ?? 'medium',
+					campus: n.campus ?? campusIdToSlug[Number(n.campusId)] ?? 'all',
+					department: n.department ?? undefined,
+					date: n.createdAt ?? n.date ?? new Date().toISOString(),
+					isVisible: n.isVisible !== false,
+					isUrgent: n.isUrgent || false
+				})).filter(n => n.title); // filter out any completely empty rows
+				// Client-side campus filtering (tolerate different representations)
+				if (newsCampusFilter !== 'all') {
+					const campusMap: Record<string, (string|number)[]> = {
+						south: ['south', 1, '1'],
+						emalahleni: ['emalahleni', 2, '2'],
+						polokwane: ['polokwane', 3, '3']
+					};
+					const allowed = campusMap[newsCampusFilter] || [newsCampusFilter];
+					list = list.filter(n => allowed.includes((n as any).campus));
+				}
+				if (newsSearch) {
+					const q = newsSearch.toLowerCase();
+					list = list.filter(n => n.title?.toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q));
+				}
+				setNewsItems(list.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime()));
+			} catch (err:any) {
+				const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter;
+				const fallback = newsStore.list(campus, newsSearch);
+				// Preserve existing server-fetched items so we don't lose them when a single refresh fails.
+				setNewsItems(prev => {
+					if (prev.length === 0) return fallback;
+					// merge by id (fallback/new locally created items may include new ones)
+					const map = new Map<string,NewsItem>();
+					prev.forEach(n => map.set(n.id, n));
+					fallback.forEach(n => { if (!map.has(n.id)) map.set(n.id, n); });
+					return Array.from(map.values());
+				});
+				setNewsError(err?.message || 'Using cached data (fetch failed).');
+			} finally { setNewsLoading(false); }
+		};
+		fetchNews();
+	}, [newsCampusFilter, newsSearch, activeTab]);
 	useEffect(() => { if (activeTab === 'services') refreshServices(); }, [activeTab, serviceSearch, serviceCategoryFilter]);
 	const refreshServices = () => { let list = serviceStore.list(serviceCategoryFilter === 'All' ? undefined : serviceCategoryFilter); if (serviceSearch) list = list.filter(s => s.title.toLowerCase().includes(serviceSearch.toLowerCase()) || s.description.toLowerCase().includes(serviceSearch.toLowerCase())); setServices(list); };
 	const handleSaveService = () => { if (!serviceForm.title.trim()) return; if (editingService) serviceStore.update(editingService.id, serviceForm); else serviceStore.create(serviceForm); setShowServiceForm(false); setEditingService(null); setServiceForm({ title: '', category: 'All Students', description: '', details: '', statusLink: '', steps: [] }); refreshServices(); };
@@ -294,10 +376,166 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 	const addStep = () => { if (!newStep.trim()) return; setServiceForm({ ...serviceForm, steps: [...(serviceForm.steps || []), newStep.trim()] }); setNewStep(''); };
 	const removeStep = (idx: number) => { setServiceForm({ ...serviceForm, steps: (serviceForm.steps || []).filter((_, i) => i !== idx) }); };
 	const moveStep = (idx: number, dir: -1 | 1) => { const steps = [...(serviceForm.steps || [])]; const target = idx + dir; if (target < 0 || target >= steps.length) return; [steps[idx], steps[target]] = [steps[target], steps[idx]]; setServiceForm({ ...serviceForm, steps }); };
-	const handleSaveNews = () => { if (!newsForm.title.trim()) return; if (editingNews) newsStore.update(editingNews.id, newsForm); else newsStore.create(newsForm); setShowNewsForm(false); setEditingNews(null); setNewsForm(blankNews); const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch)); };
+	const refreshNews = async () => {
+		setNewsLoading(true); setNewsError('');
+		try {
+			const res = await http.get(`/news/getAllNews`);
+			let raw = Array.isArray(res.data) ? res.data : [];
+			const campusIdToSlug: Record<number,string> = {1:'south',2:'emalahleni',3:'polokwane',4:'all'};
+			let list: NewsItem[] = raw.map((n:any) => ({
+				id: (n.newsId ?? n.id ?? genId()).toString(),
+				title: n.title ?? '',
+				summary: n.description ?? n.summary ?? '',
+				content: n.description ?? n.content ?? '',
+				category: n.category ?? 'Announcement',
+				priority: n.priority ?? 'medium',
+				campus: n.campus ?? campusIdToSlug[Number(n.campusId)] ?? 'all',
+				department: n.department ?? undefined,
+				date: n.createdAt ?? n.date ?? new Date().toISOString(),
+				isVisible: n.isVisible !== false,
+				isUrgent: n.isUrgent || false
+			})).filter(n => n.title);
+			if (newsCampusFilter !== 'all') {
+				const campusMap: Record<string, (string|number)[]> = {
+					south: ['south', 1, '1'],
+					emalahleni: ['emalahleni', 2, '2'],
+					polokwane: ['polokwane', 3, '3']
+				};
+				const allowed = campusMap[newsCampusFilter] || [newsCampusFilter];
+				list = list.filter(n => allowed.includes((n as any).campus));
+			}
+			if (newsSearch) {
+				const q = newsSearch.toLowerCase(); list = list.filter(n => n.title?.toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q));
+			}
+			setNewsItems(list.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime()));
+		} catch (err:any) {
+			const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter;
+			const fallback = newsStore.list(campus, newsSearch);
+			setNewsItems(prev => {
+				if (prev.length === 0) return fallback;
+				const map = new Map<string,NewsItem>();
+				prev.forEach(n => map.set(n.id, n));
+				fallback.forEach(n => { if (!map.has(n.id)) map.set(n.id, n); });
+				return Array.from(map.values());
+			});
+			setNewsError(err?.message || 'Using cached data (refresh failed).');
+		} finally { setNewsLoading(false); }
+	};
+
+	const handleSaveNews = async () => {
+		if (!newsForm.title.trim()) return;
+		if (!editingNews && selectedCampuses.length === 0) return; // need at least one campus when creating
+		setNewsLoading(true); setNewsError('');
+		try {
+			if (editingNews) {
+				// Backend Priority enum values are lowercase (high, medium, low) per News.cs
+				await http.put(`/news/updateNews`, { ...editingNews, ...newsForm, id: editingNews.id });
+			} else {
+				// We must include AdminId (int) for persistence; derive from stored numeric id or login payload
+				let adminId: number | undefined;
+				const stored = sessionStorage.getItem('adminNumericId');
+				if (stored) { const n = Number(stored); if (!Number.isNaN(n)) adminId = n; }
+				if (!adminId) {
+					const currentAdmin = sessionStorage.getItem('currentAdmin');
+					if (currentAdmin) {
+						try { const parsed = JSON.parse(currentAdmin); const possible = [parsed.adminId, parsed.AdminId, parsed.id, parsed.Id]; for (const v of possible){ const n = Number(v); if (!Number.isNaN(n)) { adminId = n; break; } } } catch {}
+					}
+				}
+				if (!adminId) throw new Error('Missing AdminId: cannot persist news. Please re-login.');
+				for (const camp of selectedCampuses) {
+					const campusMap: Record<string, number> = { south: 1, emalahleni: 2, polokwane: 3 };
+					const campusId = campusMap[camp];
+					const file = (newsForm as any).file as File | undefined;
+					const params = {
+						AdminId: adminId,
+						Title: newsForm.title,
+						Description: newsForm.summary || '',
+						Priority: newsForm.priority, // already lower-case from select
+						Category: newsForm.category,
+						CampusId: campusId,
+						...(newsForm.department ? { Department: newsForm.department } : {})
+					};
+					try {
+							if (file) {
+								// JSON + file together won't bind; send multipart with params
+								const fd = new FormData();
+								fd.append('FormFile', file);
+								console.debug('Creating news (multipart with file)', params);
+								await axios.post(`/api/news/createNews`, fd, { params });
+							} else {
+								// Try pure JSON body first (model binder should map CreateNewsDTO properties)
+								console.debug('Creating news (JSON body)', params);
+								await axios.post(`/api/news/createNews`, params, { headers: { 'Content-Type': 'application/json' } });
+							}
+						await refreshNews();
+					} catch (inner:any) {
+						// Retry alternate encoding if first attempt fails (e.g., backend strictly requires multipart)
+						if (!file) {
+							try {
+								const fd = new FormData(); // send empty multipart without file
+									Object.entries(params).forEach(([k,v]) => fd.append(k, String(v)));
+									console.debug('Retry create news as multipart (fields + no file)', params);
+									await axios.post(`/api/news/createNews`, fd);
+								await refreshNews();
+								continue; // next campus
+							} catch (retryErr:any) {
+								console.error('Create news retry failed', retryErr?.response?.status, retryErr?.response?.data || retryErr?.message);
+								throw retryErr;
+							}
+						}
+						console.error('Create news failed', inner?.response?.status, inner?.response?.data || inner?.message);
+						throw inner;
+					}
+				}
+			}
+			setShowNewsForm(false); setEditingNews(null); setNewsForm(blankNews); setSelectedCampuses([]);
+			navigate('/admin/dashboard');
+			await refreshNews();
+		} catch (err:any) {
+			// fallback to local mutation
+			if (editingNews) newsStore.update(editingNews.id, newsForm); else {
+				selectedCampuses.forEach(c => newsStore.create({ ...newsForm, campus: c as any }));
+			}
+			setNewsError(err?.message || 'Saved locally (offline).');
+			setShowNewsForm(false); setEditingNews(null); setNewsForm(blankNews); setSelectedCampuses([]);
+			const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch));
+		} finally { setNewsLoading(false); }
+	};
+
 	const handleEditNews = (item: NewsItem) => { setEditingNews(item); setNewsForm({ ...item }); setShowNewsForm(true); };
-	const handleDeleteNews = (id: string) => { if (confirm('Delete this news item?')) { newsStore.remove(id); const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch)); } };
-	const handleToggleNewsVisibility = (id: string) => { newsStore.toggleVisibility(id); const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch)); };
+
+	const handleDeleteNews = async (id: string) => {
+		if (!confirm('Delete this news item?')) return;
+		setNewsLoading(true); setNewsError('');
+		try {
+			await http.delete(`/news/deleteNews?id=${encodeURIComponent(id)}`);
+			await refreshNews();
+			navigate('/admin/dashboard');
+		} catch (err:any) {
+			// fallback local removal
+			newsStore.remove(id);
+			const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch));
+			setNewsError(err?.message || 'Deleted locally (offline).');
+		} finally { setNewsLoading(false); }
+	};
+
+	const handleToggleNewsVisibility = async (id: string) => {
+		// Visibility not explicitly supported by backend spec; send update with toggled flag
+		const target = newsItems.find(n => n.id === id) || newsStore.get(id);
+		if (!target) return;
+		const newVisible = target.isVisible === false; // toggle
+		setNewsLoading(true);
+		try {
+			await http.put(`/news/updateNews`, { ...target, isVisible: newVisible });
+			await refreshNews();
+			navigate('/admin/dashboard');
+		} catch {
+			// fallback local
+			newsStore.toggleVisibility(id);
+			const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch));
+		}
+		setNewsLoading(false);
+	};
 
 	return (
 		<div className="min-h-screen bg-gray-50">
@@ -347,7 +585,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 									<div className="p-6 border-b border-gray-200"><h2 className="text-lg font-semibold text-gray-900">Recent News Articles</h2></div>
 									<div className="p-6">
 										<div className="space-y-4">
-											{newsStore.list().filter(n => n.isVisible !== false).slice(0,5).map(item => (
+											{newsItems.filter(n => n.isVisible !== false).slice(0,5).map(item => (
 												<div key={item.id} className="p-4 border border-gray-200 rounded-lg flex items-center justify-between">
 													<div className="min-w-0 pr-4">
 														<h3 className="font-medium text-gray-900 truncate" title={item.title}>{item.title}</h3>
@@ -364,8 +602,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 													</div>
 												</div>
 											))}
-											{newsStore.list().length === 0 && (
-												<p className="text-sm text-gray-500">No news articles yet.</p>
+											{!newsLoading && newsItems.filter(n=>n.isVisible!==false).length === 0 && (
+												<p className="text-sm text-gray-500">No news articles found.</p>
 											)}
 										</div>
 									</div>
@@ -395,6 +633,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 									</div>
 									<div className="p-6">
 										<div className="overflow-x-auto">
+											{newsError && <div className="mb-4 p-3 rounded-md bg-yellow-50 text-yellow-800 text-xs border border-yellow-200">{newsError}</div>}
 											<table className="w-full text-sm">
 												<thead>
 													<tr className="border-b border-gray-200 text-left">
@@ -408,6 +647,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 													</tr>
 												</thead>
 												<tbody>
+													{newsLoading && newsItems.length === 0 && (
+														<tr><td colSpan={7} className="py-8 text-center text-gray-500 text-sm">Loading news...</td></tr>
+													)}
 													{newsItems.map(item => (
 														<tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
 															<td className="py-3 px-2 max-w-xs">
@@ -444,14 +686,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 												</div>
 												<div className="grid md:grid-cols-2 gap-4">
 													<div className="space-y-2"><label className="text-sm font-medium text-gray-700">Title *</label><input value={newsForm.title} onChange={e => setNewsForm({ ...newsForm, title: e.target.value })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter title" /></div>
-													<div className="space-y-2"><label className="text-sm font-medium text-gray-700">Campus</label><select value={newsForm.campus || ''} onChange={e => setNewsForm({ ...newsForm, campus: (e.target.value || undefined) as any })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">All Campuses</option><option value="south">South</option><option value="emalahleni">eMalahleni</option><option value="polokwane">Polokwane</option></select></div>
-													<div className="space-y-2"><label className="text-sm font-medium text-gray-700">Category</label><select value={newsForm.category} onChange={e => setNewsForm({ ...newsForm, category: e.target.value as any })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="Announcement">Announcement</option><option value="Academic">Academic</option><option value="Registration">Registration</option><option value="Deadline">Deadline</option><option value="Event">Event</option><option value="WIL">WIL</option></select></div>
-													<div className="space-y-2"><label className="text-sm font-medium text-gray-700">Priority</label><select value={newsForm.priority} onChange={e => setNewsForm({ ...newsForm, priority: e.target.value as any })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
-													<div className="space-y-2 md:col-span-2"><label className="text-sm font-medium text-gray-700">Summary *</label><textarea value={newsForm.summary} onChange={e => setNewsForm({ ...newsForm, summary: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" /></div>
-													<div className="space-y-2 md:col-span-2"><label className="text-sm font-medium text-gray-700">Content *</label><textarea value={newsForm.content} onChange={e => setNewsForm({ ...newsForm, content: e.target.value })} rows={6} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" /></div>
+													<div className="space-y-2">
+														<label className="text-sm font-medium text-gray-700">Campus *</label>
+														{editingNews ? (
+															<div className="px-3 py-2 border rounded-lg bg-gray-50 text-sm capitalize">{editingNews.campus || 'all'}</div>
+														) : (
+															<div className="border rounded-lg p-2 space-y-1">
+																{campusOptions.map(c => (
+																	<label key={c.key} className="flex items-center gap-2 text-sm">
+																		<input type="checkbox" className="rounded border-gray-300" checked={selectedCampuses.includes(c.key)} onChange={() => toggleCampus(c.key)} />
+																		<span className="capitalize">{c.label}</span>
+																	</label>
+																))}
+																{selectedCampuses.length === 0 && <p className="text-xs text-red-600">Select at least one campus.</p>}
+															</div>
+														)}
+													</div>
+													<div className="space-y-2"><label className="text-sm font-medium text-gray-700">Category *</label><select value={newsForm.category} onChange={e => setNewsForm({ ...newsForm, category: e.target.value as any })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="Announcement">Announcement</option><option value="Academic">Academic</option><option value="Registration">Registration</option><option value="Event">Event</option><option value="WIL">WIL</option></select></div>
+													<div className="space-y-2"><label className="text-sm font-medium text-gray-700">Priority *</label><select value={newsForm.priority} onChange={e => setNewsForm({ ...newsForm, priority: e.target.value as any })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
+													<div className="space-y-2"><label className="text-sm font-medium text-gray-700">Department (optional)</label><input value={newsForm.department || ''} onChange={e => setNewsForm({ ...newsForm, department: e.target.value })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. IT, CS" /></div>
+													<div className="space-y-2"><label className="text-sm font-medium text-gray-700">Attachment (optional)</label><input type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" onChange={e => { const file = e.target.files?.[0]; setNewsForm({ ...(newsForm as any), file }); }} className="w-full text-sm" /></div>
+													<div className="space-y-2 md:col-span-2"><label className="text-sm font-medium text-gray-700">Description *</label><textarea value={newsForm.summary} onChange={e => setNewsForm({ ...newsForm, summary: e.target.value })} rows={4} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter description" /></div>
 													<div className="flex items-center space-x-2 md:col-span-2"><input id="urgent" type="checkbox" checked={!!newsForm.isUrgent} onChange={e => setNewsForm({ ...newsForm, isUrgent: e.target.checked || undefined })} className="h-4 w-4 text-blue-600 border-gray-300 rounded" /><label htmlFor="urgent" className="text-sm text-gray-700">Mark as urgent</label></div>
 												</div>
-												<div className="flex justify-end gap-3 pt-4 border-t"><button onClick={() => { setShowNewsForm(false); setEditingNews(null); setNewsForm(blankNews); }} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Cancel</button><button onClick={handleSaveNews} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50" disabled={!newsForm.title || !newsForm.summary || !newsForm.content}>{editingNews ? 'Update' : 'Create'} News</button></div>
+												<div className="flex justify-end gap-3 pt-4 border-t"><button onClick={() => { setShowNewsForm(false); setEditingNews(null); setNewsForm(blankNews); setSelectedCampuses([]); }} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Cancel</button><button onClick={handleSaveNews} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50" disabled={!newsForm.title || !newsForm.summary || (!editingNews && selectedCampuses.length === 0)}>{editingNews ? 'Update' : 'Create'} News</button></div>
 											</div>
 										</div>
 									</div>

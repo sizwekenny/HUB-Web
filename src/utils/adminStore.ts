@@ -19,7 +19,7 @@ class AdminStore {
       id: '1',
       name: 'System',
       surname: 'Administrator',
-      email: 'admin',
+  email: 'admin@example.com',
       phone: '+27123456789',
       password: 'admin123',
       role: 'Super Admin',

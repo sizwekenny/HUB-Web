@@ -90,6 +90,8 @@ export interface NewsItem {
   date: string;
   category: 'Registration' | 'Academic' | 'Announcement' | 'Deadline' | 'Event' | 'WIL';
   priority: 'high' | 'medium' | 'low';
+  /** Optional department code/name this news item relates to */
+  department?: string;
   isUrgent?: boolean;
   /**
    * Visibility flag. When false the item is considered disabled/hidden from public views
@@ -102,7 +104,7 @@ export interface NewsItem {
    * Values should align with internal campus ids used in landing page.
    */
   // Supported campuses currently: Soshanguve South (south), eMalahleni (emalahleni), Polokwane (polokwane)
-  campus?: 'south' | 'emalahleni' | 'polokwane';
+  campus?: 'south' | 'emalahleni' | 'polokwane' | 'all';
   downloadFile?: {
     filename: string;
     url: string;

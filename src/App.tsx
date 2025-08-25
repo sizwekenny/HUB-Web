@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import DepartmentDetails from './components/DepartmentDetails';
 import ServiceDetails from './components/ServiceDetails';
@@ -12,7 +13,7 @@ import EmaHomePage from './components/Emalahleni/EmaHomePage';
 import EmaDepartmentDetails from './components/Emalahleni/EmaDepartmentDetails';
 import EmaNavigation from './components/Emalahleni/EmaNavigation';
 import EmaServiceDetails from './components/Emalahleni/EmaServiceDetails';
-import EmaUserManual from './components/Emalahleni/EmaUserManual';
+import EmaUserManual from './components/Emalahleni/emaUserManual';
 import PolHomePage from './components/Polokwane/PolHomePage';
 
 const departments: Department[] = [
@@ -404,6 +405,25 @@ function App() {
   // Removed unused manualSource state after refactor
 
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Map view -> route path for persistent pages
+  const viewPath: Record<string,string> = {
+    landing: '/',
+    home: '/home',
+    adminLogin: '/admin/login',
+    adminDashboard: '/admin/dashboard',
+    emaHome: '/ema',
+    polHome: '/pol'
+  };
+
+  const updateView = (view: typeof currentView) => {
+    setCurrentView(view);
+    const p = viewPath[view];
+    if (p && location.pathname !== p) navigate(p, { replace: false });
+  };
+
   // Regular Home navigation
   const handleDepartmentClick = (department: Department) => {
     setSelectedDepartment(department);
@@ -419,7 +439,7 @@ function App() {
   // Removed unused handleNavigate (navigation handled inline via setCurrentView)
 
   const handleBackToHome = () => {
-    setCurrentView('home');
+    updateView('home');
     setSelectedDepartment(null);
     setSelectedService(null);
     setIsEmaService(false);
@@ -427,37 +447,53 @@ function App() {
 
   // Emalahleni-specific back handler
   const handleBackToEmaHome = () => {
-    setCurrentView('emaHome');
+    updateView('emaHome');
     setSelectedDepartment(null);
     setSelectedService(null);
     setIsEmaService(false);
   };
 
-  const handleLogin = () => {
-    setCurrentView('adminLogin');
-  };
+  // Sync state from URL path (back/forward navigation)
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/' && currentView !== 'landing') setCurrentView('landing');
+    else if (path === '/home' && currentView !== 'home') setCurrentView('home');
+    else if (path === '/admin/login' && currentView !== 'adminLogin') setCurrentView('adminLogin');
+    else if (path === '/admin/dashboard' && currentView !== 'adminDashboard') setCurrentView('adminDashboard');
+    else if (path === '/ema' && currentView !== 'emaHome') setCurrentView('emaHome');
+    else if (path === '/pol' && currentView !== 'polHome') setCurrentView('polHome');
+  }, [location.pathname]);
 
-  const handleAdminLoginSuccess = () => {
-    setCurrentView('adminDashboard');
-  };
+  const handleLogin = () => { updateView('adminLogin'); };
 
-  const handleAdminLogout = () => {
-    setCurrentView('landing');
-  };
+  const handleAdminLoginSuccess = () => { updateView('adminDashboard'); };
+
+  const handleAdminLogout = () => { updateView('landing'); };
 
   const handleBackToLanding = () => {
-    setCurrentView('landing');
+    updateView('landing');
     setSelectedDepartment(null);
     setSelectedService(null);
     setIsEmaService(false);
   };
   const handleBackToPolHome = () => {
-    setCurrentView('polHome');
+    updateView('polHome');
     setSelectedDepartment(null);
     setSelectedService(null);
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Declarative routes (primary entry points) */}
+      <Routes>
+        <Route path="/" element={null} />
+        <Route path="/home" element={null} />
+        <Route path="/admin/login" element={null} />
+        <Route path="/admin/dashboard" element={null} />
+        <Route path="/ema" element={null} />
+        <Route path="/pol" element={null} />
+        {/* Fallback redirect for unknown paths */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
       {/* Navigation */}
       {!['landing', 'adminLogin', 'adminDashboard'].includes(currentView) && (
         currentView.startsWith('ema')
@@ -482,9 +518,9 @@ function App() {
 
 
       {/* Landing Page */}
-      {currentView === 'landing' && (
+  {currentView === 'landing' && (
         <LandingPage
-          onSelect={(page: 'home' | 'manual' | 'emaHome' | 'polHome') => setCurrentView(page)}
+          onSelect={(page: 'home' | 'manual' | 'emaHome' | 'polHome') => updateView(page)}
           onLogin={handleLogin}
         />
       )}
@@ -492,7 +528,7 @@ function App() {
 
 
       {/* Admin Login */}
-      {currentView === 'adminLogin' && (
+  {currentView === 'adminLogin' && (
         <AdminLogin
           onBack={handleBackToLanding}
           onLoginSuccess={handleAdminLoginSuccess}
@@ -500,10 +536,10 @@ function App() {
       )}
 
       {/* Admin Dashboard */}
-      {currentView === 'adminDashboard' && (
+  {currentView === 'adminDashboard' && (
         <AdminDashboard
           onLogout={handleAdminLogout}
-          onBackToHome={() => setCurrentView('landing')}
+          onBackToHome={() => updateView('landing')}
         />
       )}
 
