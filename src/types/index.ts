@@ -62,25 +62,6 @@ export interface Author {
   role?: string;
 }
 
-export interface Report {
-  id: string;
-  module: string;
-  startDate: string;
-  endDate: string;
-  submittedAt: string;
-  status: 'pending' | 'under_review' | 'reviewed' | 'approved';
-
-  author: Author;
-
-  activities: string;
-  suggestions: string;
-
-  communicationMethods: CommunicationMethod[];
-
-  sessions: Session[];
-
-  registerPdfUrl?: string;
-}
 
 export interface NewsItem {
   id: string;

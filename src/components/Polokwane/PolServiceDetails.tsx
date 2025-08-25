@@ -12,12 +12,11 @@ import {
 import { Service } from '../../types';
 import Footer from './PolFooter';
 
-interface ServiceDetailsProps {
+interface PolServiceDetailsProps {
   service: Service;
   onBack: () => void;
 }
-
-const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
+const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -53,7 +52,7 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Sign the receipt letter online via SASO',
         'Follow conditions if block is lifted, or wait 1 year if not lifted',
       ],
-      'nsfas-enquiries': [
+      'pol-nsfas-enquiries': [
        'Coming Soon',
         'Coming Soon',
         'comming Soon'
@@ -66,64 +65,64 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Register for the new course',
         'Visit Academic Department for module credits',
       ],
-      'Subject additions and cancellations': [
+      'pol-subject-additions-and-cancellations': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon',
       ],
-      'NO WALK-INS Policy': [
+      'pol-NO WALK-INS Policy': [
         'NO HUMANITIES ENQUIRIES at ICT Faculty offices',
         'Do not ask staff to screen grade 12 certificate',
         'Must apply online only',
         'Check www.tut.ac.za daily for available courses',
       ],
-      'Intercampus Transfers': [
+      'pol-Intercampus Transfers': [
         'Must be registered Computer Science Student',
         'Apply via EC (electronic Campus)',
         'Available end of October to mid-November only',
         'One intake per year only',
       ],
-      'Re-admission': [
+      'pol-Re-admission': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon',
       ],
-      'Special & Exit Examinations': [
+      'pol-Special & Exit Examinations': [
         'Visit Examination Administration Office for all enquiries',
       ],
-      'Probation': ['Refer to ITS notification', 'Sign probation form via SASO electronically'],
-      'Other Admission Enquiries': [
+      'pol-Probation': ['Refer to ITS notification', 'Sign probation form via SASO electronically'],
+      'pol-Other Admission Enquiries': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon'
       ],
-      'Residence Administration': [
+      'pol-Residence Administration': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon'
       ],
-      'bursaries': [
+      'pol-bursaries': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon'
         
       ],
-      'Recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
-      admissions: ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
-      timetables: ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
-      'financial-exclusion': ['Refer to ITS notification', 'Visits Mr Lebelo at Students Accounts'],
+      'pol-Recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
+      'pol-admissions': ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
+      'pol-timetables': ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
+      'pol-financial-exclusion': ['Refer to ITS notification', 'Visits Mr Lebelo at Students Accounts'],
 
-      'WIL For Compuer Science': [
+      'pol-WIL For Compuer Science': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon',
       ],
-       'Mentorship': [
+       'pol-Mentorship': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon',
       ],
-      'Tutoring': [
+      'pol-Tutoring': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon',
@@ -365,4 +364,4 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
   );
 };
 
-export default ServiceDetails;
+export default PolServiceDetails;

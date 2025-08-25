@@ -11,12 +11,12 @@ import {
 import { Department } from '../types';
 import Footer from './Footer';
 
-interface DepartmentDetailsProps {
+interface PolDepartmentDetailsProps {
   department: Department;
   onBack: () => void;
 }
 
-const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBack }) => {
+const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department, onBack }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [expandedCode, setExpandedCode] = useState<string | null>(null);
 
@@ -203,4 +203,4 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
   );
 };
 
-export default DepartmentDetails;
+export default PolDepartmentDetails;

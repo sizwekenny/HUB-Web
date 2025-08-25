@@ -15,6 +15,8 @@ import EmaNavigation from './components/Emalahleni/EmaNavigation';
 import EmaServiceDetails from './components/Emalahleni/EmaServiceDetails';
 import EmaUserManual from './components/Emalahleni/emaUserManual';
 import PolHomePage from './components/Polokwane/PolHomePage';
+import PolDepartmentDetails from './components/Polokwane/PolDepartmentDetails';
+import PolServiceDetails from './components/Polokwane/PolServiceDetails';
 
 const departments: Department[] = [
   {
@@ -86,14 +88,14 @@ const polDepartments: Department[] = [
 ];
 const polServices: Service[] = [
   {
-    id: 'nsfas-enquiries',
+    id: 'pol-nsfas-enquiries',
     title: 'nsfas-enquiries',
     category: 'Senior Students',
     description: 'Registration support for Polokwane students.',
     details: 'Get assistance with course registration at Polokwane Campus.'
   },
   {
-    id: 'Subject additions and cancellations',
+    id: 'pol-subject-additions-and-cancellations',
     title: 'Subject additions and cancellations',
     category: 'Senior Students',
     description: 'Access to Polokwane ICT labs and resources.',
@@ -563,12 +565,12 @@ function App() {
         />
       )}
 
-      {currentView === 'department' && selectedDepartment && selectedDepartment.id.startsWith('pol-') && (
-        <DepartmentDetails
-          department={selectedDepartment}
-          onBack={handleBackToPolHome}
-        />
-      )}
+     {currentView === 'department' && selectedDepartment && selectedDepartment.id.startsWith('pol-') && (
+  <PolDepartmentDetails
+    department={selectedDepartment}
+    onBack={handleBackToPolHome}
+  />
+)}
 
       {currentView === 'department' && selectedDepartment && !selectedDepartment.id.startsWith('ema-') && !selectedDepartment.id.startsWith('pol-') && (
         <DepartmentDetails
@@ -585,8 +587,8 @@ function App() {
     onBack={handleBackToHome}
   />
 )}
-    {currentView === 'service' && selectedService && selectedService.id.startsWith('pol-') && (
-  <ServiceDetails
+ {currentView === 'service' && selectedService && selectedService.id.startsWith('pol-') && (
+  <PolServiceDetails
     service={selectedService}
     onBack={handleBackToPolHome}
   />
@@ -624,15 +626,15 @@ function App() {
         />
       )}
 
-      {currentView === 'polHome' && (
-        <PolHomePage
-          departments={polDepartments}
-          services={polServices}
-          selectedFilter={selectedFilter}
-          onDepartmentClick={handleDepartmentClick}
-          onServiceClick={(service) => handleServiceClick(service, false)}
-        />
-      )}
+    {currentView === 'polHome' && (
+  <PolHomePage
+  departments={polDepartments}
+  services={polServices}
+  selectedFilter={selectedFilter}
+  onDepartmentClick={handleDepartmentClick}
+  onServiceClick={(service) => handleServiceClick(service, false)}
+/>
+)}
 
     </div>
   );
