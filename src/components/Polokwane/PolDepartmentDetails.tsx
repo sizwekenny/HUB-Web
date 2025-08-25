@@ -9,7 +9,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { Department } from '../../types';
-import Footer from './PolFooter';
+import Footer from '../Polokwane/PolFooter';
 
 interface DepartmentDetailsProps {
   department: Department;
@@ -28,9 +28,6 @@ const DepartmentDetails: React.FC<DepartmentDetailsProps> = ({ department, onBac
   const getDepartmentIcon = (departmentId: string) => {
     switch (departmentId) {
       case 'cs': return Monitor;
-      case 'cse': return Cpu;
-      case 'informatics': return Database;
-      case 'it': return Globe;
       default: return BookOpen;
     }
   };
