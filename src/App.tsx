@@ -12,7 +12,7 @@ import EmaHomePage from './components/Emalahleni/EmaHomePage';
 import EmaDepartmentDetails from './components/Emalahleni/EmaDepartmentDetails';
 import EmaNavigation from './components/Emalahleni/EmaNavigation';
 import EmaServiceDetails from './components/Emalahleni/EmaServiceDetails';
-import EmaUserManual from './components/Emalahleni/EmaUserManual';
+import EmaUserManual from './components/Emalahleni/emaUserManual';
 import PolHomePage from './components/Polokwane/PolHomePage';
 import PolDepartmentDetails from './components/Polokwane/PolDepartmentDetails';
 import PolServiceDetails from './components/Polokwane/PolServiceDetails';
