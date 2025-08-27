@@ -313,36 +313,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 		return Math.random().toString(36).slice(2, 11);
 	};
 
-	// Fetch news from backend (with fallback to local store) when filters or tab change
+	// Reusable backend fetch + normalization (direct axios to /api/News/getAllNews)
+	const fetchAndNormalizeNews = async (): Promise<NewsItem[]> => {
+		const res = await axios.get(`/api/News/getAllNews`);
+		const raw = Array.isArray(res.data) ? res.data : [];
+		const campusIdToSlug: Record<number,string> = {1:'south',2:'emalahleni',3:'polokwane'};
+		let list: NewsItem[] = raw.map((n:any) => ({
+			id: (n.newsId ?? n.id ?? genId()).toString(),
+			title: n.newsTitle ?? n.title ?? '',
+			summary: n.newsDescription ?? n.description ?? n.summary ?? '',
+			content: n.newsDescription ?? n.description ?? n.content ?? '',
+			category: n.category ?? 'Announcement',
+			priority: n.priority ?? 'medium',
+			campus: (campusIdToSlug[Number(n.campusId)] ?? n.campus ?? 'south') as NewsItem['campus'],
+			department: n.department ?? undefined,
+			date: n.createdAt ?? n.date ?? new Date().toISOString(),
+			isVisible: n.isVisible !== false,
+			isUrgent: n.isUrgent || false
+		})).filter(n => n.title.trim());
+		return list;
+	};
+
+	// Fetch news (overview + news tabs)
 	useEffect(() => {
 		if (activeTab !== 'news' && activeTab !== 'overview') return;
-		const fetchNews = async () => {
+		let cancelled = false;
+		(async () => {
 			setNewsLoading(true); setNewsError('');
 			try {
-				const res = await http.get(`/news/getAllNews`);
-				let raw = Array.isArray(res.data) ? res.data : [];
-				// Normalize backend DTO -> UI NewsItem
-				const campusIdToSlug: Record<number,string> = {1:'south',2:'emalahleni',3:'polokwane',4:'all'};
-				let list: NewsItem[] = raw.map((n:any) => ({
-					id: (n.newsId ?? n.id ?? genId()).toString(),
-					title: n.title ?? '',
-					summary: n.description ?? n.summary ?? '',
-					content: n.description ?? n.content ?? '',
-					category: n.category ?? 'Announcement',
-					priority: n.priority ?? 'medium',
-					campus: n.campus ?? campusIdToSlug[Number(n.campusId)] ?? 'all',
-					department: n.department ?? undefined,
-					date: n.createdAt ?? n.date ?? new Date().toISOString(),
-					isVisible: n.isVisible !== false,
-					isUrgent: n.isUrgent || false
-				})).filter(n => n.title); // filter out any completely empty rows
-				// Client-side campus filtering (tolerate different representations)
+				let list = await fetchAndNormalizeNews();
 				if (newsCampusFilter !== 'all') {
-					const campusMap: Record<string, (string|number)[]> = {
-						south: ['south', 1, '1'],
-						emalahleni: ['emalahleni', 2, '2'],
-						polokwane: ['polokwane', 3, '3']
-					};
+					const campusMap: Record<string,(string|number)[]> = { south:['south',1,'1'], emalahleni:['emalahleni',2,'2'], polokwane:['polokwane',3,'3'] };
 					const allowed = campusMap[newsCampusFilter] || [newsCampusFilter];
 					list = list.filter(n => allowed.includes((n as any).campus));
 				}
@@ -350,23 +351,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 					const q = newsSearch.toLowerCase();
 					list = list.filter(n => n.title?.toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q));
 				}
-				setNewsItems(list.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime()));
+				if (!cancelled) setNewsItems(list.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime()));
 			} catch (err:any) {
 				const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter;
 				const fallback = newsStore.list(campus, newsSearch);
-				// Preserve existing server-fetched items so we don't lose them when a single refresh fails.
-				setNewsItems(prev => {
-					if (prev.length === 0) return fallback;
-					// merge by id (fallback/new locally created items may include new ones)
-					const map = new Map<string,NewsItem>();
-					prev.forEach(n => map.set(n.id, n));
-					fallback.forEach(n => { if (!map.has(n.id)) map.set(n.id, n); });
-					return Array.from(map.values());
-				});
-				setNewsError(err?.message || 'Using cached data (fetch failed).');
-			} finally { setNewsLoading(false); }
-		};
-		fetchNews();
+				if (!cancelled) {
+					setNewsItems(prev => {
+						if (prev.length === 0) return fallback;
+						const map = new Map<string,NewsItem>();
+						prev.forEach(n => map.set(n.id, n));
+						fallback.forEach(n => { if (!map.has(n.id)) map.set(n.id, n); });
+						return Array.from(map.values());
+					});
+					setNewsError(err?.message || 'Using cached data (fetch failed).');
+				}
+			} finally { if (!cancelled) setNewsLoading(false); }
+		})();
+		return () => { cancelled = true; };
 	}, [newsCampusFilter, newsSearch, activeTab]);
 	useEffect(() => { if (activeTab === 'services') refreshServices(); }, [activeTab, serviceSearch, serviceCategoryFilter]);
 	const refreshServices = () => { let list = serviceStore.list(serviceCategoryFilter === 'All' ? undefined : serviceCategoryFilter); if (serviceSearch) list = list.filter(s => s.title.toLowerCase().includes(serviceSearch.toLowerCase()) || s.description.toLowerCase().includes(serviceSearch.toLowerCase())); setServices(list); };
@@ -379,33 +380,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 	const refreshNews = async () => {
 		setNewsLoading(true); setNewsError('');
 		try {
-			const res = await http.get(`/news/getAllNews`);
-			let raw = Array.isArray(res.data) ? res.data : [];
-			const campusIdToSlug: Record<number,string> = {1:'south',2:'emalahleni',3:'polokwane',4:'all'};
-			let list: NewsItem[] = raw.map((n:any) => ({
-				id: (n.newsId ?? n.id ?? genId()).toString(),
-				title: n.title ?? '',
-				summary: n.description ?? n.summary ?? '',
-				content: n.description ?? n.content ?? '',
-				category: n.category ?? 'Announcement',
-				priority: n.priority ?? 'medium',
-				campus: n.campus ?? campusIdToSlug[Number(n.campusId)] ?? 'all',
-				department: n.department ?? undefined,
-				date: n.createdAt ?? n.date ?? new Date().toISOString(),
-				isVisible: n.isVisible !== false,
-				isUrgent: n.isUrgent || false
-			})).filter(n => n.title);
+			let list = await fetchAndNormalizeNews();
 			if (newsCampusFilter !== 'all') {
-				const campusMap: Record<string, (string|number)[]> = {
-					south: ['south', 1, '1'],
-					emalahleni: ['emalahleni', 2, '2'],
-					polokwane: ['polokwane', 3, '3']
-				};
+				const campusMap: Record<string,(string|number)[]> = { south:['south',1,'1'], emalahleni:['emalahleni',2,'2'], polokwane:['polokwane',3,'3'] };
 				const allowed = campusMap[newsCampusFilter] || [newsCampusFilter];
 				list = list.filter(n => allowed.includes((n as any).campus));
 			}
 			if (newsSearch) {
-				const q = newsSearch.toLowerCase(); list = list.filter(n => n.title?.toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q));
+				const q = newsSearch.toLowerCase();
+				list = list.filter(n => n.title?.toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q));
 			}
 			setNewsItems(list.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime()));
 		} catch (err:any) {
