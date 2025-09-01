@@ -42,10 +42,10 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
   const getServiceSteps = (serviceId: string) => {
     if (service.steps && service.steps.length) return service.steps;
     const steps: Record<string, string[]> = {
-      'mark-enquiries': [
+      'pol-mark-enquiries': [
         'Contact your Academic Department directly for all Marks and predicate enquiries ',
       ],
-      'academic-exclusions': [
+      'pol-academic-exclusions': [
         'Refer to the ITS notification',
         'Apply for an appeal against exclusion via EC (Electronic Campus)',
         'Receive outcome via SASO electronically',
@@ -57,7 +57,7 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
         'Coming Soon',
         'comming Soon'
       ],
-      'change-of-course': [
+      'pol-change-of-course': [
         'Confirm you were registered the previous academic year',
         'Apply via EC (Electronic Campus) during October/November',
         'Wait for approval email',
@@ -70,33 +70,33 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
         'Coming Soon',
         'comming Soon',
       ],
-      'pol-NO WALK-INS Policy': [
+      'pol-nO WALK-INS Policy': [
         'NO HUMANITIES ENQUIRIES at ICT Faculty offices',
         'Do not ask staff to screen grade 12 certificate',
         'Must apply online only',
         'Check www.tut.ac.za daily for available courses',
       ],
-      'pol-Intercampus Transfers': [
+      'pol-intercampus Transfers': [
         'Must be registered Computer Science Student',
         'Apply via EC (electronic Campus)',
         'Available end of October to mid-November only',
         'One intake per year only',
       ],
-      'pol-Re-admission': [
+      'pol-re-admission': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon',
       ],
-      'pol-Special & Exit Examinations': [
+      'pol-special & Exit Examinations': [
         'Visit Examination Administration Office for all enquiries',
       ],
-      'pol-Probation': ['Refer to ITS notification', 'Sign probation form via SASO electronically'],
-      'pol-Other Admission Enquiries': [
+      'pol-probation': ['Refer to ITS notification', 'Sign probation form via SASO electronically'],
+      'pol-other Admission Enquiries': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon'
       ],
-      'pol-Residence Administration': [
+      'pol-residence Administration': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon'
@@ -107,22 +107,28 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
         'comming Soon'
         
       ],
-      'pol-Recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
+      'pol-recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
       'pol-admissions': ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
       'pol-timetables': ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
       'pol-financial-exclusion': ['Refer to ITS notification', 'Visits Mr Lebelo at Students Accounts'],
 
       'pol-WIL For Compuer Science': [
+        'Download WIL and Re-admission forms from EC and complete them.',
+        'Send the placement letter along with the completed forms to the WIL manager (TS Rankoana ,RankoanaTS@tut.ac.za)',
+        'The manager will process the forms and send them back, for the student to proceed with WIL registration.',
+        'Take the forms and placement letter to the registration office (BLD 1)',
+        'Send the proof of registration from the registration office back to the manager.',
+        'The manager assigns the student a WIL Coordinator.',
+        'Proceed to MY WIL PORTAL and register (refer to the student user manual guide on MYTutor).)  ',
+        'The manager will approve your registration.',
+        
+      ],
+       'pol-mentorship': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon',
       ],
-       'pol-Mentorship': [
-        'Coming Soon',
-        'Coming Soon',
-        'comming Soon',
-      ],
-      'pol-Tutoring': [
+      'pol-tutoring': [
         'Coming Soon',
         'Coming Soon',
         'comming Soon',

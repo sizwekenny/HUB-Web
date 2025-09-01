@@ -68,8 +68,8 @@ const emaDepartments: Department[] = [
     codes: ['DPMCF0', 'DPMC20', 'ADMC20',],
     description: 'Comprehensive computer science programs.',
     buildingNumber: 'BUILDING 14',
-    email: 'NONe',
-    contactNumber: 'NONE'
+    email: 'MakhubelaJK@tut.ac.za',
+    contactNumber: 'Not Available yet'
   },
 
 ];
@@ -80,9 +80,9 @@ const polDepartments: Department[] = [
     name: 'Computer Science',
     codes: ['DPMCF0', 'DPMC20', 'ADMC20',],
     description: 'Comprehensive computer science programs.',
-    buildingNumber: 'none',
-    email: 'NONe',
-    contactNumber: 'NONE'
+    buildingNumber: 'BUILDING 1-G247',
+    email: 'RankoanaTS@tut.ac.za',
+    contactNumber: 'Not Available yet'
   },
 
 ];
@@ -100,6 +100,148 @@ const polServices: Service[] = [
     category: 'Senior Students',
     description: 'Access to Polokwane ICT labs and resources.',
     details: 'Lab opening hours, resources and booking process.'
+  },
+   {
+    id: 'pol-mark-enquiries',
+    title: 'Mark Enquiries/Predicate Enquiries',
+    category: 'Senior Students',
+    description: 'Get assistance with mark-related queries and academic predicates.',
+    details: 'Get assistance with marks and predicate enquiries.',
+    statusLink: 'https://os.tut.ac.za/ExamsLegacy/'
+  },
+  {
+    id: 'pol-academic-exclusions',
+    title: 'Academic Exclusions',
+    category: 'Senior Students',
+    description: 'Information and appeals process for academic exclusions.',
+    details: `Appeal process and information for academic exclusions.`,
+    statusLink: 'https://ec.tut.ac.za/'
+  },
+  {
+    id: 'pol-financial-exclusion',
+    title: 'Financial Exclusion',
+    category: 'Senior Students',
+    description: 'Assistance with financial exclusion matters.',
+    details: 'Resolve financial exclusion issues. ',
+    statusLink: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login'
+  },
+  {
+    id: 'pol-change-of-course',
+    title: 'Change of Course',
+    category: 'Senior Students',
+    description: 'Process for changing your academic course (not admission related).',
+    details: 'Change your course if you were registered the previous year.',
+    statusLink: 'https://ec.tut.ac.za/'
+  },
+  {
+    id: 'pol-admissions',
+    title: 'Admissions',
+    category: 'Newcomer Students',
+    description: 'Information about application processes and deadlines.',
+    details: 'Application information and deadlines.',
+    statusLink: 'https://applications-prod.tut.ac.za/'
+  },
+  {
+    id: 'pol-bursaries',
+    title: 'Bursaries',
+    category: 'All Students',
+    description: 'Financial assistance and bursary information.',
+    details: 'Financial assistance and bursary information.'
+  },
+  {
+    id: 'pol-timetables',
+    title: 'Class & Test Timetables',
+    category: 'All Students',
+    description: 'Access your class and test schedules.',
+    details: 'Get your class and test schedules.',
+    statusLink: 'https://www.tut.ac.za/timetables'
+  },
+  {
+    id: 'pol-nO WALK-INS Policy',
+    title: 'NO WALK-INS Policy',
+    category: 'Newcomer Students',
+    description: 'Important policy for new applicants.',
+    details: 'Important policy for new applicants.',
+    statusLink: 'https://applications-prod.tut.ac.za/'
+  },
+  {
+    id: 'pol-ntercampus Transfers',
+    title: 'Intercampus Transfers',
+    category: 'Senior Students',
+    description: 'Transfers between TUT campuses (Computer Science students only)',
+    details: 'Transfers between TUT campuses (Computer Science students only)',
+    statusLink: 'https://ec.tut.ac.za/'
+  },
+  {
+    id: 'pol-re-admission',
+    title: 'Re-admission',
+    category: 'Senior Students',
+    description: 'Re-admission after break in studies or exclusion.',
+    details: 'Re-admission after break in studies or exclusion.',
+    statusLink: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login'
+  },
+  {
+    id: 'pol-pecial & Exit Examinations',
+    title: 'Special & Exit Examinations',
+    category: 'Senior Students',
+    description: 'Apply for special or exit examinations',
+    details: 'Apply for special or exit examinations',
+    statusLink: 'https://www.tut.ac.za/exit-examination'
+  },
+  {
+    id: 'pol-probation',
+    title: 'Probation',
+    category: 'Senior Students',
+    description: 'Handle probation notifications and requirements',
+    details: 'Handle probation notifications and requirementss'
+  },
+  {
+    id: 'pol-ther Admission Enquiries',
+    title: 'Other Admission Enquiries',
+    category: 'Newcomer Students',
+    description: 'Get help with application status, documentation, and campus changes.',
+    details: 'Get help with application status, documentation, and campus changes.'
+  },
+  {
+    id: 'pol-esidence Administration',
+    title: 'Residence Administration',
+    category: 'All Students',
+    description: 'Student accommodation and residence matters.',
+    details: 'Student accommodation and residence matters.'
+  },
+  {
+    id: 'pol-recognition / Examption (CAT)',
+    title: 'Recognition / Examption (CAT)',
+    category: 'All Students',
+    description: 'Get Accumulation and Transfer for previous qualifications',
+    details: 'Get Accumulation and Transfer for previous qualifications'
+
+  }
+  ,
+  {
+    id: 'pol-WIL For Compuer Science',
+    title: 'WIL For Compuer Science',
+    category: 'Senior Students',
+    description: 'Get your WIL placement and requirements.',
+    details: 'Student must have completed all their theory modules and must be in their final year of study.Student is responsible for finding WIL Placement (First get a WIL letter/recommendation letter from the department) and After finding placement, get an employee/placement letter from the organization/company in which you’re placed.',
+    statusLink: 'https://wil.tut.ac.za/'
+  }
+  ,
+  {
+    id: 'pol-mentorship',
+    title: 'Mentorship program',
+    category: 'All Students',
+    description: 'Mentorship program for guidance and support.',
+    details: 'Mentorship program for guidance and support.'
+
+  },
+  {
+    id: 'pol-tutoring',
+    title: 'Tutoring program',
+    category: 'All Students',
+    description: 'Tutoring program for academic support.',
+    details: 'Tutoring program for academic support.'
+
   }
 ];
 const services: Service[] = [
@@ -261,6 +403,23 @@ const services: Service[] = [
     details: 'Tutoring program for academic support.'
 
   }
+  ,
+  {
+    id: 'WIL For Informatics',
+    title: 'WIL For Informatics',
+    category: 'Senior Students',
+    description: 'Get your WIL placement and requirements.',
+    details: 'Get your WIL placement and requirements.'
+
+  },
+  {
+    id: 'WIL For Information Technology',
+    title: 'WIL For Information Technology',
+    category: 'Senior Students',
+    description: 'Get your WIL placement and requirements.',
+    details: 'Get your WIL placement and requirements.'
+
+  }
 ];
 
 const emaServices: Service[] = [
@@ -395,6 +554,13 @@ const emaServices: Service[] = [
     description: 'Get Accumulation and Transfer for previous qualifications',
     details: 'Get Accumulation and Transfer for previous qualifications'
 
+  },
+  {
+    id: 'WIL For Compuer Science',
+    title: 'WIL For Compuer Science',
+    category: 'Senior Students',
+    description: 'Get your WIL placement and requirements.',
+    details: 'Student must have completed all their theory modules and must be in their final year of study.Student is responsible for finding WIL Placement (First get a WIL letter/recommendation letter from the department) and After finding placement, get an employee/placement letter from the organization/company in which you’re placed.'
   }
 ];
 function App() {
@@ -403,14 +569,14 @@ function App() {
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'senior' | 'newcomer'>('all');
-  const [isEmaService, setIsEmaService] = useState(false); // Flag for Emalahleni services
-  // Removed unused manualSource state after refactor
+  const [isEmaService, setIsEmaService] = useState(false); 
+
 
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Map view -> route path for persistent pages
+
   const viewPath: Record<string,string> = {
     landing: '/',
     home: '/home',
@@ -438,7 +604,6 @@ function App() {
     setCurrentView(isEma ? 'emaService' : 'service');
   };
 
-  // Removed unused handleNavigate (navigation handled inline via setCurrentView)
 
   const handleBackToHome = () => {
     updateView('home');

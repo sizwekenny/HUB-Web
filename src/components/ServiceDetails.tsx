@@ -111,14 +111,19 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         
       ],
       'Recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
-      admissions: ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
-      timetables: ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
+      'admissions': ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
+      'timetables': ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
       'financial-exclusion': ['Refer to ITS notification', 'Visits Mr Lebelo at Students Accounts'],
 
       'WIL For Compuer Science': [
-        'Coming Soon',
-        'Coming Soon',
-        'comming Soon',
+        'Download WIL and Re-admission forms from EC and complete them.',
+        'Send the placement letter along with the completed forms to the WIL manager (V.Memani ,MemaniV@tut.ac.za)',
+        'The manager will process the forms and send them back, for the student to proceed with WIL registration.',
+        'Take the forms and placement letter to the registration office(one stop,BLD 7)',
+        'Send the proof of registration from one stop  back to the manager.',
+        'The manager assigns the student a WIL Coordinator.',
+        'Proceed to MY WIL PORTAL and register (refer to the student user manual guide on MYTutor).) https://wil.tut.ac.za/ ',
+        'The manager will approve your registration.',
       ],
        'Mentorship': [
         'Coming Soon',
@@ -130,6 +135,18 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Coming Soon',
         'comming Soon',
       ],
+      'WIL For Informatics': [
+        'Send the placement letter along with the latest academic record to your WIL coordinator (DD Malebana, malebanadd@tut.ac.za)',
+        'The WIL Coordinator will provide you with WIL and Re-admission forms which you must complete (note: use a desktop when filling these forms because mobile just duplicates the details on the forms.)',
+        'Step 2	Send the filled-out forms back to your WIL coordinator for them to sign and after they will send them back to you.',
+        'After receiving the forms back from the WIL coordinator, Take the forms and placement letter to the registration office (one stop,BLD 7 GO5)',
+        'Step 4	After registration has been completed send a pdf of the proof of registration to your WIL coordinator via email so they can allow to register on myWIL Portal(OLUMS).',
+        'After that go to https://wil.tut.ac.za/ and register (Refer to the student user manual guide on MYTutor).',
+        'The WIL Coordinator will approve your registration',
+      
+      ]
+
+      
     };
   return steps[serviceId] || [];
   };
@@ -137,16 +154,16 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
   const steps = getServiceSteps(service.id);
 
   const markStepComplete = (stepIndex: number) => {
-    // If already completed, do nothing here — unmarking handled separately
+    
     if (!completedSteps.includes(stepIndex)) {
-      // Only allow marking step if it is the next in order or any previous (optional, if you want strict order)
-      // But here just add it for simplicity
+
+ 
       setCompletedSteps([...completedSteps, stepIndex].sort((a, b) => a - b));
     }
   };
 
   const unmarkStepComplete = (stepIndex: number) => {
-    // Only allow unmark if stepIndex is the highest completed step
+   
     if (
       completedSteps.length > 0 &&
       stepIndex === Math.max(...completedSteps)

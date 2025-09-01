@@ -106,9 +106,19 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         
       ],
       'Recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
-      admissions: ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
-      timetables: ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
+      'admissions': ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
+      'timetables': ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
       'financial-exclusion': ['coming soon',],
+      'WIL For Compuer Science': [
+        'Download WIL and Re-admission forms from EC and complete them.',
+        'Send the placement letter along with the completed forms to the WIL manager (JK Makhubela, MakhubelaJK@tut.ac.za)',
+        'The manager will process the forms and send them back, for the student to proceed with WIL registration.',
+        'Take the forms and placement letter to the registration office (BLD 7)',
+        'Send the proof of registration from the registration office back to the manager.',
+        'The manager assigns the student a WIL Coordinator.',
+        'Proceed to MY WIL PORTAL and register (refer to the student user manual guide on MYTutor).) https://wil.tut.ac.za/ ',
+        'Step 8	The manager will approve your registration.',
+      ],
     };
     return steps[serviceId] || [];
   };
