@@ -22,11 +22,11 @@ import {
 import { adminStore } from '../../utils/adminStore';
 import { newsStore } from '../../utils/newsStore'; // kept only as a fallback if API fails
 // Using direct axios calls (consistent with AdminLogin pattern)
-import { http } from '../../utils/http';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { NewsItem, Service } from '../../types';
 import { serviceStore } from '../../utils/serviceStore';
+// (Slideshow moved to AdminLogin per request)
 
 interface AdminDashboardProps {
 	onLogout: () => void;
@@ -86,7 +86,6 @@ const AdminUserManagement: React.FC = () => {
 		if (!validateForm()) return;
 		setIsSubmitting(true);
 		try {
-			// Use direct axios call to backend via Vite proxy (/api prefix) as requested
 			await axios.post(`/api/admin/addAdmin`, {
 				initials: newAdmin.initials,
 				surname: newAdmin.surname,
@@ -260,7 +259,7 @@ const AdminUserManagement: React.FC = () => {
 					</div>
 				</div>
 			)}
-		</div>
+    </div>
 	);
 };
 
@@ -339,7 +338,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 			campus: (campusIdToSlug[Number(n.campusId)] ?? n.campus ?? 'south') as NewsItem['campus'],
 			department: n.department ?? undefined,
 			date: n.createdAt ?? n.date ?? new Date().toISOString(),
-			isVisible: n.isVisible !== false,
+			// Backend default for isVisible is false; map explicitly to boolean
+			isVisible: !!n.isVisible,
 			isUrgent: n.isUrgent || false
 		})).filter(n => n.title.trim());
 		return list;
@@ -553,21 +553,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	}, [showDeleteDialog, newsSearch]);
 
 	const handleToggleNewsVisibility = async (id: string) => {
-		// Visibility not explicitly supported by backend spec; send update with toggled flag
-		const target = newsItems.find(n => n.id === id) || newsStore.get(id);
-		if (!target) return;
-		const newVisible = target.isVisible === false; // toggle
-		setNewsLoading(true);
+		const idx = newsItems.findIndex(n => n.id === id);
+		if (idx === -1) return;
+		const current = newsItems[idx];
+		const updated = { ...current, isVisible: !current.isVisible };
+		// Optimistic UI
+		setNewsItems(prev => {
+			const clone = [...prev];
+			clone[idx] = updated;
+			return clone;
+		});
 		try {
-			await http.put(`/news/updateNews`, { ...target, isVisible: newVisible });
-			await refreshNews();
-			navigate('/admin/dashboard');
-		} catch {
-			// fallback local
-			newsStore.toggleVisibility(id);
-			const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch));
+			// Call new backend toggle endpoint (it infers new state server-side)
+			await axios.put(`/api/News/updateAvailability`, {}, { params: { NewsId: Number(id) } });
+		} catch (err) {
+			// Revert on failure
+			setNewsItems(prev => {
+				const clone = [...prev];
+				clone[idx] = current;
+				return clone;
+			});
 		}
-		setNewsLoading(false);
 	};
 
 	// Logout confirmation

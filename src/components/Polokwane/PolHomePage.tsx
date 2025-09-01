@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { Department, Service, NewsItem } from '../../types';
 import { newsStore } from '../../utils/newsStore';
+import axios from 'axios';
+import { mapBackendNewsArray } from '../../utils/newsMapper';
 import Chatbot from '../Chatbot';
 
 interface HomePageProps {
@@ -61,12 +63,27 @@ const HomePage: React.FC<HomePageProps> = ({
 
   useEffect(() => {
     setIsLoaded(true);
-    // initial load of south campus + global
-    setLatestNews(newsStore.list('south'));
-    const interval = setInterval(()=>{
-      setLatestNews(newsStore.list('south'));
-    }, 30000); // refresh every 30s for demo
-    return ()=> clearInterval(interval);
+    let cancel = false;
+    const campusId = 3; // Polokwane campus
+    const fetchCampusNews = async () => {
+      try {
+        let data: any[] = [];
+        try {
+          const res = await axios.get('/api/News/getNewsByCampus', { params: { CampusId: campusId } });
+          if (Array.isArray(res.data)) data = res.data; else if (res.data?.items) data = res.data.items;
+        } catch (campusErr:any) {
+          const resAll = await axios.get('/api/News/getAllNews');
+          data = Array.isArray(resAll.data) ? resAll.data : [];
+        }
+        const mapped = mapBackendNewsArray(data, 'polokwane');
+        if (!cancel) setLatestNews(mapped);
+      } catch (err) {
+        if (!cancel) setLatestNews(newsStore.list('polokwane').filter(n => n.isVisible !== false));
+      }
+    };
+    fetchCampusNews();
+    const interval = setInterval(fetchCampusNews, 60000);
+    return () => { cancel = true; clearInterval(interval); };
   }, []);
 
   // Close modal on Escape key press and handle body scroll
@@ -147,7 +164,7 @@ const filteredServices = selectedFilter === 'all'
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-              FoICT(Polokwame Campus)
+              FoICT(Polokwane Campus)
               {/* <span className="block text-yellow-400">Information Hub</span> */}
             </h1>
             <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
@@ -200,7 +217,7 @@ const filteredServices = selectedFilter === 'all'
             
             <div className="flex animate-scroll space-x-8 pb-4 hover:animation-play-state-paused">
               {/* Duplicate the news array to create infinite scroll effect */}
-              {[...latestNews, ...latestNews].map((news, index) => {
+              {(latestNews.length > 3 ? [...latestNews, ...latestNews] : latestNews).map((news, index) => {
               const getCategoryIcon = (category: string) => {
                 switch (category) {
                   case 'Registration': return FileText;
@@ -238,9 +255,9 @@ const filteredServices = selectedFilter === 'all'
 
               return (
                 <div
-                  key={`${news.id}-${Math.floor(index / latestNews.length)}`}
+                  key={`${news.id}-${latestNews.length > 0 ? Math.floor(index / latestNews.length) : 0}`}
                   className={`group bg-white rounded-xl transform transition-all duration-500 hover:scale-125 hover:z-20 cursor-pointer overflow-hidden flex-shrink-0 w-96 h-64 shadow-lg hover:shadow-2xl hover:shadow-blue-500/20 ${getPriorityStyle(news.priority)} ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
-                  style={{ transitionDelay: `${(index % latestNews.length) * 150}ms` }}
+                  style={{ transitionDelay: `${latestNews.length > 0 ? (index % latestNews.length) * 150 : 0}ms` }}
                   onClick={() => setSelectedNews(news)}
                 >
                   <div className="p-6 h-full flex flex-col">
