@@ -5,7 +5,6 @@ import {
 	Settings,
 	BarChart3,
 	LogOut,
-	Home,
 	Plus,
 	Edit,
 	Trash2,
@@ -265,7 +264,7 @@ const AdminUserManagement: React.FC = () => {
 	);
 };
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome: _onBackToHome }) => {
 	const [activeTab, setActiveTab] = useState('overview');
 	const navigate = useNavigate();
 	const stats = [
@@ -295,6 +294,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 	const [editingService, setEditingService] = useState<Service | null>(null);
 	const [serviceForm, setServiceForm] = useState<Omit<Service, 'id'>>({ title: '', category: 'All Students', description: '', details: '', statusLink: '', steps: [] });
 	const [newStep, setNewStep] = useState('');
+
+	// Delete news modal + toast
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [deleteTarget, setDeleteTarget] = useState<NewsItem | null>(null);
+	const [deletePassword, setDeletePassword] = useState('');
+	const [deleteLoading, setDeleteLoading] = useState(false);
+	const [deleteError, setDeleteError] = useState('');
+	const [toast, setToast] = useState<{ id:number; type:'success'|'error'; message:string; detail?:string }|null>(null);
+	const pushToast = (type:'success'|'error', message:string, detail?:string) => {
+		const id = Date.now();
+		setToast({ id, type, message, detail });
+	};
 	const blankNews: Omit<NewsItem, 'id' | 'date'> = { title: '', summary: '', content: '', category: 'Announcement', priority: 'medium', campus: 'south', department: '' } as any;
 	const [newsForm, setNewsForm] = useState<Omit<NewsItem, 'id' | 'date'>>(blankNews);
 	const [selectedCampuses, setSelectedCampuses] = useState<string[]>([]); // for multi-campus create
@@ -410,75 +421,91 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 		if (!editingNews && selectedCampuses.length === 0) return; // need at least one campus when creating
 		setNewsLoading(true); setNewsError('');
 		try {
-			if (editingNews) {
-				// Backend Priority enum values are lowercase (high, medium, low) per News.cs
-				await http.put(`/news/updateNews`, { ...editingNews, ...newsForm, id: editingNews.id });
-			} else {
-				// We must include AdminId (int) for persistence; derive from stored numeric id or login payload
-				let adminId: number | undefined;
-				const stored = sessionStorage.getItem('adminNumericId');
-				if (stored) { const n = Number(stored); if (!Number.isNaN(n)) adminId = n; }
-				if (!adminId) {
-					const currentAdmin = sessionStorage.getItem('currentAdmin');
-					if (currentAdmin) {
-						try { const parsed = JSON.parse(currentAdmin); const possible = [parsed.adminId, parsed.AdminId, parsed.id, parsed.Id]; for (const v of possible){ const n = Number(v); if (!Number.isNaN(n)) { adminId = n; break; } } } catch {}
-					}
+			// Resolve adminId (required by backend create endpoint)
+			let adminId: number | undefined;
+			const stored = sessionStorage.getItem('adminNumericId');
+			if (stored) { const n = Number(stored); if (!Number.isNaN(n)) adminId = n; }
+			if (!adminId) {
+				const currentAdmin = sessionStorage.getItem('currentAdmin');
+				if (currentAdmin) {
+					try { const parsed = JSON.parse(currentAdmin); const possible = [parsed.adminId, parsed.AdminId, parsed.id, parsed.Id]; for (const v of possible){ const n = Number(v); if (!Number.isNaN(n)) { adminId = n; break; } } } catch {}
 				}
-				if (!adminId) throw new Error('Missing AdminId: cannot persist news. Please re-login.');
-				for (const camp of selectedCampuses) {
+			}
+			if (!editingNews && !adminId) throw new Error('Missing AdminId: please re-login.');
+
+			if (editingNews) {
+				// PUT /api/News/updateNews expects all fields as query params + optional formFile (multipart)
+				try {
 					const campusMap: Record<string, number> = { south: 1, emalahleni: 2, polokwane: 3 };
-					const campusId = campusMap[camp];
-					const file = (newsForm as any).file as File | undefined;
+					const campusKey = (editingNews.campus || newsForm.campus || 'south') as keyof typeof campusMap;
+					const campusId = campusMap[campusKey] || 1;
 					const params = {
-						AdminId: adminId,
+						NewsId: Number(editingNews.id),
 						Title: newsForm.title,
 						Description: newsForm.summary || '',
-						Priority: newsForm.priority, // already lower-case from select
+						Priority: newsForm.priority,
 						Category: newsForm.category,
-						CampusId: campusId,
-						...(newsForm.department ? { Department: newsForm.department } : {})
+						CampusId: campusId
 					};
-					try {
-							if (file) {
-								// JSON + file together won't bind; send multipart with params
-								const fd = new FormData();
-								fd.append('FormFile', file);
-								console.debug('Creating news (multipart with file)', params);
-								await axios.post(`/api/news/createNews`, fd, { params });
-							} else {
-								// Try pure JSON body first (model binder should map CreateNewsDTO properties)
-								console.debug('Creating news (JSON body)', params);
-								await axios.post(`/api/news/createNews`, params, { headers: { 'Content-Type': 'application/json' } });
-							}
-						await refreshNews();
-					} catch (inner:any) {
-						// Retry alternate encoding if first attempt fails (e.g., backend strictly requires multipart)
-						if (!file) {
-							try {
-								const fd = new FormData(); // send empty multipart without file
-									Object.entries(params).forEach(([k,v]) => fd.append(k, String(v)));
-									console.debug('Retry create news as multipart (fields + no file)', params);
-									await axios.post(`/api/news/createNews`, fd);
-								await refreshNews();
-								continue; // next campus
-							} catch (retryErr:any) {
-								console.error('Create news retry failed', retryErr?.response?.status, retryErr?.response?.data || retryErr?.message);
-								throw retryErr;
-							}
-						}
-						console.error('Create news failed', inner?.response?.status, inner?.response?.data || inner?.message);
-						throw inner;
+					const file = (newsForm as any).file as File | undefined;
+					if (file) {
+						const fd = new FormData();
+						fd.append('formFile', file); // name per swagger (case-insensitive usually)
+						await axios.put(`/api/News/updateNews`, fd, { params });
+					} else {
+						// No file: send empty body with query params
+						await axios.put(`/api/News/updateNews`, {}, { params });
 					}
+				} catch (updateErr:any) {
+					console.error('Update news failed', updateErr?.response?.status, updateErr?.response?.data || updateErr?.message);
+					// fallback to legacy/local update so UI remains responsive
+					newsStore.update(editingNews.id, newsForm as any);
+				}
+			} else {
+				// Multi-campus create in a single request if backend supports CampusIds[], else fallback to first
+				const campusMap: Record<string, number> = { south: 1, emalahleni: 2, polokwane: 3 };
+				const campusIds = selectedCampuses.map(c => campusMap[c]).filter(Boolean);
+				const file = (newsForm as any).file as File | undefined;
+				const baseParams: any = {
+					AdminId: adminId!,
+					Title: newsForm.title,
+					Description: newsForm.summary || '',
+					Priority: newsForm.priority,
+					Category: newsForm.category,
+					CampusIds: campusIds,
+					...(newsForm.department ? { Department: newsForm.department } : {})
+				};
+				// Serialize arrays as repeated query params (?CampusIds=1&CampusIds=2)
+				const paramsSerializer = (p:any) => {
+					const usp = new URLSearchParams();
+					Object.entries(p).forEach(([k,v]) => {
+						if (Array.isArray(v)) v.forEach(val => usp.append(k, String(val)));
+						else if (v !== undefined && v !== null) usp.append(k, String(v));
+					});
+					return usp.toString();
+				};
+				try {
+					if (file) {
+						const fd = new FormData();
+						fd.append('FormFile', file);
+						await axios.post(`/api/News/createNews`, fd, { params: baseParams, paramsSerializer });
+					} else {
+						// Empty body; backend binds from query params
+						await axios.post(`/api/News/createNews`, {}, { params: baseParams, paramsSerializer });
+					}
+				} catch (createErr:any) {
+					console.error('Create news failed', createErr?.response?.status, createErr?.response?.data || createErr?.message);
+					throw createErr;
 				}
 			}
 			setShowNewsForm(false); setEditingNews(null); setNewsForm(blankNews); setSelectedCampuses([]);
+			pushToast('success', editingNews ? 'News updated' : 'News created', editingNews ? 'Changes saved successfully.' : 'New item added successfully.');
 			navigate('/admin/dashboard');
 			await refreshNews();
+			setNewsSearch(''); // clear search bar after delete
 		} catch (err:any) {
-			// fallback to local mutation
-			if (editingNews) newsStore.update(editingNews.id, newsForm); else {
-				selectedCampuses.forEach(c => newsStore.create({ ...newsForm, campus: c as any }));
-			}
+			// fallback to local mutation if offline/failed
+			if (editingNews) newsStore.update(editingNews.id, newsForm); else selectedCampuses.forEach(c => newsStore.create({ ...newsForm, campus: c as any }));
 			setNewsError(err?.message || 'Saved locally (offline).');
 			setShowNewsForm(false); setEditingNews(null); setNewsForm(blankNews); setSelectedCampuses([]);
 			const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch));
@@ -487,20 +514,43 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 
 	const handleEditNews = (item: NewsItem) => { setEditingNews(item); setNewsForm({ ...item }); setShowNewsForm(true); };
 
-	const handleDeleteNews = async (id: string) => {
-		if (!confirm('Delete this news item?')) return;
-		setNewsLoading(true); setNewsError('');
+	const openDeleteNews = (item: NewsItem) => { setDeleteTarget(item); setDeletePassword(''); setDeleteError(''); setShowDeleteDialog(true); };
+	const confirmDeleteNews = async () => {
+		if (!deleteTarget) return; if (!deletePassword.trim()) { setDeleteError('Password is required'); return; }
+		setDeleteLoading(true); setDeleteError('');
 		try {
-			await http.delete(`/news/deleteNews?id=${encodeURIComponent(id)}`);
+			// Resolve adminId
+			let adminId: number | undefined; const stored = sessionStorage.getItem('adminNumericId'); if (stored){ const n=Number(stored); if(!Number.isNaN(n)) adminId=n; }
+			if (!adminId){ const ca=sessionStorage.getItem('currentAdmin'); if (ca){ try { const p=JSON.parse(ca); for (const v of [p.adminId,p.AdminId,p.id,p.Id]) { const n=Number(v); if(!Number.isNaN(n)){ adminId=n; break; } } } catch {} } }
+			if (!adminId) throw new Error('Missing AdminId');
+			await axios.delete(`/api/News/deleteNews`, { data: { newsId: Number(deleteTarget.id), password: deletePassword, adminId } });
+			pushToast('success','News item deleted','The selected news entry was removed successfully.');
+			setShowDeleteDialog(false); setDeleteTarget(null); setDeletePassword('');
 			await refreshNews();
-			navigate('/admin/dashboard');
+			setNewsSearch(''); // clear search bar after delete
 		} catch (err:any) {
-			// fallback local removal
-			newsStore.remove(id);
-			const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch));
-			setNewsError(err?.message || 'Deleted locally (offline).');
-		} finally { setNewsLoading(false); }
+			console.error('Delete news failed', err?.response?.status, err?.response?.data || err?.message);
+			if (err?.response?.status === 401 || err?.response?.status === 403) setDeleteError('Invalid password'); else setDeleteError(err?.message || 'Delete failed');
+			if (!navigator.onLine) { // offline fallback
+				newsStore.remove(deleteTarget.id); pushToast('error','Offline delete','Item removed locally while offline.'); setShowDeleteDialog(false); setDeleteTarget(null);
+				const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch));
+				setNewsSearch(''); // clear search bar after offline delete
+			}
+		} finally { setDeleteLoading(false); }
 	};
+	const cancelDelete = () => { if (deleteLoading) return; setShowDeleteDialog(false); setDeleteTarget(null); };
+
+	// Defensive: if opening delete dialog triggers browser autofill placing admin email into search, clear it
+	useEffect(() => {
+		if (!showDeleteDialog) return;
+		try {
+			const adminRaw = sessionStorage.getItem('currentAdmin');
+			if (!adminRaw) return;
+			const parsed = JSON.parse(adminRaw);
+			const email = parsed?.email || parsed?.Email || parsed?.userEmail;
+			if (email && newsSearch === email) setNewsSearch('');
+		} catch {}
+	}, [showDeleteDialog, newsSearch]);
 
 	const handleToggleNewsVisibility = async (id: string) => {
 		// Visibility not explicitly supported by backend spec; send update with toggled flag
@@ -520,6 +570,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 		setNewsLoading(false);
 	};
 
+	// Logout confirmation
+	const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+	const openLogoutDialog = () => setShowLogoutDialog(true);
+	const cancelLogout = () => setShowLogoutDialog(false);
+	const confirmLogout = () => { setShowLogoutDialog(false); onLogout(); };
+
 	return (
 		<div className="min-h-screen bg-gray-50">
 			<header className="bg-white shadow-sm border-b border-gray-200">
@@ -530,8 +586,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 							<span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">ICT Faculty Hub</span>
 						</div>
 						<div className="flex items-center space-x-4">
-							<button onClick={onBackToHome} className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"><Home className="w-4 h-4" /><span>Back to Site</span></button>
-							<button onClick={onLogout} className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"><LogOut className="w-4 h-4" /><span>Logout</span></button>
+							<button onClick={openLogoutDialog} className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"><LogOut className="w-4 h-4" /><span>Logout</span></button>
 						</div>
 					</div>
 				</div>
@@ -579,8 +634,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 															{item.isUrgent && <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-semibold">URGENT</span>}
 														</p>
 													</div>
-													<div className="flex items-center gap-2">
+													<div className="flex items-center gap-3">
 														<span className={`px-2 py-1 rounded-full text-xs font-medium ${item.priority === 'high' ? 'bg-red-100 text-red-700' : item.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>{item.priority}</span>
+														<button
+															onClick={(e) => { e.stopPropagation(); handleToggleNewsVisibility(item.id); }}
+															aria-label={item.isVisible === false ? 'Enable news item' : 'Disable news item'}
+															className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${item.isVisible === false ? 'bg-gray-300' : 'bg-green-500'}`}
+														>
+															<span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${item.isVisible === false ? 'translate-x-1' : 'translate-x-5'}`}></span>
+														</button>
 														<button onClick={() => { handleEditNews(item); setActiveTab('news'); }} className="p-1 text-gray-400 hover:text-blue-600 transition-colors" title="Edit"><Edit className="w-4 h-4" /></button>
 													</div>
 												</div>
@@ -606,10 +668,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 													<option value="emalahleni">eMalahleni</option>
 													<option value="polokwane">Polokwane</option>
 												</select>
-												<div className="relative">
-													<Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-													<input value={newsSearch} onChange={e => setNewsSearch(e.target.value)} placeholder="Search news..." className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" />
-												</div>
 												<button onClick={() => { setEditingNews(null); setNewsForm(blankNews); setShowNewsForm(true); }} className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"><Plus className="w-4 h-4" /><span>Add News</span></button>
 											</div>
 										</div>
@@ -645,9 +703,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 															<td className="py-3 px-2"><span className={`px-2 py-1 rounded-full text-xs font-medium ${item.isVisible === false ? 'bg-gray-200 text-gray-700' : 'bg-green-100 text-green-700'}`}>{item.isVisible === false ? 'Hidden' : 'Visible'}</span></td>
 															<td className="py-3 px-2 whitespace-nowrap">{new Date(item.date).toLocaleDateString('en-ZA', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
 															<td className="py-3 px-2"><div className="flex items-center justify-end space-x-2">
-																<button onClick={() => handleToggleNewsVisibility(item.id)} className={`px-2 py-1 text-xs rounded-md border ${item.isVisible === false ? 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100' : 'bg-green-600 text-white border-green-600 hover:bg-green-700'}`}>{item.isVisible === false ? 'Enable' : 'Disable'}</button>
-																<button onClick={() => handleEditNews(item)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors"><Edit className="w-4 h-4" /></button>
-																<button onClick={() => handleDeleteNews(item.id)} className="p-2 text-gray-400 hover:text-red-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
+																{/* Visibility toggle switch */}
+																<button
+																	onClick={(e) => { e.stopPropagation(); handleToggleNewsVisibility(item.id); }}
+																	aria-label={item.isVisible === false ? 'Enable news item' : 'Disable news item'}
+																	className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${item.isVisible === false ? 'bg-gray-300' : 'bg-green-500'}`}
+																>
+																	<span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${item.isVisible === false ? 'translate-x-1' : 'translate-x-6'}`}></span>
+																</button>
+																<button onClick={(e) => { e.stopPropagation(); handleEditNews(item); }} className="p-2 text-gray-400 hover:text-blue-600 transition-colors" aria-label="Edit news"><Edit className="w-4 h-4" /></button>
+																<button onClick={(e) => { e.stopPropagation(); openDeleteNews(item); }} className="p-2 text-gray-400 hover:text-red-600 transition-colors" aria-label="Delete news"><Trash2 className="w-4 h-4" /></button>
 															</div></td>
 														</tr>
 													))}
@@ -764,6 +829,63 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome 
 					</div>
 				</div>
 			</div>
+			{showDeleteDialog && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+					<div className="bg-white rounded-xl w-full max-w-sm shadow-xl p-6 space-y-5">
+						<div className="flex items-start gap-3">
+							<div className="p-2 rounded-lg bg-red-100 text-red-600"><Trash2 className="w-5 h-5" /></div>
+							<div className="flex-1">
+								<h3 className="text-lg font-semibold text-gray-900">Delete News</h3>
+								<p className="text-xs text-gray-600 mt-1">This action is permanent. Enter your admin password to confirm deletion{deleteTarget ? ` of "${deleteTarget.title}"` : ''}.</p>
+							</div>
+						</div>
+						<div className="space-y-2">
+							<label className="block text-sm font-medium text-gray-700">Password</label>
+							<input type="password" value={deletePassword} onChange={e => setDeletePassword(e.target.value)} className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${deleteError ? 'border-red-300' : 'border-gray-300'}`} placeholder="Enter password" autoFocus />
+							{deleteError && <p className="text-xs text-red-600">{deleteError}</p>}
+						</div>
+						<div className="flex justify-end gap-3 pt-2">
+							<button onClick={cancelDelete} disabled={deleteLoading} className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50">Cancel</button>
+							<button onClick={confirmDeleteNews} disabled={deleteLoading} className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50">{deleteLoading ? 'Deleting...' : 'Delete'}</button>
+						</div>
+					</div>
+				</div>
+			)}
+			{toast && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+					<div className={`relative overflow-hidden rounded-xl shadow-2xl border max-w-sm w-full mx-4 animate-fade-in pointer-events-auto ${toast.type === 'success' ? 'bg-white border-green-200' : 'bg-white border-red-200'}`}>
+						<div className="p-4 pr-5 flex items-start gap-3">
+							<div className={`mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg ${toast.type === 'success' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>{toast.type === 'success' ? '✓' : '!'}</div>
+							<div className="flex-1">
+								<p className={`text-sm font-semibold ${toast.type === 'success' ? 'text-green-700' : 'text-red-700'}`}>{toast.message}</p>
+								{toast.detail && <p className="mt-1 text-xs text-gray-600 leading-relaxed">{toast.detail}</p>}
+								<div className="mt-3 flex justify-end">
+									<button onClick={() => setToast(null)} className="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-900 text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-500">Done</button>
+								</div>
+							</div>
+							<button onClick={() => setToast(null)} className="absolute top-2 right-2 text-gray-400 hover:text-gray-600" aria-label="Close">✕</button>
+							<div className={`absolute inset-x-0 bottom-0 h-1 ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+						</div>
+					</div>
+				</div>
+			)}
+		{showLogoutDialog && (
+			<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+				<div className="bg-white rounded-xl w-full max-w-sm shadow-xl p-6 space-y-5">
+					<div className="flex items-start gap-3">
+						<div className="p-2 rounded-lg bg-red-100 text-red-600"><LogOut className="w-5 h-5" /></div>
+						<div className="flex-1">
+							<h3 className="text-lg font-semibold text-gray-900">Confirm Logout</h3>
+							<p className="text-xs text-gray-600 mt-1">Are you sure you want to end this admin session?</p>
+						</div>
+					</div>
+					<div className="flex justify-end gap-3 pt-2">
+						<button onClick={cancelLogout} className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">Cancel</button>
+						<button onClick={confirmLogout} className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Logout</button>
+					</div>
+				</div>
+			</div>
+		)}
 		</div>
 	);
 };
