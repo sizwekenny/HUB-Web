@@ -76,7 +76,8 @@ const HomePage: React.FC<HomePageProps> = ({
           const resAll = await axios.get('/api/News/getAllNews');
           data = Array.isArray(resAll.data) ? resAll.data : [];
         }
-        const southVisible = mapBackendNewsArray(data, 'south');
+  // mapBackendNewsArray now also decodes backend docFile (base64 / bytes) into a blob URL for download
+  const southVisible = mapBackendNewsArray(data, 'south');
         if (!cancel) setLatestNews(southVisible);
       } catch (err) {
         // offline / error fallback to local store

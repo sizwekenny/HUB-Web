@@ -33,6 +33,216 @@ interface AdminDashboardProps {
 	onBackToHome: () => void;
 }
 
+// Lightweight component to update admin initials & surname via backend endpoint /Admin/updateDetails
+const AdminDetailsUpdater: React.FC = () => {
+	const [initials, setInitials] = useState('');
+	const [surname, setSurname] = useState('');
+	const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle');
+	const [message, setMessage] = useState('');
+	const [touched, setTouched] = useState<{initials:boolean; surname:boolean}>({initials:false, surname:false});
+
+	useEffect(()=>{
+		try { const raw = sessionStorage.getItem('currentAdmin'); if(raw){ const obj=JSON.parse(raw); setInitials(obj.initials || obj.Initials || obj.name || ''); setSurname(obj.surname || obj.Surname || ''); } } catch {}
+	},[]);
+
+	const validInitials = initials.trim().length>0 && initials.trim().length<=10;
+	const validSurname = surname.trim().length>1;
+	const disabled = !validInitials || !validSurname || status==='saving';
+
+	const handleSubmit = async (e:React.FormEvent) => {
+		e.preventDefault();
+		if(disabled) return;
+		setStatus('saving'); setMessage('');
+		try {
+			let adminId: number | undefined; const stored = sessionStorage.getItem('adminNumericId'); if(stored){ const n=Number(stored); if(!Number.isNaN(n)) adminId=n; }
+			if(!adminId){ const raw = sessionStorage.getItem('currentAdmin'); if(raw){ try { const obj=JSON.parse(raw); const poss=[obj.adminId,obj.AdminId,obj.id,obj.Id]; for(const v of poss){ const n=Number(v); if(!Number.isNaN(n)){ adminId=n; break; } } } catch{} } }
+			if(!adminId) throw new Error('Missing adminId');
+			await axios.post('/api/Admin/updateDetails', { adminId, initials: initials.trim(), surname: surname.trim() });
+			// Update session copy
+			try { const raw = sessionStorage.getItem('currentAdmin'); if(raw){ const obj=JSON.parse(raw); obj.initials = initials.trim(); obj.surname = surname.trim(); sessionStorage.setItem('currentAdmin', JSON.stringify(obj)); } } catch{}
+			setStatus('success'); setMessage('Details updated successfully.');
+			setTimeout(()=> setStatus('idle'), 2500);
+		} catch(err:any){ setStatus('error'); setMessage(err?.response?.data?.message || err?.message || 'Update failed'); }
+	};
+
+	return (
+		<div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
+			<h3 className="text-lg font-semibold text-gray-900 mb-4">Admin Profile Details</h3>
+			<form onSubmit={handleSubmit} className="space-y-5">
+				<div className="grid md:grid-cols-2 gap-4">
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">Initials<span className="text-red-500">*</span></label>
+						<input value={initials} onChange={e=>setInitials(e.target.value)} onBlur={()=>setTouched(t=>({...t,initials:true}))} className={`w-full px-3 py-2 rounded-lg border ${!validInitials && touched.initials ? 'border-red-300 focus:ring-red-500 focus:border-red-500':'border-gray-300 focus:ring-blue-500 focus:border-blue-500'}`} maxLength={10} placeholder="e.g. LRP" />
+						{!validInitials && touched.initials && <p className="mt-1 text-xs text-red-600">Provide 1–10 character initials.</p>}
+					</div>
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">Surname<span className="text-red-500">*</span></label>
+						<input value={surname} onChange={e=>setSurname(e.target.value)} onBlur={()=>setTouched(t=>({...t,surname:true}))} className={`w-full px-3 py-2 rounded-lg border ${!validSurname && touched.surname ? 'border-red-300 focus:ring-red-500 focus:border-red-500':'border-gray-300 focus:ring-blue-500 focus:border-blue-500'}`} placeholder="Surname" />
+						{!validSurname && touched.surname && <p className="mt-1 text-xs text-red-600">Surname must be at least 2 characters.</p>}
+					</div>
+				</div>
+				<div className="flex items-center gap-3">
+					<button type="submit" disabled={disabled} className="px-5 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+						{status==='saving' && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+						<span>{status==='saving' ? 'Saving...' : 'Update Details'}</span>
+					</button>
+					{status==='success' && <span className="text-xs text-green-600 font-medium">{message}</span>}
+					{status==='error' && <span className="text-xs text-red-600 font-medium">{message}</span>}
+				</div>
+			</form>
+		</div>
+	);
+};
+
+// Separate component for updating admin email via /Admin/updateEmail endpoint
+const AdminEmailUpdater: React.FC = () => {
+	const [email, setEmail] = useState('');
+	const [originalEmail, setOriginalEmail] = useState('');
+	const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle');
+	const [message, setMessage] = useState('');
+	const [touched, setTouched] = useState(false);
+
+	useEffect(()=>{ try { const raw = sessionStorage.getItem('currentAdmin'); if(raw){ const obj=JSON.parse(raw); const e=obj.email || obj.Email || ''; setEmail(e); setOriginalEmail(e);} } catch{} },[]);
+
+	const validEmail = /.+@.+\..+/.test(email.trim());
+	const changed = email.trim() !== originalEmail.trim();
+	const disabled = !validEmail || !changed || status==='saving';
+
+	const handleSubmit = async (e:React.FormEvent) => {
+		e.preventDefault(); if(disabled) return; setStatus('saving'); setMessage('');
+		try {
+			let adminId: number | undefined; const stored = sessionStorage.getItem('adminNumericId'); if(stored){ const n=Number(stored); if(!Number.isNaN(n)) adminId=n; }
+			if(!adminId){ const raw = sessionStorage.getItem('currentAdmin'); if(raw){ try { const obj=JSON.parse(raw); const poss=[obj.adminId,obj.AdminId,obj.id,obj.Id]; for(const v of poss){ const n=Number(v); if(!Number.isNaN(n)){ adminId=n; break; } } } catch{} } }
+			if(!adminId) throw new Error('Missing admin id');
+			await axios.post('/api/Admin/updateEmail', { id: adminId, email: email.trim() });
+			try { const raw = sessionStorage.getItem('currentAdmin'); if(raw){ const obj=JSON.parse(raw); obj.email = email.trim(); sessionStorage.setItem('currentAdmin', JSON.stringify(obj)); } } catch{}
+			setOriginalEmail(email.trim());
+			setStatus('success'); setMessage('Email updated successfully.');
+			setTimeout(()=> setStatus('idle'), 2500);
+		} catch(err:any){ setStatus('error'); setMessage(err?.response?.data?.message || err?.message || 'Update failed'); }
+	};
+
+	return (
+		<div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
+			<h3 className="text-lg font-semibold text-gray-900 mb-4">Update Email</h3>
+			<form onSubmit={handleSubmit} className="space-y-4">
+				<div>
+					<label className="block text-sm font-medium text-gray-700 mb-1">Email<span className="text-red-500">*</span></label>
+					<input value={email} onChange={e=>{setEmail(e.target.value); if(!touched) setTouched(true);}} onBlur={()=>setTouched(true)} type="email" className={`w-full px-3 py-2 rounded-lg border ${(!validEmail && touched)?'border-red-300 focus:ring-red-500 focus:border-red-500':'border-gray-300 focus:ring-blue-500 focus:border-blue-500'}`} placeholder="admin@example.com" />
+					{!validEmail && touched && <p className="mt-1 text-xs text-red-600">Enter a valid email.</p>}
+				</div>
+				<div className="flex items-center gap-3">
+					<button type="submit" disabled={disabled} className="px-5 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+						{status==='saving' && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+						<span>{status==='saving' ? 'Updating...' : 'Update Email'}</span>
+					</button>
+					{status==='success' && <span className="text-xs text-green-600 font-medium">{message}</span>}
+					{status==='error' && <span className="text-xs text-red-600 font-medium">{message}</span>}
+				</div>
+			</form>
+			{changed && validEmail && status!=='saving' && <p className="mt-2 text-[11px] text-gray-500">Remember to use the new email next time you sign in.</p>}
+		</div>
+	);
+};
+
+// Password update component using /Admin/updatePassword
+const AdminPasswordUpdater: React.FC = () => {
+	const [currentPassword, setCurrentPassword] = useState('');
+	const [newPassword, setNewPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
+	const [show, setShow] = useState<{current:boolean; next:boolean; confirm:boolean}>({current:false,next:false,confirm:false});
+	const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle');
+	const [message, setMessage] = useState('');
+	const minLen = 8;
+	const validNew = newPassword.length >= minLen && newPassword !== currentPassword;
+	const match = newPassword === confirmPassword && confirmPassword.length>0;
+	const disabled = !currentPassword || !validNew || !match || status==='saving';
+
+	// Strength scoring (simple heuristic): length, variety of char classes
+	const strengthScore = (() => {
+		if(!newPassword) return 0;
+		let score = 0;
+		const pw = newPassword;
+		if(pw.length >= 8) score += 1;
+		if(pw.length >= 12) score += 1;
+		if(/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score += 1;
+		if(/[0-9]/.test(pw)) score += 1;
+		if(/[^A-Za-z0-9]/.test(pw)) score += 1;
+		return Math.min(score,5);
+	})();
+	const strengthLabel = ['','Weak','Fair','Good','Strong','Excellent'][strengthScore];
+	const strengthColor = ['bg-gray-300','bg-red-500','bg-amber-500','bg-blue-500','bg-green-500','bg-emerald-600'][strengthScore];
+
+	const submit = async (e:React.FormEvent) => {
+		e.preventDefault(); if(disabled) return; setStatus('saving'); setMessage('');
+		try {
+			let adminId: number | undefined; const stored = sessionStorage.getItem('adminNumericId'); if(stored){ const n=Number(stored); if(!Number.isNaN(n)) adminId=n; }
+			if(!adminId){ const raw = sessionStorage.getItem('currentAdmin'); if(raw){ try { const obj=JSON.parse(raw); const poss=[obj.adminId,obj.AdminId,obj.id,obj.Id]; for(const v of poss){ const n=Number(v); if(!Number.isNaN(n)){ adminId=n; break; } } } catch{} } }
+			if(!adminId) throw new Error('Missing admin id');
+			await axios.post('/api/Admin/updatePassword', { id: adminId, currentPassword, password: newPassword });
+			setStatus('success'); setMessage('Password updated. Use the new password next login.');
+			setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
+			setTimeout(()=> setStatus('idle'), 3000);
+		} catch(err:any){ setStatus('error'); setMessage(err?.response?.data?.message || err?.message || 'Update failed'); }
+	};
+
+	return (
+		<div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
+			<h3 className="text-lg font-semibold text-gray-900 mb-4">Update Password</h3>
+			<form onSubmit={submit} className="space-y-5">
+				<div className="grid md:grid-cols-3 gap-4">
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">Current Password<span className="text-red-500">*</span></label>
+						<div className="relative">
+							<input type={show.current? 'text':'password'} value={currentPassword} onChange={e=>setCurrentPassword(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"/>
+							<button type="button" onClick={()=>setShow(s=>({...s,current:!s.current}))} className="absolute inset-y-0 right-0 px-3 text-xs text-gray-500 hover:text-gray-700">{show.current? 'Hide':'Show'}</button>
+						</div>
+					</div>
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">New Password<span className="text-red-500">*</span></label>
+						<div className="relative">
+							<input type={show.next? 'text':'password'} value={newPassword} onChange={e=>setNewPassword(e.target.value)} className={`w-full px-3 py-2 rounded-lg border ${(newPassword && !validNew)?'border-red-300 focus:ring-red-500 focus:border-red-500':'border-gray-300 focus:ring-blue-500 focus:border-blue-500'}`}/>
+							<button type="button" onClick={()=>setShow(s=>({...s,next:!s.next}))} className="absolute inset-y-0 right-0 px-3 text-xs text-gray-500 hover:text-gray-700">{show.next? 'Hide':'Show'}</button>
+						</div>
+						{newPassword && (
+							<div className="mt-2 space-y-1">
+								<div className="flex items-center justify-between text-[11px] font-medium">
+									<span className="text-gray-600">Strength:</span>
+									<span className={`text-gray-700 ${strengthScore<=2?'text-red-600':strengthScore===3?'text-amber-600':strengthScore>=4?'text-green-600':''}`}>{strengthLabel}</span>
+								</div>
+								<div className="flex gap-1" aria-hidden="true">
+									{[1,2,3,4,5].map(i => (
+										<div key={i} className={`h-1.5 flex-1 rounded-full transition-colors ${strengthScore>=i ? strengthColor : 'bg-gray-200'}`}></div>
+									))}
+								</div>
+								{!validNew && <p className="text-[11px] text-red-600">Must be at least {minLen} chars & different from current.</p>}
+								{validNew && strengthScore<3 && <p className="text-[11px] text-amber-600">Consider adding uppercase, numbers & symbols for a stronger password.</p>}
+							</div>
+						)}
+					</div>
+						<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password<span className="text-red-500">*</span></label>
+						<div className="relative">
+							<input type={show.confirm? 'text':'password'} value={confirmPassword} onChange={e=>setConfirmPassword(e.target.value)} className={`w-full px-3 py-2 rounded-lg border ${(confirmPassword && !match)?'border-red-300 focus:ring-red-500 focus:border-red-500':'border-gray-300 focus:ring-blue-500 focus:border-blue-500'}`}/>
+							<button type="button" onClick={()=>setShow(s=>({...s,confirm:!s.confirm}))} className="absolute inset-y-0 right-0 px-3 text-xs text-gray-500 hover:text-gray-700">{show.confirm? 'Hide':'Show'}</button>
+						</div>
+						{confirmPassword && !match && <p className="mt-1 text-xs text-red-600">Passwords do not match.</p>}
+					</div>
+				</div>
+				<div className="flex items-center gap-3">
+					<button type="submit" disabled={disabled} className="px-5 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+						{status==='saving' && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>}
+						<span>{status==='saving' ? 'Updating...' : 'Update Password'}</span>
+					</button>
+					{status==='success' && <span className="text-xs text-green-600 font-medium">{message}</span>}
+					{status==='error' && <span className="text-xs text-red-600 font-medium">{message}</span>}
+				</div>
+			</form>
+			<p className="mt-3 text-[11px] text-gray-500">After changing, you will stay logged in for this session. Use the new password next time you log in.</p>
+		</div>
+	);
+};
+
 interface Admin {
 	id: string;
 	name: string;
@@ -281,6 +491,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	];
 	const [newsCampusFilter, setNewsCampusFilter] = useState<'all' | 'south' | 'emalahleni' | 'polokwane'>('all');
 	const [newsSearch, setNewsSearch] = useState('');
+	// Pagination state for News Management
+	const [newsPage, setNewsPage] = useState(1);
+	const NEWS_PAGE_SIZE = 10;
 	const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
 	const [showNewsForm, setShowNewsForm] = useState(false);
 	const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
@@ -307,6 +520,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	};
 	const blankNews: Omit<NewsItem, 'id' | 'date'> = { title: '', summary: '', content: '', category: 'Announcement', priority: 'medium', campus: 'south', department: '' } as any;
 	const [newsForm, setNewsForm] = useState<Omit<NewsItem, 'id' | 'date'>>(blankNews);
+
+	// Derived pagination values for news
+	const totalNewsPages = Math.max(1, Math.ceil(newsItems.length / NEWS_PAGE_SIZE));
+	const paginatedNews = newsItems.slice((newsPage - 1) * NEWS_PAGE_SIZE, newsPage * NEWS_PAGE_SIZE);
+	const newsFrom = newsItems.length ? (newsPage - 1) * NEWS_PAGE_SIZE + 1 : 0;
+	const newsTo = Math.min(newsItems.length, newsPage * NEWS_PAGE_SIZE);
+
+	// Reset page when filters/search change
+	useEffect(() => { setNewsPage(1); }, [newsCampusFilter, newsSearch]);
+	// Clamp page if data shrinks
+	useEffect(() => { if (newsPage > totalNewsPages) setNewsPage(totalNewsPages); }, [totalNewsPages, newsPage]);
 	const [selectedCampuses, setSelectedCampuses] = useState<string[]>([]); // for multi-campus create
 	const campusOptions = [
 		{ key: 'south', label: 'South' },
@@ -576,11 +800,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 		}
 	};
 
-	// Logout confirmation
-	const [showLogoutDialog, setShowLogoutDialog] = useState(false);
-	const openLogoutDialog = () => setShowLogoutDialog(true);
-	const cancelLogout = () => setShowLogoutDialog(false);
-	const confirmLogout = () => { setShowLogoutDialog(false); onLogout(); };
+	// Logout via profile modal
+	const confirmLogout = () => { setShowProfile(false); onLogout(); };
+
+	// Admin profile (parsed from sessionStorage currentAdmin)
+	const [adminProfile, setAdminProfile] = useState<{initials?:string; surname?:string; email?:string}>({});
+	const [showProfile, setShowProfile] = useState(false);
+	useEffect(()=>{
+		try{
+			const raw = sessionStorage.getItem('currentAdmin');
+			if(raw){ const obj = JSON.parse(raw); setAdminProfile({ initials: obj.initials || obj.name || obj.Initials || obj.Name, surname: obj.surname || obj.Surname, email: obj.email || obj.Email }); }
+		}catch{}
+	},[]);
+	const openProfile = () => setShowProfile(true);
+	const closeProfile = () => setShowProfile(false);
 
 	return (
 		<div className="min-h-screen bg-gray-50">
@@ -592,7 +825,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 							<span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">ICT Faculty Hub</span>
 						</div>
 						<div className="flex items-center space-x-4">
-							<button onClick={openLogoutDialog} className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"><LogOut className="w-4 h-4" /><span>Logout</span></button>
+							{/* Profile avatar button */}
+							<button onClick={openProfile} className="relative group flex items-center gap-3 px-4 py-2 rounded-full bg-white border border-gray-200 hover:shadow transition">
+								<div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-inner">
+									{(adminProfile.initials||'AD').slice(0,2).toUpperCase()}
+								</div>
+								<div className="hidden sm:block text-left">
+									<p className="text-sm font-medium text-gray-900 leading-tight truncate max-w-[120px]">{adminProfile.surname || 'Admin'}</p>
+									<p className="text-[11px] text-gray-500 truncate max-w-[120px]">{adminProfile.email || '—'}</p>
+								</div>
+								<span className="sr-only">Open profile menu</span>
+							</button>
 						</div>
 					</div>
 				</div>
@@ -679,7 +922,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 										</div>
 									</div>
 									<div className="p-6">
-										<div className="overflow-x-auto">
+										<div className="overflow-x-auto max-h-[520px] overflow-y-auto">
 											{newsError && <div className="mb-4 p-3 rounded-md bg-yellow-50 text-yellow-800 text-xs border border-yellow-200">{newsError}</div>}
 											<table className="w-full text-sm">
 												<thead>
@@ -697,7 +940,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 													{newsLoading && newsItems.length === 0 && (
 														<tr><td colSpan={7} className="py-8 text-center text-gray-500 text-sm">Loading news...</td></tr>
 													)}
-													{newsItems.map(item => (
+													{paginatedNews.map(item => (
 														<tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
 															<td className="py-3 px-2 max-w-xs">
 																<p className="font-medium text-gray-900 line-clamp-1" title={item.title}>{item.title}</p>
@@ -727,7 +970,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 													)}
 												</tbody>
 											</table>
-										</div>
+											</div>
+											{/* Pagination controls */}
+											{newsItems.length > 0 && (
+												<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4 text-xs text-gray-600">
+													<div>Showing {newsFrom}-{newsTo} of {newsItems.length}</div>
+													<div className="flex items-center gap-2">
+														<button
+															type="button"
+															onClick={() => setNewsPage(p => Math.max(1, p - 1))}
+															disabled={newsPage === 1}
+															className="px-2.5 py-1.5 rounded-md border text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
+															aria-label="Previous page"
+														>Prev</button>
+														<span className="min-w-[90px] text-center">Page {newsPage} of {totalNewsPages}</span>
+														<button
+															type="button"
+															onClick={() => setNewsPage(p => Math.min(totalNewsPages, p + 1))}
+															disabled={newsPage === totalNewsPages}
+															className="px-2.5 py-1.5 rounded-md border text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
+															aria-label="Next page"
+														>Next</button>
+													</div>
+												</div>
+											)}
 									</div>
 								</div>
 								{showNewsForm && (
@@ -829,7 +1095,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 						{activeTab === 'settings' && (
 							<div className="bg-white rounded-lg shadow-sm">
 								<div className="p-6 border-b border-gray-200"><h2 className="text-lg font-semibold text-gray-900">System Settings</h2></div>
-								<div className="p-6"><div className="space-y-6"><div><h3 className="text-lg font-medium text-gray-900 mb-4">Site Configuration</h3><div className="space-y-4"><div><label className="block text-sm font-medium text-gray-700 mb-2">Site Title</label><input type="text" defaultValue="ICT Faculty Hub" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" /></div><div><label className="block text-sm font-medium text-gray-700 mb-2">Contact Email</label><input type="email" defaultValue="info@tut.ac.za" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" /></div></div></div><div className="pt-6 border-t border-gray-200"><button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">Save Settings</button></div></div></div>
+								<div className="p-6 space-y-10">
+									{/* Admin Details Update */}
+									<AdminDetailsUpdater />
+									<AdminEmailUpdater />
+									<AdminPasswordUpdater />
+									{/* Placeholder site configuration (unchanged) */}
+									<div className="space-y-6">
+										<div>
+											<h3 className="text-lg font-medium text-gray-900 mb-4">Site Configuration</h3>
+											<div className="space-y-4">
+												<div>
+													<label className="block text-sm font-medium text-gray-700 mb-2">Site Title</label>
+													<input type="text" defaultValue="ICT Faculty Hub" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+												</div>
+												<div>
+													<label className="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
+													<input type="email" defaultValue="info@tut.ac.za" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+												</div>
+											</div>
+										</div>
+										<div className="pt-2"><button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">Save Settings</button></div>
+									</div>
+								</div>
 							</div>
 						)}
 					</div>
@@ -875,19 +1163,36 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 					</div>
 				</div>
 			)}
-		{showLogoutDialog && (
-			<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-				<div className="bg-white rounded-xl w-full max-w-sm shadow-xl p-6 space-y-5">
-					<div className="flex items-start gap-3">
-						<div className="p-2 rounded-lg bg-red-100 text-red-600"><LogOut className="w-5 h-5" /></div>
-						<div className="flex-1">
-							<h3 className="text-lg font-semibold text-gray-900">Confirm Logout</h3>
-							<p className="text-xs text-gray-600 mt-1">Are you sure you want to end this admin session?</p>
+		{showProfile && (
+			<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={closeProfile}>
+				<div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 space-y-5 relative" onClick={e=>e.stopPropagation()}>
+					<button className="absolute top-2 right-2 text-gray-400 hover:text-gray-600" onClick={closeProfile} aria-label="Close profile">✕</button>
+					<div className="flex items-center gap-4">
+						<div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-inner">
+							{(adminProfile.initials||'AD').slice(0,2).toUpperCase()}
+						</div>
+						<div className="flex-1 min-w-0">
+							<p className="text-lg font-semibold text-gray-900 truncate">{adminProfile.surname || 'Administrator'}</p>
+							<p className="text-sm text-gray-600 truncate">{adminProfile.initials || 'N/A'} • {adminProfile.email || 'no-email'}</p>
 						</div>
 					</div>
-					<div className="flex justify-end gap-3 pt-2">
-						<button onClick={cancelLogout} className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">Cancel</button>
-						<button onClick={confirmLogout} className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Logout</button>
+					<div className="grid grid-cols-2 gap-3 text-xs">
+						<div className="p-3 rounded-lg bg-gray-50">
+							<p className="text-gray-500 font-medium mb-1">Initials</p>
+							<p className="text-gray-900 font-semibold">{adminProfile.initials || '—'}</p>
+						</div>
+						<div className="p-3 rounded-lg bg-gray-50">
+							<p className="text-gray-500 font-medium mb-1">Surname</p>
+							<p className="text-gray-900 font-semibold truncate">{adminProfile.surname || '—'}</p>
+						</div>
+						<div className="p-3 rounded-lg bg-gray-50 col-span-2">
+							<p className="text-gray-500 font-medium mb-1">Email</p>
+							<p className="text-gray-900 font-semibold truncate">{adminProfile.email || '—'}</p>
+						</div>
+					</div>
+					<div className="flex justify-end gap-3 pt-4 border-t">
+						<button onClick={closeProfile} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Close</button>
+						<button onClick={confirmLogout} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2"><LogOut className="w-4 h-4" />Logout</button>
 					</div>
 				</div>
 			</div>

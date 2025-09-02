@@ -14,7 +14,7 @@ export function mapBackendNewsItem(raw: any, campus: NewsItem['campus']): NewsIt
   const isVisible = !!raw?.isVisible || raw?.isVisible === undefined; // default true if undefined
   const department = raw?.department || undefined;
 
-  // Attachment detection
+  // Attachment detection (URL-based + raw binary via backend 'docFile')
   // Accept a wide range of possible field names.
   let rawFile: any = raw?.file || raw?.attachment || raw?.document || raw?.newsFile || raw?.uploadedFile;
   let rawUrl: string | null = null;
@@ -38,6 +38,51 @@ export function mapBackendNewsItem(raw: any, campus: NewsItem['campus']): NewsIt
       type: (['pdf','png','jpg','jpeg','docx','xlsx'].includes(ext || '') ? ext : 'pdf') as any,
       size
     };
+  } else if (raw?.docFile) {
+    // docFile can be:
+    // 1) Base64 string
+    // 2) Array (byte values)
+    // 3) Object with data / base64 / bytes property
+    try {
+      let bytes: Uint8Array | null = null;
+      if (typeof raw.docFile === 'string') {
+        // Strip possible data URL prefix
+        const b64 = raw.docFile.split(',').pop()!.trim();
+        const bin = atob(b64);
+        const arr = new Uint8Array(bin.length);
+        for (let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+        bytes = arr;
+      } else if (Array.isArray(raw.docFile)) {
+        bytes = new Uint8Array(raw.docFile);
+      } else if (raw.docFile && typeof raw.docFile === 'object') {
+        const candidate = raw.docFile.data || raw.docFile.base64 || raw.docFile.bytes;
+        if (typeof candidate === 'string') {
+          const b64 = candidate.split(',').pop()!.trim();
+          const bin = atob(b64);
+          const arr = new Uint8Array(bin.length);
+          for (let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+          bytes = arr;
+        } else if (Array.isArray(candidate)) {
+          bytes = new Uint8Array(candidate);
+        }
+      }
+      if (bytes) {
+        const mimeMap: Record<string,string> = { pdf:'application/pdf', png:'image/png', jpg:'image/jpeg', jpeg:'image/jpeg', docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document', xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' };
+        const mime = mimeMap[ext || 'pdf'] || 'application/octet-stream';
+  // Ensure we pass a regular ArrayBuffer to Blob (avoid SAB typing edge cases)
+  const safeBytes = bytes instanceof Uint8Array ? new Uint8Array(bytes) : new Uint8Array(bytes as any);
+  const blob = new Blob([safeBytes.buffer], { type: mime });
+        const url = URL.createObjectURL(blob);
+        downloadFile = {
+          filename: fileName || `document.${ext || 'pdf'}`,
+          url,
+          type: (['pdf','png','jpg','jpeg','docx','xlsx'].includes(ext || '') ? ext : 'pdf') as any,
+          size: `${(blob.size/1024).toFixed(1)} KB`
+        };
+      }
+    } catch {
+      // swallow mapping errors; proceed without attachment
+    }
   }
 
   return {
