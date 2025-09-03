@@ -405,14 +405,10 @@ const filteredServices = selectedFilter === 'all'
                   </span>
                 </div>
 
-                <div className="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
-                  <p className="text-gray-700 font-semibold mb-2">Summary:</p>
-                  <p className="text-gray-600 leading-relaxed">{selectedNews.summary}</p>
-                </div>
-
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-700 font-semibold mb-3">Full Details:</p>
-                  <p className="text-gray-600 leading-relaxed whitespace-pre-line">{selectedNews.content}</p>
+                <div className="p-4 rounded-lg bg-blue-50 border-l-4 border-blue-500">
+                  <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                    {selectedNews.summary || selectedNews.content}
+                  </p>
                 </div>
 
                 {/* Modal Footer */}
