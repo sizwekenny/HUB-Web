@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { NewsItem } from '../../../types';
 
@@ -18,6 +18,17 @@ interface Props {
 }
 
 const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, newsLoading, newsError, newsCampusFilter, newsFrom, newsTo, total, page, totalPages, onCampusFilterChange, onAdd, onPrev, onNext, onToggleVisibility, onEdit, onDelete }) => {
+  const [viewItem, setViewItem] = useState<NewsItem | null>(null);
+
+  // Close on ESC
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setViewItem(null); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  const openView = (item: NewsItem) => setViewItem(item);
+  const closeView = () => setViewItem(null);
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm">
@@ -53,7 +64,7 @@ const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, news
               <tbody>
                 {newsLoading && newsItems.length === 0 && <tr><td colSpan={7} className="py-8 text-center text-gray-500 text-sm">Loading news...</td></tr>}
                 {paginatedNews.map(item => (
-                  <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <tr key={item.id} onClick={() => openView(item)} className="cursor-pointer border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 px-2 max-w-xs">
                       <p className="font-medium text-gray-900 line-clamp-1" title={item.title}>{item.title}</p>
                       <p className="text-xs text-gray-500 line-clamp-1" title={item.summary}>{item.summary}</p>
@@ -86,6 +97,43 @@ const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, news
           )}
         </div>
       </div>
+    {viewItem && (
+      <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="news-view-title">
+        <div className="relative w-full max-w-2xl bg-white rounded-xl shadow-xl border border-gray-200 animate-in fade-in zoom-in-95">
+          <div className="flex items-start justify-between gap-4 p-6 border-b border-gray-100">
+            <div>
+              <h3 id="news-view-title" className="text-xl font-semibold text-gray-900 mb-1">{viewItem.title}</h3>
+              <p className="text-sm text-gray-500">{new Date(viewItem.date).toLocaleString('en-GB',{year:'numeric',month:'short',day:'2-digit', hour:'2-digit', minute:'2-digit'})}</p>
+            </div>
+            <button onClick={closeView} aria-label="Close" className="text-gray-400 hover:text-gray-600 transition-colors">✕</button>
+          </div>
+          <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 font-medium capitalize">{viewItem.campus || 'All'}</span>
+              <span className="px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-medium">{viewItem.category}</span>
+              <span className={`px-2 py-1 rounded-full font-medium ${viewItem.priority==='high'?'bg-red-100 text-red-700':viewItem.priority==='medium'?'bg-yellow-100 text-yellow-700':'bg-green-100 text-green-700'}`}>{viewItem.priority}</span>
+              {viewItem.isVisible===false && <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700 font-medium">Hidden</span>}
+              {viewItem.isUrgent && <span className="px-2 py-1 rounded-full bg-red-600 text-white font-medium">Urgent</span>}
+              {viewItem.department && <span className="px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 font-medium">{viewItem.department}</span>}
+            </div>
+            {viewItem.summary && viewItem.summary !== viewItem.content && (
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-1">Summary</h4>
+                <p className="text-sm leading-relaxed text-gray-600 whitespace-pre-wrap">{viewItem.summary}</p>
+              </div>
+            )}
+            <div>
+              <h4 className="text-sm font-semibold text-gray-700 mb-1">Details</h4>
+              <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">{viewItem.content || viewItem.summary}</p>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 p-6 border-t border-gray-100 bg-gray-50 rounded-b-xl">
+            <button onClick={closeView} className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 text-sm font-medium">Close</button>
+            <button onClick={()=>{closeView(); onEdit(viewItem);}} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm font-medium">Edit</button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };
