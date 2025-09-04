@@ -6,6 +6,7 @@ import southImg from '../../assets/south.jpg';
 import emaImg from '../../assets/emalahleni.jpg';
 import polImg from '../../assets/polokwane.png';
 import tutImg from '../../assets/TUT.png';
+import tutFull from '../../assets/TUT2.png';
 // Removed local demo adminStore fallback to enforce backend-only authentication.
 import { http, extractErrorMessage } from '../../utils/http';
 import { useNavigate } from 'react-router-dom';
@@ -68,25 +69,33 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onBack, onLoginSuccess }) => {
 				images={[southImg, emaImg, polImg, tutImg]}
 				intervalMs={6000}
 				fadeDurationMs={1200}
-				overlayClassName="bg-gradient-to-br from-blue-900/60 via-indigo-900/50 to-purple-900/60"
+				overlayClassName="bg-gradient-to-br from-blue-950/80 via-indigo-950/70 to-purple-950/75"
 			/>
 			{/* Existing decorative gradients layered above slideshow for subtle texture */}
 			<div className="pointer-events-none absolute inset-0 mix-blend-overlay bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.25),transparent_60%),radial-gradient(circle_at_80%_70%,rgba(99,102,241,0.25),transparent_55%)]" />
-			<div className="absolute inset-0 bg-gradient-to-br from-blue-50/70 via-indigo-50/60 to-purple-50/60 backdrop-blur-[2px]" />
+			<div className="absolute inset-0 bg-gradient-to-br from-slate-900/55 via-indigo-900/45 to-purple-900/50 backdrop-blur-[3px]" />
 
-			<button onClick={onBack} className="absolute top-6 left-6 flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors z-10">
-				<ArrowLeft className="w-5 h-5" /> <span className="font-medium">Back to Home</span>
-			</button>
+			{/* Top-left institutional full logo + styled back button */}
+			<div className="absolute top-4 left-4 z-20 flex flex-col items-start space-y-3">
+				<img src={tutFull} alt="TUT Full Logo" className="w-56 md:w-60 max-w-[260px] h-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)]" />
+				<button
+					onClick={onBack}
+					className="group flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg shadow-black/30 hover:shadow-xl hover:brightness-110 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400"
+				>
+					<ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
+					<span className="font-medium tracking-wide">Back to Home</span>
+				</button>
+			</div>
 
 			<div className="w-full max-w-md relative z-10">
 				<div className="text-center mb-8 animate-in fade-in duration-700">
-					<div className="flex justify-center mb-4">
+					<div className="flex flex-col items-center mb-5">
 						<div className="p-4 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 rounded-2xl shadow-xl ring-4 ring-white/25">
 							<Shield className="w-12 h-12 text-white drop-shadow" />
 						</div>
 					</div>
-					<h1 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-2">Admin Portal</h1>
-					<p className="text-gray-600">Secure access to the ICT Faculty Hub</p>
+					<h1 className="text-3xl font-extrabold tracking-tight text-gray-100 mb-2 drop-shadow-sm">Admin Portal</h1>
+					<p className="text-gray-200/90">Secure access to the ICT Faculty Hub</p>
 				</div>
 				<div className="bg-white/90 backdrop-blur rounded-2xl shadow-xl p-8 border border-gray-100 ring-1 ring-black/5 animate-in zoom-in-95 duration-500">
 					<form onSubmit={handleSubmit} noValidate className="space-y-6">
@@ -123,7 +132,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onBack, onLoginSuccess }) => {
 					</form>
 					{/* Demo credentials removed intentionally. */}
 				</div>
-				<div className="text-center mt-6 text-xs text-gray-500">Having trouble? Contact <a href="mailto:it-support@tut.ac.za" className="text-blue-600 font-medium">IT Support</a> · <span className="text-gray-400">v1.0</span></div>
+				<div className="text-center mt-6 text-xs text-gray-300">Having trouble? Contact <a href="mailto:it-support@tut.ac.za" className="text-blue-300 hover:text-blue-200 font-medium underline-offset-2" >IT Support</a> · <span className="text-gray-400/80">v1.0</span></div>
 			</div>
 		</div>
 	);

@@ -21,6 +21,7 @@ import AdminPasswordUpdater from './sections/AdminPasswordUpdater';
 import AdminUserManagement from './sections/AdminUserManagement';
 import NewsManagementSection from './sections/NewsManagementSection';
 import ServicesManagementSection from './sections/ServicesManagementSection';
+import tutLogo from '../../assets/TUT.png';
 // (Slideshow moved to AdminLogin per request)
 
 interface AdminDashboardProps {
@@ -32,6 +33,19 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome: _onBackToHome }) => {
 	const [activeTab, setActiveTab] = useState('overview');
+	// Live date & time (24h)
+	const [currentTime, setCurrentTime] = useState('');
+	const [currentDate, setCurrentDate] = useState('');
+	useEffect(() => {
+		const update = () => {
+			const now = new Date();
+			setCurrentTime(now.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+			setCurrentDate(now.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }));
+		};
+		update();
+		const id = setInterval(update, 1000);
+		return () => clearInterval(id);
+	}, []);
 	const navigate = useNavigate();
 	const stats = [
 		{ label: 'Total Students', value: '12,450', icon: Users, color: 'bg-blue-500' },
@@ -358,7 +372,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	};
 
 	// Logout via profile modal
-	const confirmLogout = () => { setShowProfile(false); onLogout(); };
+	// Logout confirmation dialog
+	const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+	const requestLogout = () => { setShowProfile(false); setShowLogoutConfirm(true); };
+	const cancelLogoutConfirm = () => setShowLogoutConfirm(false);
+	const performLogout = () => { setShowLogoutConfirm(false); onLogout(); };
 
 	// Admin profile (parsed from sessionStorage currentAdmin)
 	const [adminProfile, setAdminProfile] = useState<{initials?:string; surname?:string; email?:string}>({});
@@ -376,13 +394,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 		<div className="min-h-screen bg-gray-50">
 			<header className="bg-white shadow-sm border-b border-gray-200">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-					<div className="flex justify-between items-center py-4">
+					<div className="flex justify-between items-center py-3">
 						<div className="flex items-center space-x-4">
+							<img
+								src={tutLogo}
+								alt="TUT Logo"
+								className="h-[50px] md:h-[58px] w-auto rounded-md shadow-sm object-contain"
+							/>
 							<h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-							<span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">ICT Faculty Hub</span>
 						</div>
 						<div className="flex items-center space-x-4">
-							{/* Profile avatar button */}
+							<div className="flex flex-col items-start leading-tight select-none">
+								<span className="text-sm font-mono text-gray-700 tabular-nums" aria-label="Current time">{currentTime}</span>
+								<span className="text-[11px] font-medium text-gray-500" aria-label="Current date">{currentDate}</span>
+							</div>
+							{/* Profile avatar button (moved to right of time/date) */}
 							<button onClick={openProfile} className="relative group flex items-center gap-3 px-4 py-2 rounded-full bg-white border border-gray-200 hover:shadow transition">
 								<div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-inner">
 									{(adminProfile.initials||'AD').slice(0,2).toUpperCase()}
@@ -646,7 +672,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 					</div>
 					<div className="flex justify-end gap-3 pt-4 border-t">
 						<button onClick={closeProfile} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Close</button>
-						<button onClick={confirmLogout} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2"><LogOut className="w-4 h-4" />Logout</button>
+						<button onClick={requestLogout} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2"><LogOut className="w-4 h-4" />Logout</button>
+					</div>
+				</div>
+			</div>
+		)}
+		{showLogoutConfirm && (
+			<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+				<div className="bg-white rounded-xl w-full max-w-sm shadow-xl p-6 space-y-5">
+					<h3 className="text-lg font-semibold text-gray-900">Confirm Logout</h3>
+					<p className="text-sm text-gray-600">Are you sure you want to log out of the admin dashboard?</p>
+					<div className="flex justify-end gap-3 pt-2">
+						<button onClick={cancelLogoutConfirm} className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">Cancel</button>
+						<button onClick={performLogout} className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Logout</button>
 					</div>
 				</div>
 			</div>
