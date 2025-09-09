@@ -46,11 +46,9 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Contact your Academic Department directly for all Marks and predicate enquiries ',
       ],
       'academic-exclusions': [
-        'Refer to the ITS notification',
-        'Apply for an appeal against exclusion via EC (Electronic Campus)',
-        'Receive outcome via SASO electronically',
-        'Sign the receipt letter online via SASO',
-        'Follow conditions if block is lifted, or wait 1 year if not lifted',
+        'Get appeal forms from the Student Support Coordinator office in building 14 and complete them.',
+        'You are then required to submit your appeals by handing in a hard copy exclusion appeal form together with the relevant supporting documents',
+        
       ],
       'nsfas-enquiries': [
         'Visit the Financial Aid Office for enquiries',
@@ -68,8 +66,8 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Visit Academic Department for module credits',
       ],
       'Subject additions and cancellations': [
-        'Obtain the form from OneStop.',
-        'Obtain approval from your Academic Department.',
+        'Go to building 7',
+       
       ],
       'NO WALK-INS Policy': [
         'NO HUMANITIES ENQUIRIES at ICT Faculty offices',
@@ -88,27 +86,33 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
       
       ],
       'Special & Exit Examinations': [
-        'Comming Soon',
+        'Go to Building 7',
       ],
-      'Probation': ['Refer to ITS notification',
-      'Sign probation form via SASO electronically'],
+      'Probation': ['Get appeal forms from the Student Support Coordinator office in building 14 and complete them.',
+      'submit their appeals by handing in a hard copy probation appeal form together with the relevant supporting documents'],
       
-      'Other Admission Enquiries': [
-        'Coming Soon',
+      'ema Other Admissions Enquiries': [
+        'Via email – admission@tut.ac.za or Via a phone call – 0861102421 or just visit building 7',
         
       ],
       'Residence Administration': [
-        'Coming Soon',
+        'visit Building 7',
         
       ],
       'bursaries': [
-        'Coming soon',
+        'Visit the FUNDI office in building 7',
         
       ],
-      'Recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
+      'Recognition / Examption (CAT)': ['Obtain approvals from your Academic Department.'],
       'admissions': ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
-      'timetables': ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
-      'financial-exclusion': ['coming soon',],
+      
+      'financial-exclusion': ['Refer to the ITS notification.',
+        
+      ],
+      'academicc-exclusions': ['Get appeal forms from the Student Support Coordinator office in building 14 and complete them.',
+      'Submit the completed forms to the Exclusion Appeal Committee  office in building 14 before the closing date.',
+
+      ],
       'WIL For Compuer Science': [
         'Download WIL and Re-admission forms from EC and complete them.',
         'Send the placement letter along with the completed forms to the WIL manager (JK Makhubela, MakhubelaJK@tut.ac.za)',
@@ -118,6 +122,19 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'The manager assigns the student a WIL Coordinator.',
         'Proceed to MY WIL PORTAL and register (refer to the student user manual guide on MYTutor).) https://wil.tut.ac.za/ ',
         'Step 8	The manager will approve your registration.',
+      ],
+      'class timetables': [
+        'Go to building 7',
+        'If you experience clashes on the timetables, visit your Academic Department urgently',
+      ],
+      'no-walk-ins':[
+        'Do not visit any office and ask staff to screen your grade 12 certificate.',
+        'You must apply on-line.',
+        'click on the quick link daily to see which courses are available if you did not apply earlier or if you want to apply late.',
+
+      ],
+      'admission': [
+   'Visit the TUT website to check application closing dates (www.tut.ac.za) use the quick link',
       ],
     };
     return steps[serviceId] || [];
