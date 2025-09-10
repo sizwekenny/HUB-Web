@@ -8,6 +8,9 @@ interface Props {
   newsLoading: boolean;
   newsError: string;
   newsCampusFilter: string;
+  // Title-only search term (already applied in parent filtering logic)
+  search?: string;
+  onSearchChange?: (v:string)=>void;
   newsFrom: number; newsTo: number; total: number; page: number; totalPages: number;
   onCampusFilterChange: (v:string)=>void;
   onAdd: ()=>void;
@@ -17,7 +20,7 @@ interface Props {
   onDelete: (item:NewsItem)=>void;
 }
 
-const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, newsLoading, newsError, newsCampusFilter, newsFrom, newsTo, total, page, totalPages, onCampusFilterChange, onAdd, onPrev, onNext, onToggleVisibility, onEdit, onDelete }) => {
+const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, newsLoading, newsError, newsCampusFilter, search='', onSearchChange, newsFrom, newsTo, total, page, totalPages, onCampusFilterChange, onAdd, onPrev, onNext, onToggleVisibility, onEdit, onDelete }) => {
   const [viewItem, setViewItem] = useState<NewsItem | null>(null);
 
   // Close on ESC
@@ -36,6 +39,18 @@ const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, news
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <h2 className="text-lg font-semibold text-gray-900">News Management</h2>
             <div className="flex flex-wrap gap-3 items-center">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={search}
+                  onChange={e=>onSearchChange?.(e.target.value)}
+                  placeholder="Search title..."
+                  className="pl-3 pr-10 py-2 w-48 md:w-60 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                {search && (
+                  <button type="button" onClick={()=>onSearchChange?.('')} aria-label="Clear search" className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600">✕</button>
+                )}
+              </div>
               <select value={newsCampusFilter} onChange={e => onCampusFilterChange(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <option value="all">All Campuses</option>
                 <option value="south">South</option>
@@ -98,8 +113,17 @@ const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, news
         </div>
       </div>
     {viewItem && (
-      <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="news-view-title">
-        <div className="relative w-full max-w-2xl bg-white rounded-xl shadow-xl border border-gray-200 animate-in fade-in zoom-in-95">
+      <div
+        className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="news-view-title"
+        onMouseDown={(e)=>{ if(e.target === e.currentTarget) closeView(); }}
+      >
+        <div
+          className="relative w-full max-w-2xl bg-white rounded-xl shadow-xl border border-gray-200 animate-in fade-in zoom-in-95"
+          onMouseDown={(e)=>e.stopPropagation()}
+        >
           <div className="flex items-start justify-between gap-4 p-6 border-b border-gray-100">
             <div>
               <h3 id="news-view-title" className="text-xl font-semibold text-gray-900 mb-1">{viewItem.title}</h3>

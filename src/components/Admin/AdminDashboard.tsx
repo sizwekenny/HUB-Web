@@ -5,7 +5,6 @@ import {
 	Settings,
 	BarChart3,
 	LogOut,
-	Edit,
 	Trash2,
 	EyeOff,
 	BookOpen
@@ -61,7 +60,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 		{ id: 'settings', label: 'Settings', icon: Settings },
 	];
 	const [newsCampusFilter, setNewsCampusFilter] = useState<'all' | 'south' | 'emalahleni' | 'polokwane'>('all');
-	const [newsSearch, setNewsSearch] = useState('');
+	const [newsSearch, setNewsSearch] = useState(''); // title-only search term
 	// Pagination state for News Management
 	const [newsPage, setNewsPage] = useState(1);
 	const NEWS_PAGE_SIZE = 10;
@@ -155,7 +154,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 				}
 				if (newsSearch) {
 					const q = newsSearch.toLowerCase();
-					list = list.filter(n => n.title?.toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q));
+					list = list.filter(n => n.title?.toLowerCase().includes(q));
 				}
 				if (!cancelled) setNewsItems(list.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime()));
 			} catch (err:any) {
@@ -194,7 +193,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 			}
 			if (newsSearch) {
 				const q = newsSearch.toLowerCase();
-				list = list.filter(n => n.title?.toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q));
+				list = list.filter(n => n.title?.toLowerCase().includes(q));
 			}
 			setNewsItems(list.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime()));
 		} catch (err:any) {
@@ -391,10 +390,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	const closeProfile = () => setShowProfile(false);
 
 	return (
-		<div className="min-h-screen bg-gray-50">
+		<div className="min-h-screen bg-gray-50 flex flex-col">
 			<header className="bg-white shadow-sm border-b border-gray-200">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-					<div className="flex justify-between items-center py-3">
+					<div className="flex justify-between items-center h-full">
 						<div className="flex items-center space-x-4">
 							<img
 								src={tutLogo}
@@ -422,10 +421,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 						</div>
 					</div>
 				</div>
-			</header>
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-				<div className="flex space-x-8">
-					<div className="w-72 bg-white rounded-lg shadow-sm p-6">
+				</header>
+					<div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+					<div className="flex items-stretch space-x-8 h-full">
+						<div className="w-72 bg-white rounded-lg shadow-sm p-6 sticky top-16 h-[calc(100vh-4rem)] overflow-auto">
 						<nav className="space-y-2">
 							{tabs.map(tab => { const IconComponent = tab.icon; return (
 								<button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors duration-200 ${activeTab === tab.id ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
@@ -435,7 +434,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 							); })}
 						</nav>
 					</div>
-					<div className="flex-1">
+					<div className="flex-1 min-h-full">
 						{activeTab === 'overview' && (
 							<div className="space-y-8">
 								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -451,36 +450,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 										</div>
 									); })}
 								</div>
-								<div className="bg-white rounded-lg shadow-sm">
-									<div className="p-6 border-b border-gray-200"><h2 className="text-lg font-semibold text-gray-900">Recent News Articles</h2></div>
+								<div className="bg-white rounded-lg shadow-sm min-h-[420px]">
+									<div className="p-6 border-b border-gray-200 flex items-center justify-between">
+										<h2 className="text-lg font-semibold text-gray-900">Recent News Articles</h2>
+										<button onClick={()=>setActiveTab('news')} className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors">View All</button>
+									</div>
 									<div className="p-6">
-										<div className="space-y-4">
-											{newsItems.filter(n => n.isVisible !== false).slice(0,5).map(item => (
-												<div key={item.id} className="p-4 border border-gray-200 rounded-lg flex items-center justify-between">
-													<div className="min-w-0 pr-4">
-														<h3 className="font-medium text-gray-900 truncate" title={item.title}>{item.title}</h3>
-														<p className="text-xs text-gray-500 flex items-center gap-2 mt-1">
-															<span>{new Date(item.date).toLocaleDateString('en-ZA',{year:'numeric',month:'short',day:'numeric'})}</span>
-															<span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-[10px] font-medium">{item.category}</span>
-															{item.campus && <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-medium capitalize">{item.campus}</span>}
-															{item.isUrgent && <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-semibold">URGENT</span>}
-														</p>
+										<div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+											{newsItems.filter(n => n.isVisible !== false).slice(0,6).map(item => (
+												<div key={item.id} className="group relative rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 shadow-sm hover:shadow-md transition-all cursor-pointer" onClick={()=>{ handleEditNews(item); setActiveTab('news'); }}>
+													<div className="flex items-start justify-between gap-3">
+														<h3 className="text-sm font-semibold text-gray-900 pr-2 line-clamp-2" title={item.title}>{item.title}</h3>
+														<span className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium ${item.priority==='high'?'bg-red-100 text-red-700':item.priority==='medium'?'bg-yellow-100 text-yellow-700':'bg-green-100 text-green-700'}`}>{item.priority}</span>
 													</div>
-													<div className="flex items-center gap-3">
-														<span className={`px-2 py-1 rounded-full text-xs font-medium ${item.priority === 'high' ? 'bg-red-100 text-red-700' : item.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>{item.priority}</span>
-														<button
-															onClick={(e) => { e.stopPropagation(); handleToggleNewsVisibility(item.id); }}
-															aria-label={item.isVisible === false ? 'Enable news item' : 'Disable news item'}
-															className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${item.isVisible === false ? 'bg-gray-300' : 'bg-green-500'}`}
-														>
-															<span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${item.isVisible === false ? 'translate-x-1' : 'translate-x-5'}`}></span>
-														</button>
-														<button onClick={() => { handleEditNews(item); setActiveTab('news'); }} className="p-1 text-gray-400 hover:text-blue-600 transition-colors" title="Edit"><Edit className="w-4 h-4" /></button>
+													<p className="mt-2 text-xs text-gray-600 line-clamp-3 min-h-[48px]">{item.summary || item.content || '—'}</p>
+													<div className="mt-3 flex flex-wrap items-center gap-2">
+														<span className="text-[10px] text-gray-500">{new Date(item.date).toLocaleDateString('en-ZA',{year:'2-digit',month:'short',day:'numeric'})}</span>
+														<span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-[10px] font-medium">{item.category}</span>
+														{item.campus && <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-medium capitalize">{item.campus}</span>}
+														{item.isUrgent && <span className="px-2 py-0.5 rounded-full bg-red-600/90 text-white text-[10px] font-semibold">Urgent</span>}
 													</div>
-												</div>
+													<div className="absolute inset-x-0 -bottom-px h-0.5 bg-gradient-to-r from-transparent via-blue-500/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+											</div>
 											))}
 											{!newsLoading && newsItems.filter(n=>n.isVisible!==false).length === 0 && (
-												<p className="text-sm text-gray-500">No news articles found.</p>
+												<p className="text-sm text-gray-500 col-span-full">No news articles found.</p>
 											)}
 										</div>
 									</div>
@@ -495,6 +489,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 									newsLoading={newsLoading}
 									newsError={newsError}
 									newsCampusFilter={newsCampusFilter}
+									search={newsSearch}
+									onSearchChange={(v)=>setNewsSearch(v)}
 									newsFrom={newsFrom}
 									newsTo={newsTo}
 									total={newsItems.length}
