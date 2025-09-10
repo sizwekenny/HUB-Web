@@ -48,9 +48,9 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
       'pol-academic-exclusions': [
         'Refer to the ITS notification',
         'Apply for an appeal against exclusion via EC (Electronic Campus)',
-        'Receive outcome via SASO electronically',
-        'Sign the receipt letter online via SASO',
-        'Follow conditions if block is lifted, or wait 1 year if not lifted',
+        'coming Soon',
+        'coming Soon',
+        'coming Soon',
       ],
       'pol-nsfas-enquiries': [
        'Coming Soon',
@@ -59,11 +59,11 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
       ],
       'pol-change-of-course': [
         'Confirm you were registered the previous academic year',
-        'Apply via EC (Electronic Campus) during October/November',
-        'Wait for approval email',
-        'Cancel your current course first',
-        'Register for the new course',
-        'Visit Academic Department for module credits',
+        'If yes, apply for change of course via EC (Electronic Campus).',
+        'You can only apply once a year during the October/November period due to the faculty having one intake per year.',
+        'After you receive an approval email, you have to first cancel your current course before the new course can be opened on the system.',
+        'Thereafter, you can register for the new course.',
+        'You must visit your Academic Department to determine for which modules you will be credited and for which modules you need to register for.',
       ],
       'pol-subject-additions-and-cancellations': [
         'Coming Soon',
@@ -77,10 +77,11 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
         'Check www.tut.ac.za daily for available courses',
       ],
       'pol-intercampus Transfers': [
-        'Must be registered Computer Science Student',
-        'Apply via EC (electronic Campus)',
-        'Available end of October to mid-November only',
-        'One intake per year only',
+        'Were you a registered student the previous/current academic year in Computer Science?',
+        'If yes, apply for an intercampus transfer via EC (Electronic Campus).',
+        'The link/tab will be available during the end of October until mid-November.',
+        'You can only apply during this period due to the Faculty of ICT having only one intake per year.',
+        'The outcome of your application will be communicated with you via the email you provide.',
       ],
       'pol-re-admission': [
         'Coming Soon',
@@ -90,11 +91,10 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
       'pol-special & Exit Examinations': [
         'Visit Examination Administration Office for all enquiries',
       ],
-      'pol-probation': ['Refer to ITS notification', 'Sign probation form via SASO electronically'],
+      'pol-probation': ['Refer to ITS notification', 'coming Soon'],
       'pol-other Admission Enquiries': [
-        'Coming Soon',
-        'Coming Soon',
-        'comming Soon'
+        'Via email – admission@tut.ac.za  or Via a phone call – 0861102421 or just visit building 1 at campus',
+        
       ],
       'pol-residence Administration': [
         'Coming Soon',
@@ -102,9 +102,7 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
         'comming Soon'
       ],
       'pol-bursaries': [
-        'Coming Soon',
-        'Coming Soon',
-        'comming Soon'
+        'comming Soon',
         
       ],
       'pol-recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
@@ -122,16 +120,6 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
         'Proceed to MY WIL PORTAL and register (refer to the student user manual guide on MYTutor).)  ',
         'The manager will approve your registration.',
         
-      ],
-       'pol-mentorship': [
-        'Coming Soon',
-        'Coming Soon',
-        'comming Soon',
-      ],
-      'pol-tutoring': [
-        'Coming Soon',
-        'Coming Soon',
-        'comming Soon',
       ],
     };
   return steps[serviceId] || [];

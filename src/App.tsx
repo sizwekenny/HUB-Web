@@ -165,7 +165,7 @@ const polServices: Service[] = [
     statusLink: 'https://applications-prod.tut.ac.za/'
   },
   {
-    id: 'pol-ntercampus Transfers',
+    id: 'pol-intercampus Transfers',
     title: 'Intercampus Transfers',
     category: 'Senior Students',
     description: 'Transfers between TUT campuses (Computer Science students only)',
@@ -181,7 +181,7 @@ const polServices: Service[] = [
     statusLink: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login'
   },
   {
-    id: 'pol-pecial & Exit Examinations',
+    id: 'pol-special & Exit Examinations',
     title: 'Special & Exit Examinations',
     category: 'Senior Students',
     description: 'Apply for special or exit examinations',
@@ -196,14 +196,14 @@ const polServices: Service[] = [
     details: 'Handle probation notifications and requirementss'
   },
   {
-    id: 'pol-ther Admission Enquiries',
+    id: 'pol-other Admission Enquiries',
     title: 'Other Admission Enquiries',
     category: 'Newcomer Students',
     description: 'Get help with application status, documentation, and campus changes.',
     details: 'Get help with application status, documentation, and campus changes.'
   },
   {
-    id: 'pol-esidence Administration',
+    id: 'pol-residence Administration',
     title: 'Residence Administration',
     category: 'All Students',
     description: 'Student accommodation and residence matters.',
@@ -432,7 +432,7 @@ const emaServices: Service[] = [
     statusLink: 'https://os.tut.ac.za/ExamsLegacy/'
   },
   {
-    id: 'academic-exclusions',
+    id: 'academicc-exclusions',
     title: 'Academic Exclusions',
     category: 'Senior Students',
     description: 'Information and appeals process for academic exclusions.',
@@ -464,7 +464,7 @@ const emaServices: Service[] = [
     statusLink: 'https://ec.tut.ac.za/'
   },
   {
-    id: 'admissions',
+    id: 'admission',
     title: 'Admissions',
     category: 'Newcomer Students',
     description: 'Information about application processes and deadlines.',
@@ -479,7 +479,7 @@ const emaServices: Service[] = [
     details: 'Financial assistance and bursary information.'
   },
   {
-    id: 'timetables',
+    id: 'class timetables',
     title: 'Class & Test Timetables',
     category: 'All Students',
     description: 'Access your class and test schedules.',
@@ -495,7 +495,7 @@ const emaServices: Service[] = [
     statusLink: 'https://ienabler.tut.ac.za/pls/prodi41/w99pkg.mi_login'
   },
   {
-    id: 'NO WALK-INS Policy',
+    id: 'no-walk-ins',
     title: 'NO WALK-INS Policy',
     category: 'Newcomer Students',
     description: 'Important policy for new applicants.',
@@ -534,7 +534,7 @@ const emaServices: Service[] = [
     details: 'Handle probation notifications and requirementss'
   },
   {
-    id: 'Other Admission Enquiries',
+    id: 'ema Other Admissions Enquiries',
     title: 'Other Admission Enquiries',
     category: 'Newcomer Students',
     description: 'Get help with application status, documentation, and campus changes.',
