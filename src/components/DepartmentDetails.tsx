@@ -31,6 +31,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
       case 'cse': return Cpu;
       case 'informatics': return Database;
       case 'it': return Globe;
+      case 'fyf': return Globe;
       default: return BookOpen;
     }
   };

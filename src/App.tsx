@@ -57,6 +57,15 @@ const departments: Department[] = [
     buildingNumber: 'BUILDING 12 ROOM 162',
     email: 'chokoepn@tut.ac.za',
     contactNumber: '+27 12 382 9041'
+  },
+  {
+    id: 'fyf',
+    name: 'ICT First Year & Foundation',
+    codes: ['DPITF0', 'DPIT20', 'ADIT21'],
+    description: 'Practical IT programs focusing on technology and systems.',
+    buildingNumber: 'BUILDING 18-G-14',
+    email: 'coming soon',
+    contactNumber: 'coming soon'
   }
 
 ];

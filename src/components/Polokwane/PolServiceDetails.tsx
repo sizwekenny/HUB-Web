@@ -105,7 +105,7 @@ const PolServiceDetails: React.FC<PolServiceDetailsProps> =  ({ service, onBack 
         'comming Soon',
         
       ],
-      'pol-recognition / Examption (CAT)': ['Obtain form from OneStop', 'Get approvals from Academic Department'],
+      'pol-recognition / Examption (CAT)': ['coming soon', 'coming Soon'],
       'pol-admissions': ['Visit www.tut.ac.za to check application closing dates', 'Use the Quick link provided to apply online'],
       'pol-timetables': ['Visit Academic Department for timetables', 'Report clashes to Academic Department urgently'],
       'pol-financial-exclusion': ['Refer to ITS notification', 'Visits Mr Lebelo at Students Accounts'],

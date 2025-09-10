@@ -6,6 +6,7 @@ export interface Department {
   buildingNumber: string;
   email: string;
   contactNumber: string;
+  link?: string;
 }
 
 export interface Service {

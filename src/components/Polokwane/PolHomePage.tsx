@@ -46,6 +46,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const [showAllNews, setShowAllNews] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [latestNews, setLatestNews] = useState<NewsItem[]>([]);
+  const [showCampusVideo, setShowCampusVideo] = useState(false);
 
   // Handle transition to all news view
   const handleViewAllNews = () => {
@@ -183,6 +184,12 @@ const filteredServices = selectedFilter === 'all'
                 className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-900 transform hover:scale-105 transition-all duration-300"
               >
                 Student Services
+              </button>
+              <button
+                onClick={() => setShowCampusVideo(true)}
+                className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-yellow-600 hover:text-white hover:border-white border-2 border-transparent transform hover:scale-105 transition-all duration-300 shadow-lg"
+              >
+                Explore Our Campus
               </button>
             </div>
           </div>
@@ -675,6 +682,32 @@ const filteredServices = selectedFilter === 'all'
           </div>
         </div>
       </section>
+            {showCampusVideo && (
+              <div
+                className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[70] p-4"
+                onClick={() => setShowCampusVideo(false)}
+              >
+                <div
+                  className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    onClick={() => setShowCampusVideo(false)}
+                    className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full hover:bg-gray-200 transition-colors duration-200"
+                  >
+                    <X className="w-6 h-6 text-black" />
+                  </button>
+                  <video
+                    className="w-full h-auto"
+                    controls
+                    autoPlay
+                  >
+                    <source src="src/assets/polokwane.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+            )}
 
       {/* Footer */}
       <Footer/>
