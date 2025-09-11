@@ -38,6 +38,17 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
 
   const IconComponent = getDepartmentIcon(department.id);
 
+  const getDepartmentPrograms = (departmentId: string) => {
+    switch (departmentId) {
+      case 'informatics':
+        return ['DPIFF0', 'DPIF20', 'ADIF20'];
+      case 'fyf':
+        return ['FYF101', 'FYF102', 'FYF103'];
+      default:
+        return department.codes;
+    }
+  };
+
   const getCodeDescription = (code: string) => {
     const descriptions: Record<string, string> = {
       'DPMCF0': 'Diploma in Computer Science - Foundation',
@@ -54,7 +65,10 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
       'ADIF20': 'Advanced Diploma in Informatics',
       'DPITF0': 'Diploma in Information Technology - Foundation',
       'DPIT20': 'Diploma in Information Technology - MainStream',
-      'ADIT21': 'Advanced Diploma in Information Technology'
+      'ADIT21': 'Advanced Diploma in Information Technology',
+      'FYF101': 'Introduction to University Studies & Academic Skills',
+      'FYF102': 'Mathematics & Computer Fundamentals',
+      'FYF103': 'Communication & Professional Skills'
     };
     return descriptions[code] || 'Program description not available';
   };
@@ -75,10 +89,34 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
       'ADIF20': '2 Years',
       'DPITF0': '4 Years (Foundation)',
       'DPIT20': '3 Years',
-      'ADIT21': '2 Years'
+      'ADIT21': '2 Years',
+      'FYF101': '1 Year',
+      'FYF102': '1 Year',
+      'FYF103': '1 Year'
     };
     return durations[code] || 'Varies';
   };
+
+  const getSubjectsByDepartment = (departmentId: string) => {
+    if (departmentId === 'informatics') {
+      return [
+        { subject: 'Information Systems', lecturer: 'Ms. Irene Abraham-Samgeorge', email: 'abrahamia@tut.ac.za' },
+        { subject: 'Computer Programming', lecturer: 'Mr. John Smith', email: 'cprogram@tut.ac.za' },
+        { subject: 'Mathematics for IT', lecturer: 'Dr. Jane Doe', email: 'mathit@tut.ac.za' },
+        { subject: 'ICT Skills', lecturer: 'Mr. Alex Brown', email: 'ictskills@tut.ac.za' }
+      ];
+    }
+    if (departmentId === 'fyf') {
+      return [
+        { subject: 'Academic Skills', lecturer: 'Dr. Linda White', email: 'academics@tut.ac.za' },
+        { subject: 'Math & Computer Fundamentals', lecturer: 'Mr. Peter Johnson', email: 'mathcomp@tut.ac.za' },
+        { subject: 'Communication & Professional Skills', lecturer: 'Ms. Sarah Lee', email: 'communication@tut.ac.za' }
+      ];
+    }
+    return [];
+  };
+
+  const subjects = getSubjectsByDepartment(department.id);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-16" style={{ paddingTop: '0px' }}>
@@ -113,7 +151,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
             <div className={`bg-white rounded-xl shadow-lg p-8 transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '200ms' }}>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Programs</h2>
               <div className="space-y-4">
-                {department.codes.map((code, index) => (
+                {getDepartmentPrograms(department.id).map((code, index) => (
                   <div
                     key={code}
                     className={`border border-gray-200 rounded-lg overflow-hidden transition-all duration-500 hover:shadow-md ${expandedCode === code ? 'bg-blue-50 border-blue-300' : 'bg-white hover:bg-gray-50'}`}
@@ -135,7 +173,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
                       <ChevronLeft className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${expandedCode === code ? 'rotate-90' : '-rotate-90'}`} />
                     </div>
 
-                    <div className={`overflow-hidden transition-all duration-500 ${expandedCode === code ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className={`overflow-hidden transition-all duration-500 ${expandedCode === code ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
                       <div className="px-4 pb-4 border-t border-gray-200">
                         <div className="pt-4">
                           <h4 className="font-semibold text-gray-900 mb-2">Program Description</h4>
@@ -147,15 +185,30 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
                             </div>
                             <div className="bg-white p-4 rounded-lg border border-gray-100">
                               <h5 className="font-medium text-gray-900 mb-2">Level</h5>
-                              <p className="text-gray-600">
-                                {code.startsWith('AD') ? 'Advanced Diploma' : 'Diploma'}
-                              </p>
+                              <p className="text-gray-600">{code.startsWith('AD') ? 'Advanced Diploma' : 'Diploma'}</p>
                             </div>
                           </div>
+
+                          {/* Subjects & Lecturers (Informatics or FYF) */}
+                          {subjects.length > 0 && (
+                            <div className="bg-white p-4 rounded-lg border border-gray-200 mt-4">
+                              <h5 className="font-medium text-gray-900 mb-3">Subjects & Lecturers</h5>
+                              <ul className="space-y-2 text-gray-700 text-sm">
+                                {subjects.map((sub, idx) => (
+                                  <li key={idx} className="flex justify-between border-b pb-2">
+                                    <span>{sub.subject}</span>
+                                    <a href={`mailto:${sub.email}`} className="text-blue-600 hover:underline">
+                                      {sub.lecturer} ({sub.email})
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
                         </div>
                       </div>
                     </div>
-
                   </div>
                 ))}
               </div>
@@ -182,8 +235,8 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
             <div className={`bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '600ms' }}>
               <h3 className="text-xl font-bold mb-4">Need Help?</h3>
               <p className="mb-4 opacity-90">Contact your Academic Department for more information about these programs.</p>
-              
             </div>
+
             <div className={`bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg p-6 mt-6 text-blue-900 transform transition-all duration-1000${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '500ms' }}>
               <h2 className="text-lg font-semibold text-gray-700 dark:text-black mb-4">Quick Information</h2>
               <ul className="space-y-2 text-sm text-gray-900 dark:text-gray-900">
@@ -192,9 +245,6 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
                 <li><span className="font-medium text-gray-900 dark:text-gray">Contact Number:</span> {department.contactNumber}</li>
               </ul>
             </div>
-
-            {/* Help Card */}
-            
           </div>
         </div>
       </div>
