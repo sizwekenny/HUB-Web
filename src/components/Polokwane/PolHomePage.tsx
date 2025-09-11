@@ -151,7 +151,11 @@ const filteredServices = selectedFilter === 'all'
       return true; // fallback
     });
 
-
+useEffect(() => {
+  if (selectedFilter !== 'all') {
+    handleScrollTo('services');
+  }
+}, [selectedFilter]);
   return (
     <div className="min-h-screen">
       {/* Hero Section */}

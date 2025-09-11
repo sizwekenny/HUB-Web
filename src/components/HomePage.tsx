@@ -13,9 +13,10 @@ import {
   Calendar,
   FileText,
   Megaphone,
-  X,
+  X,MapPin, Phone, Mail,
   Download
 } from 'lucide-react';
+
 import { Department, Service, NewsItem } from '../types';
 import axios from 'axios';
 import { newsStore } from '../utils/newsStore';
@@ -137,6 +138,11 @@ const HomePage: React.FC<HomePageProps> = ({
       localStorage.removeItem('expandServices');
     }
   }, []);
+  useEffect(() => {
+  if (selectedFilter !== 'all') {
+    handleScrollTo('services');
+  }
+}, [selectedFilter]);
 
   const handleScrollTo = (section: 'departments' | 'services') => {
     if (section === 'departments' && departmentsRef.current) {
@@ -170,7 +176,7 @@ const HomePage: React.FC<HomePageProps> = ({
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-              FoICT(south Campus)
+              FoICT(Sosha South Campus)
               {/* <span className="block text-yellow-400">Information Hub</span> */}
             </h1>
             <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
@@ -593,7 +599,7 @@ const HomePage: React.FC<HomePageProps> = ({
         </div>
       )}
 
-      {/* Academic Departments */}
+      
       {/* Academic Departments */}
       <section ref={departmentsRef} className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -646,51 +652,70 @@ const HomePage: React.FC<HomePageProps> = ({
               );
             })}
 
-            {/* SASO Office Card */}
-            <div
-              id="department-bld18"
-              className="flex-1 min-w-[220px] max-w-[250px] group bg-white rounded-xl shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden"
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-500 transition-colors duration-300">
-                    <BookOpen className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors duration-300" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
-                  SASO: Student Academic Support Office
-                  
-                </h3>
-                <p className="text-gray-600 mb-2 text-sm">
-                  <a
-                    href="https://sds.onlinewebshop.net/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline hover:text-blue-800"
-                  >
-                    SASO Website
-                  </a>
-                </p>
-                <p className="text-gray-600 text-sm">🏢 BLD 18-242</p>
-                <p className="text-gray-600 text-sm">📧 general@tut.ac.za</p>
-                <p className="text-gray-600 text-sm">📞 086 110 2421</p>
-
-                {/* Services */}
-                <div className="mt-4">
-                  <h4 className="font-semibold text-gray-800 mb-2">Services:</h4>
-                  <ul className="list-disc list-inside text-gray-600 text-sm space-y-1">
-                    <li>Peer to peer learning</li>
-                    <li>Mentorship</li>
-                    <li>Tutorship</li>
-                    <li>Studythons</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+           
           </div>
         </div>
       </section>
+       {/* SASO Office Card */}
+    <div
+  id="department-bld18"
+  className="w-full min-h-[200px] bg-white rounded-2xl shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden flex flex-col items-center text-center"
+>
+  {/* Header */}
+  <div className="bg-blue-50 w-full py-6 flex flex-col items-center">
+    <BookOpen className="w-10 h-10 text-blue-600 mb-2" />
+    <h3 className="text-2xl font-bold text-gray-900">
+      SASO: Student Academic Support Office
+    </h3>
+    <p className="text-gray-600 font-medium">Building 18 - Room 242</p>
+  </div>
 
+  {/* Body */}
+  <div className="p-6 w-full flex flex-col items-center">
+    {/* Contact Info */}
+    <div className="flex flex-wrap justify-center gap-4 text-gray-700 text-sm mb-4">
+      <a
+        href="https://sds.onlinewebshop.net/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
+      >
+        <Globe className="w-4 h-4" /> SASO Website
+      </a>
+      <span className="text-gray-400">|</span>
+      <span className="flex items-center gap-2">
+        <MapPin className="w-4 h-4 text-green-500" /> BLD 18-242
+      </span>
+      <span className="text-gray-400">|</span>
+      <span className="flex items-center gap-2">
+        <Mail className="w-4 h-4 text-red-500" /> general@tut.ac.za
+      </span>
+      <span className="text-gray-400">|</span>
+      <span className="flex items-center gap-2">
+        <Phone className="w-4 h-4 text-purple-500" /> 086 110 2421
+      </span>
+    </div>
+
+    {/* Services */}
+   <div className="w-full max-w-4xl">
+  <h4 className="font-semibold text-gray-800 mb-3">Services Offered:</h4>
+  <div className="flex flex-nowrap justify-center gap-4 text-gray-600 text-sm overflow-x-auto">
+    <span className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2">
+      <BookOpen className="w-4 h-4 text-blue-500" /> Peer Learning
+    </span>
+    <span className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2">
+      <BookOpen className="w-4 h-4 text-blue-500" /> Mentorship
+    </span>
+    <span className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2">
+      <BookOpen className="w-4 h-4 text-blue-500" /> Tutorship
+    </span>
+    <span className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2">
+      <BookOpen className="w-4 h-4 text-blue-500" /> Studythons
+    </span>
+  </div>
+</div>
+  </div>
+</div>
 
       {/* Student Services */}
       <section ref={servicesRef} className="py-20 bg-white">

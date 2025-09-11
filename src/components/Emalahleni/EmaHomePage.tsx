@@ -126,25 +126,29 @@ const HomePage: React.FC<HomePageProps> = ({
     }
   }, []);
 
-  const handleScrollTo = (section: 'departments' | 'services') => {
-    if (section === 'departments' && departmentsRef.current) {
-      departmentsRef.current.scrollIntoView({ behavior: 'smooth' });
+   const handleScrollTo = (section: 'departments' | 'services') => {
+      if (section === 'departments' && departmentsRef.current) {
+        departmentsRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+      if (section === 'services' && servicesRef.current) {
+        servicesRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+  
+    // Filter services based on selectedFilter prop
+  const filteredServices = selectedFilter === 'all'
+    ? services
+    : services.filter(service => {
+        if (selectedFilter === 'senior') return service.category === 'Senior Students';
+        if (selectedFilter === 'newcomer') return service.category === 'Newcomer Students';
+        return true; // fallback
+      });
+  
+  useEffect(() => {
+    if (selectedFilter !== 'all') {
+      handleScrollTo('services');
     }
-    if (section === 'services' && servicesRef.current) {
-      servicesRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  // Filter services based on selectedFilter prop
-const filteredServices = selectedFilter === 'all'
-  ? services
-  : services.filter(service => {
-      if (selectedFilter === 'senior') return service.category === 'Senior Students';
-      if (selectedFilter === 'newcomer') return service.category === 'Newcomer Students';
-      return true; // fallback
-    });
-
-
+  }, [selectedFilter]);
   return (
     <div className="min-h-screen">
       {/* Hero Section */}

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Globe, Monitor, Mail, MapPin } from 'lucide-react';
+import { Globe, Monitor, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin, Calendar, Youtube, } from 'lucide-react';
+import { FaTiktok } from 'react-icons/fa';  
 
 const Footer: React.FC = () => {
   const quickLinks = [
@@ -25,8 +26,21 @@ const Footer: React.FC = () => {
     },
   ];
 
+  const socialLinks = [
+    { name: 'Facebook', url: 'https://www.facebook.com/TUTCommunications', icon: <Facebook className="w-5 h-5" /> },
+    { name: 'Twitter', url: 'https://x.com/official_tut', icon: <Twitter className="w-5 h-5" /> },
+    { name: 'Instagram', url: 'https://www.instagram.com/tut_official2/#', icon: <Instagram className="w-5 h-5" /> },
+    { name: 'TikTok', url: 'https://www.tiktok.com/@tut_official1?lang=en', icon: <FaTiktok className="w-5 h-5" /> },
+    { name: 'Youtube', url: 'https://www.youtube.com/channel/UCD4jxDpRYTarILQjtsEQv9Q?view_as=subscriber', icon: <Youtube className="w-5 h-5" /> },
+  ];
+
+  const calendarLinks = [
+    { year: '2025', url: 'https://tut.ac.za/images/docs/Academic-Core-Calendar.pdf' },
+    { year: '2026', url: 'https://tut.ac.za/images/docs/2025/2026-AcademicCore-Calendar.pdf' },
+  ];
+
   return (
-    <footer className="relative overflow-hidden text-center md:text-left py-12 bg-yellow-600 text-white mt-16" style={{marginTop:'0px'}}>
+    <footer className="relative overflow-hidden text-center md:text-left py-12 bg-yellow-600 text-white mt-16" style={{ marginTop: '0px' }}>
       {/* Floating Background Elements */}
       <div className="absolute top-20 left-10 w-16 h-16 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute bottom-20 right-10 w-24 h-24 bg-blue-300 rounded-full opacity-20 animate-bounce"></div>
@@ -64,29 +78,45 @@ const Footer: React.FC = () => {
 
         <hr className="border-gray-300 mb-6" />
 
-        {/* About TUT and Contact Info */}
+        {/* Social Media + Contact */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+          {/* Follow Us + Calendar */}
           <div>
-            <h5 className="text-lg font-semibold mb-3">About TUT</h5>
+            <h5 className="text-lg font-semibold mb-3">Follow Us</h5>
+            <div className="flex gap-4 mb-6">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-yellow-500"
+                >
+                  {social.icon}
+                  
+                </a>
+              ))}
+            </div>
+
+            {/* Calendar Section */}
+            <h5 className="text-lg font-semibold mb-3">Calendar</h5>
             <ul className="space-y-2 text-sm">
-              {[
-                ['Council', 'https://www.tut.ac.za/council'],
-                ['Executive Management Committee', 'https://www.tut.ac.za/executive-management-committee'],
-                ['Executive Deans', 'https://www.tut.ac.za/executive-deans'],
-                ['Campus Rectors', 'https://www.tut.ac.za/campus-rectors'],
-                ['Vacancies', 'https://www.tut.ac.za/vacancies/list/1'],
-                ['Tenders', 'https://www.tut.ac.za/tender'],
-                ['Research, Innovation & Engagement', 'https://www.tut.ac.za/research-innovation-engagement'],
-              ].map(([name, url]) => (
-                <li key={name}>
-                  <a href={url} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-500">
-                    {name}
+              {calendarLinks.map((cal) => (
+                <li key={cal.year}>
+                  <a
+                    href={cal.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 hover:text-yellow-500"
+                  >
+                    <Calendar className="w-4 h-4" /> Academic Calendar {cal.year}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* Contact */}
           <div>
             <h5 className="text-lg font-semibold mb-3">Contact</h5>
             <p className="text-sm">Tel: <a href="tel:+27861102421" className="hover:text-yellow-500">086 110 2421</a></p>
