@@ -51,7 +51,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
 
   const getCodeDescription = (code: string) => {
     const descriptions: Record<string, string> = {
-      'DPMCF0': 'Diploma in Computer Science - Foundation',
+        'DPMCF0': 'Diploma in Computer Science - Foundation',
       'DPMC20': 'Diploma in Computer Science - MainStream',
       'ADMC20': 'Advanced Diploma in Computer Science',
       'DPRSF0': 'Diploma in Computer Science (Research) - Foundation',
@@ -75,7 +75,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
 
   const getProgramDuration = (code: string) => {
     const durations: Record<string, string> = {
-      'DPMCF0': '4 Years (Foundation)',
+       'DPMCF0': '4 Years (Foundation)',
       'DPMC20': '3 Years',
       'ADMC20': '2 Years',
       'DPRSF0': '4 Years (Foundation)',
@@ -97,76 +97,95 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
     return durations[code] || 'Varies';
   };
 
-  const getSubjectsByDepartment = (departmentId: string) => {
-  if (departmentId === 'informatics') {
-    return [
-      { 
-        subject: 'Information Systems', 
-        lecturers: [
-          { name: 'Ms. Irene Abraham-Samgeorge', email: 'abrahamia@tut.ac.za' },
-          { name: 'Mr. John Smith', email: 'johnsmith@tut.ac.za' },
-          { name: 'Dr. Alice Brown', email: 'aliceb@tut.ac.za' }
-        ]
-      },
-      { 
-        subject: 'Computer Programming', 
-        lecturers: [
-          { name: 'Mr. Alex Brown', email: 'cprogram1@tut.ac.za' },
-          { name: 'Ms. Emily Stone', email: 'cprogram2@tut.ac.za' },
-          { name: 'Mr. Kevin Lee', email: 'cprogram3@tut.ac.za' }
-        ]
-      },
-      { 
-        subject: 'Mathematics for IT', 
-        lecturers: [
-          { name: 'Dr. Jane Doe', email: 'mathit@tut.ac.za' },
-          { name: 'Mr. Carl Green', email: 'cgreen@tut.ac.za' }
-        ]
-      },
-      { 
-        subject: 'ICT Skills', 
-        lecturers: [
-          { name: 'Prof. William Black', email: 'wblack@tut.ac.za' },
-          { name: 'Dr. Angela White', email: 'awhite@tut.ac.za' }
-        ]
-      }
-    ];
-  }
+  // Subjects per program for Informatics
+  const getProgramSubjects = (programCode: string) => {
+    switch (programCode) {
+      case 'DPIFF0': // Foundation
+        return [
+          {
+            subject: 'BCMF15D',
+            lecturers: [
+              { name: 'Ms. Irene Abraham-Samgeorge ', email: 'abrahamia@tut.ac.za' },
+              
+            ]
+          },
+          {
+            subject: 'BFSF15D    ',
+            lecturers: [
+              { name: 'Mr. Dimakatso Malebana ', email: 'malebanadd@tut.ac.za' }
+            ]
+          }
+        ];
+      case 'DPIF20': // Mainstream
+        return [
+          {
+            subject: 'BCM115D ',
+            lecturers: [
+              { name: 'Ms. Irene Abraham-Samgeorge ', email: 'abrahamia@tut.ac.za' },
+            ]
+          },
+          {
+            subject: 'BFS115D ',
+            lecturers: [
+              { name: 'Mr. Dimakatso Malebana ', email: 'malebanadd@tut.ac.za' }
+            ]
+          }
+        ];
+      case 'ADIF20': // Advanced Diploma
+        return [
+          {
+            subject: 'KWM117V',
+            lecturers: [
+              { name: 'Dr. Cecile Kgoetiane ', email: 'kgwetianech@tut.ac.za' }
+            ]
+          },
+          {
+            subject: 'ITM117V',
+            lecturers: [
+              { name: 'Mr. Mashithishi Phurutsi ', email: 'phurutsimb@tut.ac.za' },
+              
+            ]
+          }
+        ];
+      default:
+        return [];
+    }
+  };
 
-  if (departmentId === 'fyf') {
-    return [
-      { 
-        subject: 'Academic Skills', 
-        lecturers: [
-          { name: 'Dr. Linda White', email: 'academics1@tut.ac.za' },
-          { name: 'Mr. David Clark', email: 'academics2@tut.ac.za' }
-        ]
-      },
-      { 
-        subject: 'Math & Computer Fundamentals', 
-        lecturers: [
-          { name: 'Mr. Peter Johnson', email: 'mathcomp1@tut.ac.za' },
-          { name: 'Ms. Rachel Kim', email: 'mathcomp2@tut.ac.za' }
-        ]
-      },
-      { 
-        subject: 'Communication & Professional Skills', 
-        lecturers: [
-          { name: 'Ms. Sarah Lee', email: 'communication1@tut.ac.za' },
-          { name: 'Mr. Tom Harris', email: 'communication2@tut.ac.za' }
-        ]
-      }
-    ];
-  }
-
-  return [];
-};
-
-
-  const subjects = getSubjectsByDepartment(department.id);
+  // FYF subjects (as before)
+  const getFyfSubjects = () => [
+    {
+      subject: 'TROF05D/PPAF05D',
+      lecturers: [
+        { name: 'Mr. VW Kambale (Module Coordinator', email: 'Kambalevw@tut.ac.za', office: '18-G07' },
+        { name: 'Ms. Z Nzima', email: 'NzimaLZ@tut.ac.za', office: '12-108' }
+      ]
+    },
+    {
+      subject: 'COHF05D/CHOF05D',
+      lecturers: [
+        { name: 'Dr. C Coetzee (Module Coordinator)', email: 'CoetzeeC@tut.ac.za', office: '12-221' },
+        { name: 'Mr. KN Letageng', email: 'LetagengKN@tut.ac.za', office: '12-126' }
+      ]
+    },
+    {
+      subject: 'COEF05X/CAPF05X & 16P105X/16E105X',
+      lecturers: [
+        { name: 'Ms. MT Popela (module Coordinator COE/CAP105X)', email: 'PopelaMT@tut.ac.za', office: '12-224' },
+        { name: 'Mr. KE Mokgomole (Module Coordinator 16P/16E105X)', email: 'MokgomoleK@tut.ac.za', office: '12-232' }
+      ]
+    },
+    {
+      subject: 'CN1F05D/CFAF05D/CGAF05D',
+      lecturers: [
+        { name: 'Ms. MP Dibetle (Module Coordinator CGA)', email: 'DibetleMP@tut.ac.za', office: '12-134' },
+        { name: 'Ms. FE Ntuli (Module Coordinator CFA)', email: 'NtuliFE@tut.ac.za', office: '12-229' }
+      ]
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-16" style={{ paddingTop: '0px' }}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-16">
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -195,78 +214,94 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Programs */}
           <div className="lg:col-span-2">
-            <div className={`bg-white rounded-xl shadow-lg p-8 transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '200ms' }}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Programs</h2>
-              <div className="space-y-4">
-                {getDepartmentPrograms(department.id).map((code, index) => (
-                  <div
-                    key={code}
-                    className={`border border-gray-200 rounded-lg overflow-hidden transition-all duration-500 hover:shadow-md ${expandedCode === code ? 'bg-blue-50 border-blue-300' : 'bg-white hover:bg-gray-50'}`}
-                    style={{ transitionDelay: `${index * 100}ms` }}
-                  >
-                    <div
-                      className="p-4 cursor-pointer flex items-center justify-between"
-                      onClick={() => setExpandedCode(expandedCode === code ? null : code)}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 bg-yellow-400 rounded-lg flex items-center justify-center mr-4">
-                          <GraduationCap className="w-6 h-6 text-blue-900" />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{code}</h3>
-                          <p className="text-sm text-gray-600">Click to view details</p>
-                        </div>
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              {department.id === 'fyf' ? (
+                <>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Subjects & Lecturers</h2>
+                  <div className="space-y-6">
+                    {getFyfSubjects().map((subj, idx) => (
+                      <div key={idx} className="border-b pb-3 mb-3">
+                        <h6 className="font-semibold text-gray-900">{subj.subject}</h6>
+                        <ul className="ml-4 list-disc text-sm text-gray-700">
+                          {subj.lecturers.map((lec, i) => (
+                            <li key={i}>
+                              <span className="font-medium">{lec.name}</span> —{" "}
+                              <span className="text-blue-600">{lec.email}</span> {lec.office && `(Office: ${lec.office})`}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <ChevronLeft className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${expandedCode === code ? 'rotate-90' : '-rotate-90'}`} />
-                    </div>
-
-                    <div className={`overflow-hidden transition-all duration-500 ${expandedCode === code ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                      <div className="px-4 pb-4 border-t border-gray-200">
-                        <div className="pt-4">
-                          <h4 className="font-semibold text-gray-900 mb-2">Program Description</h4>
-                          <p className="text-gray-700 mb-4">{getCodeDescription(code)}</p>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="bg-white p-4 rounded-lg border border-gray-100">
-                              <h5 className="font-medium text-gray-900 mb-2">Duration</h5>
-                              <p className="text-gray-600">{getProgramDuration(code)}</p>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Programs</h2>
+                  <div className="space-y-4">
+                    {getDepartmentPrograms(department.id).map((code) => (
+                      <div
+                        key={code}
+                        className={`border border-gray-200 rounded-lg overflow-hidden transition-all duration-500 hover:shadow-md ${expandedCode === code ? 'bg-blue-50 border-blue-300' : 'bg-white hover:bg-gray-50'}`}
+                      >
+                        <div
+                          className="p-4 cursor-pointer flex items-center justify-between"
+                          onClick={() => setExpandedCode(expandedCode === code ? null : code)}
+                        >
+                          <div className="flex items-center">
+                            <div className="w-12 h-12 bg-yellow-400 rounded-lg flex items-center justify-center mr-4">
+                              <GraduationCap className="w-6 h-6 text-blue-900" />
                             </div>
-                            <div className="bg-white p-4 rounded-lg border border-gray-100">
-                              <h5 className="font-medium text-gray-900 mb-2">Level</h5>
-                              <p className="text-gray-600">{code.startsWith('AD') ? 'Advanced Diploma' : 'Diploma'}</p>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">{code}</h3>
+                              <p className="text-sm text-gray-600">Click to view details</p>
                             </div>
                           </div>
+                          <ChevronLeft className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${expandedCode === code ? 'rotate-90' : '-rotate-90'}`} />
+                        </div>
 
-                          {/* Subjects & Lecturers (Informatics or FYF) */}
-                          {getSubjectsByDepartment(department.id).map((subj, idx) => (
-  <div key={idx} className="border-b pb-3 mb-3">
-    <h6 className="font-semibold text-gray-900">{subj.subject}</h6>
-    <ul className="ml-4 list-disc text-sm text-gray-700">
-      {subj.lecturers.map((lec, i) => (
-        <li key={i}>
-          {lec.name} — 
-          <a href={`mailto:${lec.email}`} className="text-blue-600 hover:underline ml-1">
-            {lec.email}
-          </a>
-        </li>
-      ))}
-    </ul>
-  </div>
-))}
+                        <div className={`overflow-hidden transition-all duration-500 ${expandedCode === code ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                          <div className="px-4 pb-4 border-t border-gray-200">
+                            <div className="pt-4">
+                              <h4 className="font-semibold text-gray-900 mb-2">Program Description</h4>
+                              <p className="text-gray-700 mb-4">{getCodeDescription(code)}</p>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div className="bg-white p-4 rounded-lg border border-gray-100">
+                                  <h5 className="font-medium text-gray-900 mb-2">Duration</h5>
+                                  <p className="text-gray-600">{getProgramDuration(code)}</p>
+                                </div>
+                                <div className="bg-white p-4 rounded-lg border border-gray-100">
+                                  <h5 className="font-medium text-gray-900 mb-2">Level</h5>
+                                  <p className="text-gray-600">{code.startsWith('AD') ? 'Advanced Diploma' : 'Diploma'}</p>
+                                </div>
+                              </div>
 
-
+                              {getProgramSubjects(code).map((subj, idx) => (
+                                <div key={idx} className="border-b pb-3 mb-3">
+                                  <h6 className="font-semibold text-gray-900">{subj.subject}</h6>
+                                  <ul className="ml-4 list-disc text-sm text-gray-700">
+                                    {subj.lecturers.map((lec, i) => (
+                                      <li key={i}>
+                                        <span className="font-medium">{lec.name}</span> —{" "}
+                                        <span className="text-blue-600">{lec.email}</span> 
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              )}
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Quick Action at the Top */}
-            <div className={`bg-white rounded-xl shadow-lg p-6 transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '400ms' }}>
+            <div className="bg-white rounded-xl shadow-lg p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Action</h3>
               <p className="text-gray-700 mb-4">View the official ICT prospectus for detailed curriculum information.</p>
               <a
@@ -279,15 +314,12 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
               </a>
             </div>
 
-            {/* Quick Information */}
-           
-
-            <div className={`bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg p-6 mt-6 text-blue-900 transform transition-all duration-1000${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '500ms' }}>
-              <h2 className="text-lg font-semibold text-gray-700 dark:text-black mb-4">Quick Information</h2>
-              <ul className="space-y-2 text-sm text-gray-900 dark:text-gray-900">
-                <li><span className="font-medium text-gray-900 dark:text-gray">Building Number:</span> {department.buildingNumber}</li>
-                <li><span className="font-medium text-gray-900 dark:text-gray">Email:</span> {department.email}</li>
-                <li><span className="font-medium text-gray-900 dark:text-gray">Contact Number:</span> {department.contactNumber}</li>
+            <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg p-6 mt-6 text-blue-900">
+              <h2 className="text-lg font-semibold text-gray-700 mb-4">Quick Information</h2>
+              <ul className="space-y-2 text-sm text-gray-900">
+                <li><span className="font-medium">Building Number:</span> {department.buildingNumber}</li>
+                <li><span className="font-medium">Email:</span> {department.email}</li>
+                <li><span className="font-medium">Contact Number:</span> {department.contactNumber}</li>
               </ul>
             </div>
           </div>

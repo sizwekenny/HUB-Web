@@ -5,7 +5,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Monitor,
-  
+
   Clock,
   AlertTriangle,
   Calendar,
@@ -46,6 +46,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const handleViewAllNews = () => {
     setShowAllNews(true);
   };
+  const [showCampusVideo, setShowCampusVideo] = useState(false);
 
   // Handle transition back to home
   const handleBackToHome = () => {
@@ -66,13 +67,13 @@ const HomePage: React.FC<HomePageProps> = ({
         try {
           const res = await axios.get('/api/News/getNewsByCampus', { params: { CampusId: campusId } });
           if (Array.isArray(res.data)) data = res.data; else if (res.data?.items) data = res.data.items;
-        } catch (campusErr:any) {
+        } catch (campusErr: any) {
           // fallback to all news then filter by campus id if campus endpoint unavailable
           const resAll = await axios.get('/api/News/getAllNews');
           data = Array.isArray(resAll.data) ? resAll.data : [];
         }
-  const mapped = mapBackendNewsArray(data, 'emalahleni');
-  if (!cancel) setLatestNews(mapped);
+        const mapped = mapBackendNewsArray(data, 'emalahleni');
+        if (!cancel) setLatestNews(mapped);
       } catch (err) {
         if (!cancel) setLatestNews(newsStore.list('emalahleni').filter(n => n.isVisible !== false));
       }
@@ -111,7 +112,7 @@ const HomePage: React.FC<HomePageProps> = ({
   const getDepartmentIcon = (departmentId: string) => {
     switch (departmentId) {
       case 'cs': return Monitor;
-  
+
       default: return BookOpen;
     }
   };
@@ -126,24 +127,24 @@ const HomePage: React.FC<HomePageProps> = ({
     }
   }, []);
 
-   const handleScrollTo = (section: 'departments' | 'services') => {
-      if (section === 'departments' && departmentsRef.current) {
-        departmentsRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-      if (section === 'services' && servicesRef.current) {
-        servicesRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    };
-  
-    // Filter services based on selectedFilter prop
+  const handleScrollTo = (section: 'departments' | 'services') => {
+    if (section === 'departments' && departmentsRef.current) {
+      departmentsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+    if (section === 'services' && servicesRef.current) {
+      servicesRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Filter services based on selectedFilter prop
   const filteredServices = selectedFilter === 'all'
     ? services
     : services.filter(service => {
-        if (selectedFilter === 'senior') return service.category === 'Senior Students';
-        if (selectedFilter === 'newcomer') return service.category === 'Newcomer Students';
-        return true; // fallback
-      });
-  
+      if (selectedFilter === 'senior') return service.category === 'Senior Students';
+      if (selectedFilter === 'newcomer') return service.category === 'Newcomer Students';
+      return true; // fallback
+    });
+
   useEffect(() => {
     if (selectedFilter !== 'all') {
       handleScrollTo('services');
@@ -182,6 +183,13 @@ const HomePage: React.FC<HomePageProps> = ({
               >
                 Student Services
               </button>
+              <button
+                onClick={() => setShowCampusVideo(true)}
+                className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-yellow-600 hover:text-white hover:border-white border-2 border-transparent transform hover:scale-105 transition-all duration-300 shadow-lg"
+              >
+                Explore Our Campus
+              </button>
+
             </div>
           </div>
         </div>
@@ -212,112 +220,112 @@ const HomePage: React.FC<HomePageProps> = ({
             {/* Fade gradients on sides */}
             <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-white via-blue-50/50 to-transparent z-20 pointer-events-none"></div>
             <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-white via-blue-50/50 to-transparent z-20 pointer-events-none"></div>
-            
+
             <div className="flex animate-scroll space-x-8 pb-4 hover:animation-play-state-paused">
               {/* Duplicate the news array to create infinite scroll effect */}
               {(latestNews.length > 3 ? [...latestNews, ...latestNews] : latestNews).map((news, index) => {
-              const getCategoryIcon = (category: string) => {
-                switch (category) {
-                  case 'Registration': return FileText;
-                  case 'Academic': return BookOpen;
-                  case 'Announcement': return Megaphone;
-                  case 'Deadline': return Clock;
-                  case 'Event': return Calendar;
-                  case 'WIL': return GraduationCap;
-                  default: return FileText;
-                }
-              };
+                const getCategoryIcon = (category: string) => {
+                  switch (category) {
+                    case 'Registration': return FileText;
+                    case 'Academic': return BookOpen;
+                    case 'Announcement': return Megaphone;
+                    case 'Deadline': return Clock;
+                    case 'Event': return Calendar;
+                    case 'WIL': return GraduationCap;
+                    default: return FileText;
+                  }
+                };
 
-              const getCategoryColor = (category: string) => {
-                switch (category) {
-                  case 'Registration': return 'bg-blue-100 text-blue-800';
-                  case 'Academic': return 'bg-blue-200 text-blue-900';
-                  case 'Announcement': return 'bg-blue-50 text-blue-700';
-                  case 'Deadline': return 'bg-red-100 text-red-800';
-                  case 'Event': return 'bg-yellow-100 text-yellow-800';
-                  case 'WIL': return 'bg-indigo-100 text-indigo-800';
-                  default: return 'bg-blue-100 text-blue-800';
-                }
-              };
+                const getCategoryColor = (category: string) => {
+                  switch (category) {
+                    case 'Registration': return 'bg-blue-100 text-blue-800';
+                    case 'Academic': return 'bg-blue-200 text-blue-900';
+                    case 'Announcement': return 'bg-blue-50 text-blue-700';
+                    case 'Deadline': return 'bg-red-100 text-red-800';
+                    case 'Event': return 'bg-yellow-100 text-yellow-800';
+                    case 'WIL': return 'bg-indigo-100 text-indigo-800';
+                    default: return 'bg-blue-100 text-blue-800';
+                  }
+                };
 
-              const getPriorityStyle = (priority: string) => {
-                switch (priority) {
-                  case 'high': return 'border-l-4 border-blue-600';
-                  case 'medium': return 'border-l-4 border-blue-400';
-                  case 'low': return 'border-l-4 border-blue-300';
-                  default: return 'border-l-4 border-blue-400';
-                }
-              };
+                const getPriorityStyle = (priority: string) => {
+                  switch (priority) {
+                    case 'high': return 'border-l-4 border-blue-600';
+                    case 'medium': return 'border-l-4 border-blue-400';
+                    case 'low': return 'border-l-4 border-blue-300';
+                    default: return 'border-l-4 border-blue-400';
+                  }
+                };
 
-              const IconComponent = getCategoryIcon(news.category);
+                const IconComponent = getCategoryIcon(news.category);
 
-              return (
-                <div
-                  key={`${news.id}-${latestNews.length > 0 ? Math.floor(index / latestNews.length) : 0}`}
-                  className={`group bg-white rounded-xl transform transition-all duration-500 hover:scale-125 hover:z-20 cursor-pointer overflow-hidden flex-shrink-0 w-96 h-64 shadow-lg hover:shadow-2xl hover:shadow-blue-500/20 ${getPriorityStyle(news.priority)} ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
-                  style={{ transitionDelay: `${latestNews.length > 0 ? (index % latestNews.length) * 150 : 0}ms` }}
-                  onClick={() => setSelectedNews(news)}
-                >
-                  <div className="p-6 h-full flex flex-col">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-600 transition-colors duration-300">
-                          <IconComponent className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors duration-300" />
+                return (
+                  <div
+                    key={`${news.id}-${latestNews.length > 0 ? Math.floor(index / latestNews.length) : 0}`}
+                    className={`group bg-white rounded-xl transform transition-all duration-500 hover:scale-125 hover:z-20 cursor-pointer overflow-hidden flex-shrink-0 w-96 h-64 shadow-lg hover:shadow-2xl hover:shadow-blue-500/20 ${getPriorityStyle(news.priority)} ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                    style={{ transitionDelay: `${latestNews.length > 0 ? (index % latestNews.length) * 150 : 0}ms` }}
+                    onClick={() => setSelectedNews(news)}
+                  >
+                    <div className="p-6 h-full flex flex-col">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-600 transition-colors duration-300">
+                            <IconComponent className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors duration-300" />
+                          </div>
+                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getCategoryColor(news.category)}`}>
+                            {news.category}
+                          </span>
                         </div>
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getCategoryColor(news.category)}`}>
-                          {news.category}
-                        </span>
-                      </div>
-                      {news.isUrgent && (
-                        <div className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
-                          <AlertTriangle className="w-3 h-3" />
-                          <span>Urgent</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors duration-300 line-clamp-2">
-                      {news.title}
-                    </h3>
-                    
-                    <p className="text-sm text-gray-600 mb-4 flex-grow line-clamp-2">
-                      {news.summary}
-                    </p>
-                    
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-center text-gray-500 text-xs">
-                        <Clock className="w-4 h-4 mr-1" />
-                        <span>{new Date(news.date).toLocaleDateString('en-ZA', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        {news.downloadFile && (
-                          <a
-                            href={news.downloadFile.url}
-                            download={news.downloadFile.filename}
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors duration-200"
-                            title={`Download ${news.downloadFile.filename}`}
-                          >
-                            <Download className="w-3 h-3" />
-                            <span>Download</span>
-                          </a>
+                        {news.isUrgent && (
+                          <div className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                            <AlertTriangle className="w-3 h-3" />
+                            <span>Urgent</span>
+                          </div>
                         )}
-                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transform group-hover:translate-x-1 transition-all duration-300" />
+                      </div>
+
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors duration-300 line-clamp-2">
+                        {news.title}
+                      </h3>
+
+                      <p className="text-sm text-gray-600 mb-4 flex-grow line-clamp-2">
+                        {news.summary}
+                      </p>
+
+                      <div className="flex items-center justify-between mt-auto">
+                        <div className="flex items-center text-gray-500 text-xs">
+                          <Clock className="w-4 h-4 mr-1" />
+                          <span>{new Date(news.date).toLocaleDateString('en-ZA', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {news.downloadFile && (
+                            <a
+                              href={news.downloadFile.url}
+                              download={news.downloadFile.filename}
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors duration-200"
+                              title={`Download ${news.downloadFile.filename}`}
+                            >
+                              <Download className="w-3 h-3" />
+                              <span>Download</span>
+                            </a>
+                          )}
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transform group-hover:translate-x-1 transition-all duration-300" />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           </div>
 
           <div className="text-center mt-12">
-            <button 
+            <button
               onClick={handleViewAllNews}
               className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
@@ -329,11 +337,11 @@ const HomePage: React.FC<HomePageProps> = ({
 
       {/* News Modal */}
       {selectedNews && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4 animate-in fade-in duration-300"
           onClick={() => setSelectedNews(null)}
         >
-          <div 
+          <div
             className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform animate-in zoom-in-95 duration-300"
             onClick={(e) => e.stopPropagation()}
           >
@@ -392,7 +400,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 <h2 className="text-2xl font-bold text-gray-900">
                   {selectedNews.title}
                 </h2>
-                
+
                 <div className="flex items-center text-gray-500 text-sm">
                   <Clock className="w-4 h-4 mr-2" />
                   <span>{new Date(selectedNews.date).toLocaleDateString('en-ZA', {
@@ -401,10 +409,9 @@ const HomePage: React.FC<HomePageProps> = ({
                     day: 'numeric'
                   })}</span>
                   <span className="mx-2">•</span>
-                  <span className={`font-medium ${
-                    selectedNews.priority === 'high' ? 'text-blue-600' :
-                    selectedNews.priority === 'medium' ? 'text-blue-500' : 'text-blue-400'
-                  }`}>
+                  <span className={`font-medium ${selectedNews.priority === 'high' ? 'text-blue-600' :
+                      selectedNews.priority === 'medium' ? 'text-blue-500' : 'text-blue-400'
+                    }`}>
                     {selectedNews.priority.charAt(0).toUpperCase() + selectedNews.priority.slice(1)} Priority
                   </span>
                 </div>
@@ -507,7 +514,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     <div
                       key={news.id}
                       className={`group bg-white rounded-xl transform transition-all duration-300 hover:scale-105 hover:z-10 cursor-pointer overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-blue-500/20 h-64 ${getPriorityStyle(news.priority)} ${isExiting ? 'animate-card-fly-out' : 'animate-card-fly-in'}`}
-                      style={{ 
+                      style={{
                         '--start-x': `${(index % 4 - 2) * 200}px`,
                         '--start-y': `${Math.floor(index / 4) * 100 - 200}px`,
                         '--end-x': `${(index % 4 - 2) * 300}px`,
@@ -532,15 +539,15 @@ const HomePage: React.FC<HomePageProps> = ({
                             </div>
                           )}
                         </div>
-                        
+
                         <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors duration-300 line-clamp-3">
                           {news.title}
                         </h3>
-                        
+
                         <p className="text-sm text-gray-600 mb-4 flex-grow line-clamp-2">
                           {news.summary}
                         </p>
-                        
+
                         <div className="flex items-center justify-between mt-auto">
                           <div className="flex items-center text-gray-500 text-xs">
                             <Clock className="w-4 h-4 mr-1" />
@@ -573,9 +580,9 @@ const HomePage: React.FC<HomePageProps> = ({
               </div>
             </div>
           </div>
-          
+
           {/* Full Footer Component - Outside container for full width */}
-          <Footer/>
+          <Footer />
         </div>
       )}
 
@@ -673,12 +680,38 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
       </section>
+      {showCampusVideo && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[70] p-4"
+          onClick={() => setShowCampusVideo(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowCampusVideo(false)}
+              className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full hover:bg-gray-200 transition-colors duration-200"
+            >
+              <X className="w-6 h-6 text-black" />
+            </button>
+            <video
+              className="w-full h-auto"
+              controls
+              autoPlay
+            >
+              <source src="src/assets/Sosha.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
-      <Footer/>
-     <div>
-      <Chatbot />
-    </div>
+      <Footer />
+      <div>
+        <Chatbot />
+      </div>
     </div>
   );
 };

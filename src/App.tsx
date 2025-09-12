@@ -61,7 +61,7 @@ const departments: Department[] = [
   {
     id: 'fyf',
     name: 'ICT First Year & Foundation',
-    codes: ['DPITF0', 'DPIT20', 'ADIT21'],
+    codes: ['TROF05D/PPAF05D', 'COHF05D/CHOF05D', 'COEF05X/CAPF05X & 16P105X/16E105X','CN1F05D/CFAF05D/CGAF05D',''],
     description: 'Practical IT programs focusing on technology and systems.',
     buildingNumber: 'BUILDING 18-G-14',
     email: 'coming soon',
