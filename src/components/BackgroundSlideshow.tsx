@@ -85,7 +85,13 @@ const BackgroundSlideshow: React.FC<BackgroundSlideshowProps> = ({
             className={`absolute inset-0 w-full h-full object-cover ${prevIndex !== null ? 'opacity-0' : 'opacity-100'} transition-opacity`}
             style={{ transitionDuration: fadeDurationMs + 'ms', animation: prevIndex !== null ? undefined : undefined }}
             onLoad={(e) => { if (prevIndex !== null) { // trigger fade sequence next frame
-              requestAnimationFrame(() => { (e.currentTarget as HTMLImageElement).classList.remove('opacity-0'); (e.currentTarget as HTMLImageElement).classList.add('opacity-100'); });
+              try {
+                const img = e.currentTarget as HTMLImageElement | null;
+                if (!img) return;
+                requestAnimationFrame(() => {
+                  try { img.classList?.remove('opacity-0'); img.classList?.add('opacity-100'); } catch {}
+                });
+              } catch {}
             } }}
             alt="Background slide" />
       </div>

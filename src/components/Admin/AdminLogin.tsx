@@ -21,6 +21,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onBack, onLoginSuccess }) => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
+	const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
 	const [capsLock, setCapsLock] = useState(false);
 	const [rememberMe, setRememberMe] = useState(false);
 	const [touched, setTouched] = useState<{email:boolean; password:boolean}>({email:false,password:false});
@@ -47,7 +48,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onBack, onLoginSuccess }) => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setIsLoading(true); setError('');
+		setIsLoading(true); setError(''); setFieldErrors({});
 		try {
 			const result = await http.post('/admin/AdminLogin', formData);
 			if (result.status === 200){
@@ -57,8 +58,43 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onBack, onLoginSuccess }) => {
 				if(numericId!==undefined) sessionStorage.setItem('adminNumericId', String(numericId));
 				onLoginSuccess(); navigate('/admin/dashboard');
 			}
-		} catch(err:any){ setError(extractErrorMessage(err) || 'Invalid credentials or server error.'); setTimeout(()=>errorRef.current?.focus(),50); }
-		finally { setIsLoading(false);}  
+		} catch(err:any){
+			// Try to parse structured errors (field-level) if present on server response
+			try {
+				const data = err?.response?.data;
+				if (data) {
+					// ModelState style
+					if (data.errors && typeof data.errors === 'object') {
+						const fe: any = {};
+						if (data.errors.Email) fe.email = (data.errors.Email as string[]).join(' ');
+						if (data.errors.Password) fe.password = (data.errors.Password as string[]).join(' ');
+						setFieldErrors(fe);
+						if (Object.keys(fe).length) {
+							setTimeout(()=>{ if (fe.email) emailInputRef.current?.focus(); else errorRef.current?.focus(); },50);
+							setError('Please fix the highlighted fields.');
+							return;
+						}
+					}
+					// ASP.NET ProblemDetails style
+					if (data.detail || data.title) {
+						// If the ProblemDetails indicates a missing user, map to generic credentials message
+						const msg = [data.title, data.detail].filter(Boolean).join(': ');
+						if (/user not found/i.test(msg) || err?.response?.status === 401) {
+							setError('Invalid email or password.');
+						} else {
+							setError(msg);
+						}
+						setTimeout(()=>errorRef.current?.focus(),50);
+						return;
+					}
+				}
+			} catch {}
+			// When server returns a plain string containing an exception message, avoid revealing whether the user exists.
+			const raw = extractErrorMessage(err) || 'Invalid credentials or server error.';
+			if (/user not found/i.test(String(raw)) || err?.response?.status === 401) setError('Invalid email or password.');
+			else setError(raw);
+			setTimeout(()=>errorRef.current?.focus(),50);
+		} finally { setIsLoading(false); }
 	};
 
 	const handleKeyState = (e: React.KeyboardEvent<HTMLInputElement>) => { if(e.getModifierState) setCapsLock(e.getModifierState('CapsLock')); };
@@ -106,6 +142,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onBack, onLoginSuccess }) => {
 								<input ref={emailInputRef} id="admin-email" name="email" type="email" value={formData.email} onChange={handleInputChange} onBlur={handleBlur} aria-invalid={!emailValid && touched.email} aria-describedby={!emailValid && touched.email ? 'email-error' : undefined} className={`block w-full pl-10 pr-3 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border ${!emailValid && touched.email ? 'border-red-400' : 'border-gray-300'}`} placeholder="admin@example.com" required />
 							</div>
 							{!emailValid && touched.email && <p id="email-error" className="mt-1 text-xs text-red-600">Enter a valid email address.</p>}
+								{fieldErrors.email && <p id="email-server-error" className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>}
 						</div>
 						<div>
 							<label htmlFor="admin-password" className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
@@ -116,6 +153,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onBack, onLoginSuccess }) => {
 								{capsLock && <div className="absolute -bottom-5 left-0 text-xs text-amber-600 font-medium">Caps Lock is ON</div>}
 							</div>
 							  {!passwordValid && touched.password && <p id="password-error" className="mt-2 text-xs text-red-600">Password must be at least 8 characters.</p>}
+							  {fieldErrors.password && <p id="password-server-error" className="mt-2 text-xs text-red-600">{fieldErrors.password}</p>}
 						</div>
 						<div className="flex items-center justify-between text-sm">
 							<label className="inline-flex items-center gap-2 select-none">
