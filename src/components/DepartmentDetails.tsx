@@ -98,23 +98,70 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
   };
 
   const getSubjectsByDepartment = (departmentId: string) => {
-    if (departmentId === 'informatics') {
-      return [
-        { subject: 'Information Systems', lecturer: 'Ms. Irene Abraham-Samgeorge', email: 'abrahamia@tut.ac.za' },
-        { subject: 'Computer Programming', lecturer: 'Mr. John Smith', email: 'cprogram@tut.ac.za' },
-        { subject: 'Mathematics for IT', lecturer: 'Dr. Jane Doe', email: 'mathit@tut.ac.za' },
-        { subject: 'ICT Skills', lecturer: 'Mr. Alex Brown', email: 'ictskills@tut.ac.za' }
-      ];
-    }
-    if (departmentId === 'fyf') {
-      return [
-        { subject: 'Academic Skills', lecturer: 'Dr. Linda White', email: 'academics@tut.ac.za' },
-        { subject: 'Math & Computer Fundamentals', lecturer: 'Mr. Peter Johnson', email: 'mathcomp@tut.ac.za' },
-        { subject: 'Communication & Professional Skills', lecturer: 'Ms. Sarah Lee', email: 'communication@tut.ac.za' }
-      ];
-    }
-    return [];
-  };
+  if (departmentId === 'informatics') {
+    return [
+      { 
+        subject: 'Information Systems', 
+        lecturers: [
+          { name: 'Ms. Irene Abraham-Samgeorge', email: 'abrahamia@tut.ac.za' },
+          { name: 'Mr. John Smith', email: 'johnsmith@tut.ac.za' },
+          { name: 'Dr. Alice Brown', email: 'aliceb@tut.ac.za' }
+        ]
+      },
+      { 
+        subject: 'Computer Programming', 
+        lecturers: [
+          { name: 'Mr. Alex Brown', email: 'cprogram1@tut.ac.za' },
+          { name: 'Ms. Emily Stone', email: 'cprogram2@tut.ac.za' },
+          { name: 'Mr. Kevin Lee', email: 'cprogram3@tut.ac.za' }
+        ]
+      },
+      { 
+        subject: 'Mathematics for IT', 
+        lecturers: [
+          { name: 'Dr. Jane Doe', email: 'mathit@tut.ac.za' },
+          { name: 'Mr. Carl Green', email: 'cgreen@tut.ac.za' }
+        ]
+      },
+      { 
+        subject: 'ICT Skills', 
+        lecturers: [
+          { name: 'Prof. William Black', email: 'wblack@tut.ac.za' },
+          { name: 'Dr. Angela White', email: 'awhite@tut.ac.za' }
+        ]
+      }
+    ];
+  }
+
+  if (departmentId === 'fyf') {
+    return [
+      { 
+        subject: 'Academic Skills', 
+        lecturers: [
+          { name: 'Dr. Linda White', email: 'academics1@tut.ac.za' },
+          { name: 'Mr. David Clark', email: 'academics2@tut.ac.za' }
+        ]
+      },
+      { 
+        subject: 'Math & Computer Fundamentals', 
+        lecturers: [
+          { name: 'Mr. Peter Johnson', email: 'mathcomp1@tut.ac.za' },
+          { name: 'Ms. Rachel Kim', email: 'mathcomp2@tut.ac.za' }
+        ]
+      },
+      { 
+        subject: 'Communication & Professional Skills', 
+        lecturers: [
+          { name: 'Ms. Sarah Lee', email: 'communication1@tut.ac.za' },
+          { name: 'Mr. Tom Harris', email: 'communication2@tut.ac.za' }
+        ]
+      }
+    ];
+  }
+
+  return [];
+};
+
 
   const subjects = getSubjectsByDepartment(department.id);
 
@@ -190,21 +237,22 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
                           </div>
 
                           {/* Subjects & Lecturers (Informatics or FYF) */}
-                          {subjects.length > 0 && (
-                            <div className="bg-white p-4 rounded-lg border border-gray-200 mt-4">
-                              <h5 className="font-medium text-gray-900 mb-3">Subjects & Lecturers</h5>
-                              <ul className="space-y-2 text-gray-700 text-sm">
-                                {subjects.map((sub, idx) => (
-                                  <li key={idx} className="flex justify-between border-b pb-2">
-                                    <span>{sub.subject}</span>
-                                    <a href={`mailto:${sub.email}`} className="text-blue-600 hover:underline">
-                                      {sub.lecturer} ({sub.email})
-                                    </a>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
+                          {getSubjectsByDepartment(department.id).map((subj, idx) => (
+  <div key={idx} className="border-b pb-3 mb-3">
+    <h6 className="font-semibold text-gray-900">{subj.subject}</h6>
+    <ul className="ml-4 list-disc text-sm text-gray-700">
+      {subj.lecturers.map((lec, i) => (
+        <li key={i}>
+          {lec.name} — 
+          <a href={`mailto:${lec.email}`} className="text-blue-600 hover:underline ml-1">
+            {lec.email}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+))}
+
 
                         </div>
                       </div>
@@ -232,10 +280,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
             </div>
 
             {/* Quick Information */}
-            <div className={`bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '600ms' }}>
-              <h3 className="text-xl font-bold mb-4">Need Help?</h3>
-              <p className="mb-4 opacity-90">Contact your Academic Department for more information about these programs.</p>
-            </div>
+           
 
             <div className={`bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg p-6 mt-6 text-blue-900 transform transition-all duration-1000${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '500ms' }}>
               <h2 className="text-lg font-semibold text-gray-700 dark:text-black mb-4">Quick Information</h2>

@@ -395,22 +395,31 @@ const services: Service[] = [
     details: 'Get your WIL placement and requirements.'
 
   }
-  ,
+ ,
   {
-    id: 'Mentorship',
-    title: 'Mentorship program',
+    id: 'Mentorship & Tutoring program',
+    title: 'Mentorship & Tutoring program',
     category: 'All Students',
     description: 'Mentorship program for guidance and support.',
-    details: 'Mentorship program for guidance and support.'
+    details: 'Mentorship program for guidance and support.',
+    statusLink: 'https://sds.onlinewebshop.net/'
 
   },
   {
-    id: 'Tutoring',
-    title: 'Tutoring program',
+    id: 'Studython',
+    title: 'Studython',
     category: 'All Students',
-    description: 'Tutoring program for academic support.',
-    details: 'Tutoring program for academic support.'
+    description: 'Studython program for academic support.',
+    details: '•	Please arrive at Nkuna Statue by 17:00 on the day of the event. •	A detailed timetable will be provided on the day of the Studython. •	Even if your modules are not appearing on the form, you are welcome to attend.'
 
+  },
+  {
+    id: 'Peer to Peer learning',
+    title: 'Peer to Peer learning',
+    category: 'All Students',
+    description: 'Peer to Peer learning program for academic support.',
+    details: 'Peer to Peer learning program for academic support.',
+    statusLink: 'https://sds.onlinewebshop.net/'
   }
   ,
   {

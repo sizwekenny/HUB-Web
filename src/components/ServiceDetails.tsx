@@ -125,15 +125,19 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
         'Proceed to MY WIL PORTAL and register (refer to the student user manual guide on MYTutor).) https://wil.tut.ac.za/ ',
         'The manager will approve your registration.',
       ],
-       'Mentorship': [
-        'Coming Soon',
-        'Coming Soon',
+       'Mentorship & Tutoring program': [
+        'For assistance in any of your modules ,visit the mentors lab (BLD 10-252).',
+        'for more mentorship enquiries use the quick link to visit the website.',
         'comming Soon',
       ],
-      'Tutoring': [
-        'Coming Soon',
-        'Coming Soon',
-        'comming Soon',
+      'Studython': [
+        'Upon receivig  link to register via email.',
+        'Complete the registration form  NB:use your TUT4LIFE student email.',
+        'Select all the modules you need assistance with. ',
+      ],
+      'Peer to Peer learning': [
+        'visit the webiste using the quick link provided. for more info about this program.',
+      
       ],
       'WIL For Informatics': [
         'Send the placement letter along with the latest academic record to your WIL coordinator (DD Malebana, malebanadd@tut.ac.za)',
