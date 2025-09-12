@@ -107,6 +107,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 		{ key: 'emalahleni', label: 'eMalahleni' },
 		{ key: 'polokwane', label: 'Polokwane' }
 	];
+	const toggleAllCampuses = (checked: boolean) => {
+		if (checked) setSelectedCampuses(campusOptions.map(c => c.key));
+		else setSelectedCampuses([]);
+	};
 	const toggleCampus = (key: string) => {
 		setSelectedCampuses(prev => prev.includes(key) ? prev.filter(c => c !== key) : [...prev, key]);
 	};
@@ -119,24 +123,54 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 
 	// Reusable backend fetch + normalization (direct axios to /api/News/getAllNews)
 	const fetchAndNormalizeNews = async (): Promise<NewsItem[]> => {
-		const res = await axios.get(`/api/News/getAllNews`);
-		const raw = Array.isArray(res.data) ? res.data : [];
+		// Prefer the new campus-shaped endpoint; fall back to legacy News endpoint
 		const campusIdToSlug: Record<number,string> = {1:'south',2:'emalahleni',3:'polokwane'};
-		let list: NewsItem[] = raw.map((n:any) => ({
-			id: (n.newsId ?? n.id ?? genId()).toString(),
-			title: n.newsTitle ?? n.title ?? '',
-			summary: n.newsDescription ?? n.description ?? n.summary ?? '',
-			content: n.newsDescription ?? n.description ?? n.content ?? '',
-			category: n.category ?? 'Announcement',
-			priority: n.priority ?? 'medium',
-			campus: (campusIdToSlug[Number(n.campusId)] ?? n.campus ?? 'south') as NewsItem['campus'],
-			department: n.department ?? undefined,
-			date: n.createdAt ?? n.date ?? new Date().toISOString(),
-			// Backend default for isVisible is false; map explicitly to boolean
-			isVisible: !!n.isVisible,
-			isUrgent: n.isUrgent || false
-		})).filter(n => n.title.trim());
-		return list;
+		try {
+			const res = await axios.get(`/api/Campus/adminGetAllCampus`);
+			const payload = res.data?.data ?? res.data ?? [];
+			// payload is expected to be an array of campus objects each with a `news` array
+			let list: NewsItem[] = [];
+			for (const campusObj of (Array.isArray(payload) ? payload : [])) {
+				const campusId = Number(campusObj?.campusId);
+				const slug = campusIdToSlug[campusId] || (campusObj?.campusName || '').toLowerCase().replace(/\s+/g,'') || 'south';
+				const newsArray = Array.isArray(campusObj?.news) ? campusObj.news : [];
+				for (const n of newsArray) {
+					const item: NewsItem = {
+						id: (n.newsId ?? n.id ?? genId()).toString(),
+						title: n.newsTitle ?? n.title ?? '',
+						summary: n.newsDescription ?? n.description ?? n.summary ?? '',
+						content: n.newsDescription ?? n.description ?? n.content ?? '',
+						category: n.category ?? 'Announcement',
+						priority: n.priority ?? 'medium',
+						campus: slug as NewsItem['campus'],
+						department: n.department ?? undefined,
+						date: n.createdAt ?? n.createdAt ?? n.date ?? new Date().toISOString(),
+						isVisible: (typeof n.isVisible === 'boolean') ? n.isVisible : true,
+						isUrgent: !!n.isUrgent
+					};
+					if (item.title.trim()) list.push(item);
+				}
+			}
+			return list;
+		} catch (err) {
+			// fallback to legacy endpoint
+			const res = await axios.get(`/api/News/getAllNews`);
+			const raw = Array.isArray(res.data) ? res.data : [];
+			let list: NewsItem[] = raw.map((n:any) => ({
+				id: (n.newsId ?? n.id ?? genId()).toString(),
+				title: n.newsTitle ?? n.title ?? '',
+				summary: n.newsDescription ?? n.description ?? n.summary ?? '',
+				content: n.newsDescription ?? n.description ?? n.content ?? '',
+				category: n.category ?? 'Announcement',
+				priority: n.priority ?? 'medium',
+				campus: (campusIdToSlug[Number(n.campusId)] ?? n.campus ?? 'south') as NewsItem['campus'],
+				department: n.department ?? undefined,
+				date: n.createdAt ?? n.date ?? new Date().toISOString(),
+				isVisible: !!n.isVisible,
+				isUrgent: n.isUrgent || false
+			})).filter(n => n.title.trim());
+			return list;
+		}
 	};
 
 	// Fetch news (overview + news tabs)
@@ -256,36 +290,32 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 					newsStore.update(editingNews.id, newsForm as any);
 				}
 			} else {
-				// Multi-campus create in a single request if backend supports CampusIds[], else fallback to first
+				// Backend requires a non-null CampusId for each created record.
+				// Create one request per selected campus (or the single campus in editing case).
 				const campusMap: Record<string, number> = { south: 1, emalahleni: 2, polokwane: 3 };
-				const campusIds = selectedCampuses.map(c => campusMap[c]).filter(Boolean);
+				const campusesToCreate = selectedCampuses.length ? selectedCampuses : [newsForm.campus || 'south'];
 				const file = (newsForm as any).file as File | undefined;
-				const baseParams: any = {
-					AdminId: adminId!,
-					Title: newsForm.title,
-					Description: newsForm.summary || '',
-					Priority: newsForm.priority,
-					Category: newsForm.category,
-					CampusIds: campusIds,
-					...(newsForm.department ? { Department: newsForm.department } : {})
-				};
-				// Serialize arrays as repeated query params (?CampusIds=1&CampusIds=2)
-				const paramsSerializer = (p:any) => {
-					const usp = new URLSearchParams();
-					Object.entries(p).forEach(([k,v]) => {
-						if (Array.isArray(v)) v.forEach(val => usp.append(k, String(val)));
-						else if (v !== undefined && v !== null) usp.append(k, String(v));
-					});
-					return usp.toString();
-				};
+				// Send one request per campus to ensure CampusId is present
 				try {
-					if (file) {
-						const fd = new FormData();
-						fd.append('FormFile', file);
-						await axios.post(`/api/News/createNews`, fd, { params: baseParams, paramsSerializer });
-					} else {
-						// Empty body; backend binds from query params
-						await axios.post(`/api/News/createNews`, {}, { params: baseParams, paramsSerializer });
+					for (const campusKey of campusesToCreate) {
+						const campusId = campusMap[campusKey] || undefined;
+						const params: any = {
+							AdminId: adminId!,
+							Title: newsForm.title,
+							Description: newsForm.summary || '',
+							Priority: newsForm.priority,
+							Category: newsForm.category,
+							...(newsForm.department ? { Department: newsForm.department } : {}),
+							...(campusId ? { CampusId: campusId } : {}),
+							Campus: campusKey // also include slug in case backend expects it
+						};
+						if (file) {
+							const fd = new FormData();
+							fd.append('FormFile', file);
+							await axios.post(`/api/News/createNews`, fd, { params });
+						} else {
+							await axios.post(`/api/News/createNews`, {}, { params });
+						}
 					}
 				} catch (createErr:any) {
 					console.error('Create news failed', createErr?.response?.status, createErr?.response?.data || createErr?.message);
@@ -358,8 +388,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 			return clone;
 		});
 		try {
-			// Call new backend toggle endpoint (it infers new state server-side)
-			await axios.put(`/api/News/updateAvailability`, {}, { params: { NewsId: Number(id) } });
+			// Call backend updateVisibility endpoint (it infers new state server-side)
+			await axios.put(`/api/News/updateVisibility`, {}, { params: { NewsId: Number(id) } });
 		} catch (err) {
 			// Revert on failure
 			setNewsItems(prev => {
@@ -391,14 +421,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col">
-			<header className="bg-white shadow-sm border-b border-gray-200">
+			<header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-200">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex justify-between items-center h-full">
 						<div className="flex items-center space-x-4">
 							<img
 								src={tutLogo}
 								alt="TUT Logo"
-								className="h-[50px] md:h-[58px] w-auto rounded-md shadow-sm object-contain"
+								className="h-[72px] md:h-[84px] w-auto rounded-md shadow-sm object-contain"
 							/>
 							<h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
 						</div>
@@ -424,7 +454,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 				</header>
 					<div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
 					<div className="flex items-stretch space-x-8 h-full">
-						<div className="w-72 bg-white rounded-lg shadow-sm p-6 sticky top-16 h-[calc(100vh-4rem)] overflow-auto">
+						<div className="w-72 bg-white rounded-lg shadow-sm p-6 sticky top-20 h-[calc(100vh-5rem)] overflow-auto">
 						<nav className="space-y-2">
 							{tabs.map(tab => { const IconComponent = tab.icon; return (
 								<button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors duration-200 ${activeTab === tab.id ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
@@ -520,6 +550,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 															<div className="px-3 py-2 border rounded-lg bg-gray-50 text-sm capitalize">{editingNews.campus || 'all'}</div>
 														) : (
 															<div className="border rounded-lg p-2 space-y-1">
+																	<div className="flex items-center justify-between px-2">
+																		<label className="flex items-center gap-2 text-sm font-medium">
+																			<input type="checkbox" className="rounded border-gray-300" checked={selectedCampuses.length === campusOptions.length} onChange={e => toggleAllCampuses(e.target.checked)} />
+																			<span>Select all</span>
+																		</label>
+																	</div>
 																{campusOptions.map(c => (
 																	<label key={c.key} className="flex items-center gap-2 text-sm">
 																		<input type="checkbox" className="rounded border-gray-300" checked={selectedCampuses.includes(c.key)} onChange={() => toggleCampus(c.key)} />
