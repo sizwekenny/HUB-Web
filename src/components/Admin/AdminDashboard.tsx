@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
 	Users,
 	FileText,
@@ -7,6 +7,7 @@ import {
 	LogOut,
 	Trash2,
 	EyeOff,
+	Bell,
 	BookOpen
 } from 'lucide-react';
 import { newsStore } from '../../utils/newsStore';
@@ -20,6 +21,7 @@ import AdminPasswordUpdater from './sections/AdminPasswordUpdater';
 import AdminUserManagement from './sections/AdminUserManagement';
 import NewsManagementSection from './sections/NewsManagementSection';
 import ServicesManagementSection from './sections/ServicesManagementSection';
+import DepartmentsSection from './sections/DepartmentsSection';
 import tutLogo from '../../assets/TUT.png';
 // (Slideshow moved to AdminLogin per request)
 
@@ -55,6 +57,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	const tabs = [
 		{ id: 'overview', label: 'Overview', icon: BarChart3 },
 		{ id: 'news', label: 'News Management', icon: FileText },
+		{ id: 'departments', label: 'Departments', icon: Users },
 		{ id: 'services', label: 'Services Management', icon: BookOpen },
 		{ id: 'users', label: 'User Management', icon: Users },
 		{ id: 'settings', label: 'Settings', icon: Settings },
@@ -90,12 +93,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	};
 	const blankNews: Omit<NewsItem, 'id' | 'date'> = { title: '', summary: '', content: '', category: 'Announcement', priority: 'medium', campus: 'south', department: '' } as any;
 	const [newsForm, setNewsForm] = useState<Omit<NewsItem, 'id' | 'date'>>(blankNews);
+	const [departmentsByCampus, setDepartmentsByCampus] = useState<Array<{ campusId: number; campusName: string; departments: import('../../types').Department[] }>>([]);
 
-	// Derived pagination values for news
-	const totalNewsPages = Math.max(1, Math.ceil(newsItems.length / NEWS_PAGE_SIZE));
-	const paginatedNews = newsItems.slice((newsPage - 1) * NEWS_PAGE_SIZE, newsPage * NEWS_PAGE_SIZE);
-	const newsFrom = newsItems.length ? (newsPage - 1) * NEWS_PAGE_SIZE + 1 : 0;
-	const newsTo = Math.min(newsItems.length, newsPage * NEWS_PAGE_SIZE);
+		// Deduplicate newsItems by id (prefer the most recent per id) to avoid duplicate React keys
+		const dedupedNews = useMemo(() => {
+			const map = new Map<string, NewsItem>();
+			for (const n of newsItems) {
+				const existing = map.get(n.id);
+				if (!existing) map.set(n.id, n);
+				else {
+					// prefer the newest by date
+					try {
+						if (new Date(n.date).getTime() > new Date(existing.date).getTime()) map.set(n.id, n);
+					} catch { /* ignore date parse issues */ }
+				}
+			}
+			return Array.from(map.values()).sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime());
+		}, [newsItems]);
+
+		// Derived pagination values for news (based on deduplicated list)
+		const totalNewsPages = Math.max(1, Math.ceil(dedupedNews.length / NEWS_PAGE_SIZE));
+		const paginatedNews = dedupedNews.slice((newsPage - 1) * NEWS_PAGE_SIZE, newsPage * NEWS_PAGE_SIZE);
+		const newsFrom = dedupedNews.length ? (newsPage - 1) * NEWS_PAGE_SIZE + 1 : 0;
+		const newsTo = Math.min(dedupedNews.length, newsPage * NEWS_PAGE_SIZE);
 
 	// Reset page when filters/search change
 	useEffect(() => { setNewsPage(1); }, [newsCampusFilter, newsSearch]);
@@ -127,31 +147,127 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 		const campusIdToSlug: Record<number,string> = {1:'south',2:'emalahleni',3:'polokwane'};
 		try {
 			const res = await axios.get(`/api/Campus/adminGetAllCampus`);
-			const payload = res.data?.data ?? res.data ?? [];
-			// payload is expected to be an array of campus objects each with a `news` array
-			let list: NewsItem[] = [];
-			for (const campusObj of (Array.isArray(payload) ? payload : [])) {
-				const campusId = Number(campusObj?.campusId);
-				const slug = campusIdToSlug[campusId] || (campusObj?.campusName || '').toLowerCase().replace(/\s+/g,'') || 'south';
-				const newsArray = Array.isArray(campusObj?.news) ? campusObj.news : [];
-				for (const n of newsArray) {
-					const item: NewsItem = {
-						id: (n.newsId ?? n.id ?? genId()).toString(),
-						title: n.newsTitle ?? n.title ?? '',
-						summary: n.newsDescription ?? n.description ?? n.summary ?? '',
-						content: n.newsDescription ?? n.description ?? n.content ?? '',
-						category: n.category ?? 'Announcement',
-						priority: n.priority ?? 'medium',
-						campus: slug as NewsItem['campus'],
-						department: n.department ?? undefined,
-						date: n.createdAt ?? n.createdAt ?? n.date ?? new Date().toISOString(),
-						isVisible: (typeof n.isVisible === 'boolean') ? n.isVisible : true,
-						isUrgent: !!n.isUrgent
-					};
-					if (item.title.trim()) list.push(item);
+				const payload = res.data?.data ?? res.data ?? [];
+				// If payload contains services and departments, extract them so other parts of the admin UI can use them.
+				try {
+					// payload may be an array of campus objects; each campus may include `services` and `departments`
+					const allServices: any[] = [];
+					const allDepts: any[] = [];
+					if (Array.isArray(payload)) {
+						for (const campusObj of payload) {
+							if (Array.isArray(campusObj.campusServices)) {
+								for (const cs of campusObj.campusServices) {
+									if (cs && cs.service) {
+										// include service and attach campus-specific metadata
+										const s = { ...cs.service, phone: cs.phone, location: cs.location, email: cs.email, steps: cs.steps };
+										allServices.push(s);
+									}
+								}
+							}
+							if (Array.isArray(campusObj.departments)) allDepts.push(...campusObj.departments);
+						}
+					}
+					if (allServices.length) {
+						// deduplicate by serviceId
+						const byId = new Map<number | string, any>();
+						for (const s of allServices) {
+							const sid = s.serviceId ?? s.id ?? s._id ?? s.serviceId;
+							if (!byId.has(sid)) byId.set(sid, s);
+						}
+						const svcNormalized = Array.from(byId.values()).map((s:any) => ({ id: String(s.serviceId ?? s.id ?? s._id ?? Math.random().toString(36).slice(2,9)), title: s.serviceTitle ?? s.serviceName ?? s.title ?? '', category: (s.category || s.serviceCategory || 'All Students') as any, description: s.serviceDescription ?? s.description ?? '', details: JSON.stringify(s.steps || []), statusLink: s.serviceUrl || s.statusLink || '' }));
+						serviceStore.replaceAll(svcNormalized as any);
+						setServices(svcNormalized as any[]);
+					}
+					if (Array.isArray(payload)) {
+						const grouped: Array<{ campusId: number; campusName: string; departments: import('../../types').Department[] }> = [];
+						for (const campusObj of payload) {
+							const campusId = Number(campusObj.campusId || campusObj.id || 0);
+							const campusName = campusObj.campusName || campusObj.name || '';
+							const arr = Array.isArray(campusObj.departments) ? campusObj.departments.map((d:any) => ({ id: String(d.departmentId ?? d.id ?? Math.random().toString(36).slice(2,9)), name: d.departmentName ?? d.name ?? '', codes: d.codes || [], description: d.description || '', buildingNumber: d.buildingNumber || '', email: d.email || '', contactNumber: d.contactNumber || '', link: d.link || '', courses: Array.isArray(d.courses) ? d.courses.map((c:any) => ({ courseCode: c.courseCode, courseName: c.courseName, duration: c.duration, nqfLevel: c.nqfLevel })) : [] })) : [];
+							grouped.push({ campusId, campusName, departments: arr });
+						}
+						setDepartmentsByCampus(grouped);
+					}
+				} catch (ex) { /* non-critical */ }
+				// payload might be campus-centric (each campus has a `news` array)
+				// or news-centric (array of news objects each with `news_Campus` or `news_Campuses` array)
+				let list: NewsItem[] = [];
+				if (Array.isArray(payload)) {
+					// Detect news-centric shape: items have newsId and news_Campus array
+					const first = payload[0];
+					const looksLikeNewsArray = first && (first.newsId || first.newsId === 0) && (Array.isArray(first.news_Campus) || Array.isArray(first.news_Campuses));
+					if (looksLikeNewsArray) {
+						// Map campus name to slug helper
+						const nameToSlug: Record<string,string> = {
+							'soshanguve': 'south', 'south': 'south',
+							'emalahleni': 'emalahleni',
+							'polokwane': 'polokwane'
+						};
+						for (const n of payload) {
+							const campuses = Array.isArray(n.news_Campus) ? n.news_Campus : (Array.isArray(n.news_Campuses) ? n.news_Campuses : []);
+							if (campuses.length === 0) {
+								const item: NewsItem = {
+									id: (n.newsId ?? n.id ?? genId()).toString(),
+									title: n.newsTitle ?? n.title ?? '',
+									summary: n.newsDescription ?? n.description ?? n.summary ?? '',
+									content: n.newsDescription ?? n.description ?? n.content ?? '',
+									category: n.category ?? 'Announcement',
+									priority: n.priority ?? 'medium',
+									campus: 'all',
+									department: n.department ?? undefined,
+									date: n.createdAt ?? n.date ?? new Date().toISOString(),
+									isVisible: (typeof n.isVisible === 'boolean') ? n.isVisible : true,
+									isUrgent: !!n.isUrgent
+								};
+								if (item.title.trim()) list.push(item);
+							} else {
+								for (const c of campuses) {
+									const name = (c?.campusName || c?.campus || '').toString().toLowerCase();
+									const slug = nameToSlug[name] || name.replace(/\s+/g,'').toLowerCase() || 'south';
+									const item: NewsItem = {
+										id: (n.newsId ?? n.id ?? genId()).toString(),
+										title: n.newsTitle ?? n.title ?? '',
+										summary: n.newsDescription ?? n.description ?? n.summary ?? '',
+										content: n.newsDescription ?? n.description ?? n.content ?? '',
+										category: n.category ?? 'Announcement',
+										priority: n.priority ?? 'medium',
+										campus: slug as NewsItem['campus'],
+										department: n.department ?? undefined,
+										date: n.createdAt ?? n.date ?? new Date().toISOString(),
+										isVisible: (typeof n.isVisible === 'boolean') ? n.isVisible : true,
+										isUrgent: !!n.isUrgent
+									};
+									if (item.title.trim()) list.push(item);
+								}
+							}
+						}
+						return list;
+					}
+					// Otherwise assume campus-centric: each campusObj has campusId and news array
+					for (const campusObj of payload) {
+						const campusId = Number(campusObj?.campusId);
+						const slug = campusIdToSlug[campusId] || (campusObj?.campusName || '').toLowerCase().replace(/\s+/g,'') || 'south';
+						const newsArray = Array.isArray(campusObj?.news) ? campusObj.news : [];
+						for (const n of newsArray) {
+							const item: NewsItem = {
+								id: (n.newsId ?? n.id ?? genId()).toString(),
+								title: n.newsTitle ?? n.title ?? '',
+								summary: n.newsDescription ?? n.description ?? n.summary ?? '',
+								content: n.newsDescription ?? n.description ?? n.content ?? '',
+								category: n.category ?? 'Announcement',
+								priority: n.priority ?? 'medium',
+								campus: slug as NewsItem['campus'],
+								department: n.department ?? undefined,
+								date: n.createdAt ?? n.createdAt ?? n.date ?? new Date().toISOString(),
+								isVisible: (typeof n.isVisible === 'boolean') ? n.isVisible : true,
+								isUrgent: !!n.isUrgent
+							};
+							if (item.title.trim()) list.push(item);
+						}
+					}
+					return list;
 				}
-			}
-			return list;
+				return list;
 		} catch (err) {
 			// fallback to legacy endpoint
 			const res = await axios.get(`/api/News/getAllNews`);
@@ -209,6 +325,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 		return () => { cancelled = true; };
 	}, [newsCampusFilter, newsSearch, activeTab]);
 	useEffect(() => { if (activeTab === 'services') refreshServices(); }, [activeTab, serviceSearch, serviceCategoryFilter]);
+
+	// no-op: departments are hydrated directly during fetchAndNormalizeNews
 	const refreshServices = () => { let list = serviceStore.list(serviceCategoryFilter === 'All' ? undefined : serviceCategoryFilter); if (serviceSearch) list = list.filter(s => s.title.toLowerCase().includes(serviceSearch.toLowerCase()) || s.description.toLowerCase().includes(serviceSearch.toLowerCase())); setServices(list); };
 	const handleSaveService = () => { if (!serviceForm.title.trim()) return; if (editingService) serviceStore.update(editingService.id, serviceForm); else serviceStore.create(serviceForm); setShowServiceForm(false); setEditingService(null); setServiceForm({ title: '', category: 'All Students', description: '', details: '', statusLink: '', steps: [] }); refreshServices(); };
 	const handleEditService = (s: Service) => { setEditingService(s); const { id, ...rest } = s; setServiceForm(rest); setShowServiceForm(true); };
@@ -229,7 +347,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 				const q = newsSearch.toLowerCase();
 				list = list.filter(n => n.title?.toLowerCase().includes(q));
 			}
-			setNewsItems(list.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime()));
+			// If we have temporary optimistic items in current state, remove those that were just created on server
+			setNewsItems(prev => {
+				const temps = prev.filter(p => String(p.id).startsWith('temp-'));
+				let deduped = list.slice();
+				if (temps.length) {
+					// remove temps that match by title+summary+date (day precision)
+					const matches = new Set<string>();
+					for (const s of deduped) {
+						const key = `${(s.title||'').trim().toLowerCase()}|${(s.summary||'').trim().toLowerCase()}|${new Date(s.date).toISOString().split('T')[0]}`;
+						matches.add(key);
+					}
+					// keep temps that are NOT matched on server
+					const keepTemps = temps.filter(t => {
+						const key = `${(t.title||'').trim().toLowerCase()}|${(t.summary||'').trim().toLowerCase()}|${new Date(t.date).toISOString().split('T')[0]}`;
+						return !matches.has(key);
+					});
+					// merge server items with surviving temps at the front
+					deduped = [...keepTemps, ...deduped];
+				}
+				return deduped.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime());
+			});
 		} catch (err:any) {
 			const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter;
 			const fallback = newsStore.list(campus, newsSearch);
@@ -262,30 +400,63 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 			if (!editingNews && !adminId) throw new Error('Missing AdminId: please re-login.');
 
 			if (editingNews) {
-				// PUT /api/News/updateNews expects all fields as query params + optional formFile (multipart)
+				// PUT /api/News/updateNews supports receiving CampusIds array; use FormData to attach file and repeated CampusIds
 				try {
 					const campusMap: Record<string, number> = { south: 1, emalahleni: 2, polokwane: 3 };
-					const campusKey = (editingNews.campus || newsForm.campus || 'south') as keyof typeof campusMap;
-					const campusId = campusMap[campusKey] || 1;
-					const params = {
-						NewsId: Number(editingNews.id),
-						Title: newsForm.title,
-						Description: newsForm.summary || '',
-						Priority: newsForm.priority,
-						Category: newsForm.category,
-						CampusId: campusId
-					};
+					// Prefer aggregated campuses passed through the editing item (from NewsManagementSection)
+					const maybeCampuses = (editingNews as any).campuses as string[] | undefined;
+					const campusKeys = Array.isArray(maybeCampuses) && maybeCampuses.length > 0 ? maybeCampuses : [(editingNews.campus || newsForm.campus || 'south')];
+
 					const file = (newsForm as any).file as File | undefined;
+					// If there's a file, send multipart form data. Otherwise, send JSON body matching UpdateNewsDTO.
 					if (file) {
 						const fd = new FormData();
-						fd.append('formFile', file); // name per swagger (case-insensitive usually)
-						await axios.put(`/api/News/updateNews`, fd, { params });
+						fd.append('NewsId', String(Number(editingNews.id)));
+						fd.append('Title', newsForm.title || '');
+						fd.append('Description', newsForm.summary || '');
+						fd.append('Priority', String(newsForm.priority || 'medium'));
+						fd.append('Category', newsForm.category || '');
+						for (const campusKey of campusKeys) {
+							const cid = campusMap[campusKey as keyof typeof campusMap] || undefined;
+							if (cid) fd.append('CampusIds', String(cid));
+						}
+						fd.append('formFile', file);
+						await axios.put(`/api/News/updateNews`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
 					} else {
-						// No file: send empty body with query params
-						await axios.put(`/api/News/updateNews`, {}, { params });
+						// Build JSON body so ASP.NET can bind UpdateNewsDTO from JSON body
+						const body: any = {
+							NewsId: Number(editingNews.id),
+							Title: newsForm.title || '',
+							Description: newsForm.summary || '',
+							Priority: newsForm.priority || 'medium',
+							Category: newsForm.category || '',
+							CampusIds: [] as number[],
+						};
+						for (const campusKey of campusKeys) {
+							const cid = campusMap[campusKey as keyof typeof campusMap] || undefined;
+							if (cid) body.CampusIds.push(cid);
+						}
+						await axios.put(`/api/News/updateNews`, body, { headers: { 'Content-Type': 'application/json' } });
 					}
 				} catch (updateErr:any) {
 					console.error('Update news failed', updateErr?.response?.status, updateErr?.response?.data || updateErr?.message);
+					// If the server returned ModelState errors (ProblemDetails or dictionary), extract readable messages
+					let detail = updateErr?.response?.data;
+					try {
+						if (detail && typeof detail === 'object') {
+							// ProblemDetails-style
+							if (detail.errors) {
+								const msgs: string[] = [];
+								for (const k of Object.keys(detail.errors)) msgs.push(`${k}: ${detail.errors[k].join(', ')}`);
+								detail = msgs.join(' | ');
+							} else if (detail.title || detail.detail) {
+								detail = `${detail.title || ''} ${detail.detail || ''}`.trim();
+							} else {
+								detail = JSON.stringify(detail);
+							}
+						}
+					} catch { detail = updateErr?.response?.data || updateErr?.message; }
+					pushToast('error', 'Update failed', String(detail || updateErr?.message || 'Failed to update news'));
 					// fallback to legacy/local update so UI remains responsive
 					newsStore.update(editingNews.id, newsForm as any);
 				}
@@ -295,31 +466,50 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 				const campusMap: Record<string, number> = { south: 1, emalahleni: 2, polokwane: 3 };
 				const campusesToCreate = selectedCampuses.length ? selectedCampuses : [newsForm.campus || 'south'];
 				const file = (newsForm as any).file as File | undefined;
-				// Send one request per campus to ensure CampusId is present
+				// OPTIMISTIC CREATE: insert temp entries per selected campus so UI updates immediately
+				const temps: NewsItem[] = [];
+				for (const campusKey of campusesToCreate) {
+					const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+					const temp: NewsItem = {
+						id: tempId,
+						title: newsForm.title,
+						summary: newsForm.summary || '',
+						description: newsForm.summary || '',
+						date: new Date().toISOString(),
+						priority: newsForm.priority || 'medium',
+						category: newsForm.category || '',
+						campus: campusKey as any,
+						campusId: undefined,
+						isVisible: true,
+						attachmentUrl: '',
+					} as any;
+					temps.push(temp);
+				}
+				// prepend temps so user sees them immediately
+				setNewsItems(prev => {
+					const merged = [...temps, ...prev];
+					return merged.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime());
+				});
+
+				// Build FormData matching CreateNewsDTO: AdminId, Title, Description, Priority, Category, multiple CampusIds, optional FormFile
+				const fd = new FormData();
+				fd.append('AdminId', String(adminId!));
+				fd.append('Title', newsForm.title);
+				fd.append('Description', newsForm.summary || '');
+				fd.append('Priority', String(newsForm.priority || 'medium'));
+				fd.append('Category', newsForm.category || 'Announcement');
+				// append each CampusId entry expected by List<int> CampusIds
+				for (const campusKey of campusesToCreate) {
+					const cid = campusMap[campusKey] || undefined;
+					if (cid) fd.append('CampusIds', String(cid));
+				}
+				if (file) fd.append('FormFile', file);
+
 				try {
-					for (const campusKey of campusesToCreate) {
-						const campusId = campusMap[campusKey] || undefined;
-						const params: any = {
-							AdminId: adminId!,
-							Title: newsForm.title,
-							Description: newsForm.summary || '',
-							Priority: newsForm.priority,
-							Category: newsForm.category,
-							...(newsForm.department ? { Department: newsForm.department } : {}),
-							...(campusId ? { CampusId: campusId } : {}),
-							Campus: campusKey // also include slug in case backend expects it
-						};
-						if (file) {
-							const fd = new FormData();
-							fd.append('FormFile', file);
-							await axios.post(`/api/News/createNews`, fd, { params });
-						} else {
-							await axios.post(`/api/News/createNews`, {}, { params });
-						}
-					}
+					await axios.post(`/api/News/createNews`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
 				} catch (createErr:any) {
-					console.error('Create news failed', createErr?.response?.status, createErr?.response?.data || createErr?.message);
-					throw createErr;
+					console.error('Create news failed (bulk)', createErr?.response?.status, createErr?.response?.data || createErr?.message);
+					// leave optimistic temps; refresh below will merge/remove them as appropriate
 				}
 			}
 			setShowNewsForm(false); setEditingNews(null); setNewsForm(blankNews); setSelectedCampuses([]);
@@ -339,42 +529,41 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	const handleEditNews = (item: NewsItem) => { setEditingNews(item); setNewsForm({ ...item }); setShowNewsForm(true); };
 
 	const openDeleteNews = (item: NewsItem) => { setDeleteTarget(item); setDeletePassword(''); setDeleteError(''); setShowDeleteDialog(true); };
-	const confirmDeleteNews = async () => {
-		if (!deleteTarget) return; if (!deletePassword.trim()) { setDeleteError('Password is required'); return; }
-		setDeleteLoading(true); setDeleteError('');
-		try {
-			// Resolve adminId
-			let adminId: number | undefined; const stored = sessionStorage.getItem('adminNumericId'); if (stored){ const n=Number(stored); if(!Number.isNaN(n)) adminId=n; }
-			if (!adminId){ const ca=sessionStorage.getItem('currentAdmin'); if (ca){ try { const p=JSON.parse(ca); for (const v of [p.adminId,p.AdminId,p.id,p.Id]) { const n=Number(v); if(!Number.isNaN(n)){ adminId=n; break; } } } catch {} } }
-			if (!adminId) throw new Error('Missing AdminId');
-			await axios.delete(`/api/News/deleteNews`, { data: { newsId: Number(deleteTarget.id), password: deletePassword, adminId } });
-			pushToast('success','News item deleted','The selected news entry was removed successfully.');
-			setShowDeleteDialog(false); setDeleteTarget(null); setDeletePassword('');
-			await refreshNews();
-			setNewsSearch(''); // clear search bar after delete
-		} catch (err:any) {
-			console.error('Delete news failed', err?.response?.status, err?.response?.data || err?.message);
-			if (err?.response?.status === 401 || err?.response?.status === 403) setDeleteError('Invalid password'); else setDeleteError(err?.message || 'Delete failed');
-			if (!navigator.onLine) { // offline fallback
-				newsStore.remove(deleteTarget.id); pushToast('error','Offline delete','Item removed locally while offline.'); setShowDeleteDialog(false); setDeleteTarget(null);
-				const campus = newsCampusFilter === 'all' ? undefined : newsCampusFilter; setNewsItems(newsStore.list(campus, newsSearch));
-				setNewsSearch(''); // clear search bar after offline delete
-			}
-		} finally { setDeleteLoading(false); }
-	};
-	const cancelDelete = () => { if (deleteLoading) return; setShowDeleteDialog(false); setDeleteTarget(null); };
 
-	// Defensive: if opening delete dialog triggers browser autofill placing admin email into search, clear it
-	useEffect(() => {
-		if (!showDeleteDialog) return;
+	const cancelDelete = () => {
+		setShowDeleteDialog(false);
+		setDeleteTarget(null);
+		setDeletePassword('');
+		setDeleteError('');
+		setDeleteLoading(false);
+	};
+
+	const confirmDeleteNews = async () => {
+		setDeleteLoading(true);
+		setDeleteError('');
 		try {
-			const adminRaw = sessionStorage.getItem('currentAdmin');
-			if (!adminRaw) return;
-			const parsed = JSON.parse(adminRaw);
-			const email = parsed?.email || parsed?.Email || parsed?.userEmail;
-			if (email && newsSearch === email) setNewsSearch('');
-		} catch {}
-	}, [showDeleteDialog, newsSearch]);
+			if (!deleteTarget) {
+				setDeleteError('No item selected');
+				return;
+			}
+			// Try common HTTP delete pattern; fall back to POST if server expects that
+			try {
+				await axios.delete(`/api/News/deleteNews`, { params: { NewsId: Number(deleteTarget.id), Password: deletePassword } });
+			} catch (e) {
+				// fallback: POST delete endpoint
+				try { await axios.post(`/api/News/deleteNews`, {}, { params: { NewsId: Number(deleteTarget.id), Password: deletePassword } }); } catch(e2) { throw e2; }
+			}
+			pushToast('success', 'News deleted', `"${deleteTarget.title}" removed.`);
+			await refreshNews();
+		} catch (err:any) {
+			setDeleteError(err?.message || 'Failed to delete item.');
+		} finally {
+			setDeleteLoading(false);
+			setShowDeleteDialog(false);
+			setDeleteTarget(null);
+			setDeletePassword('');
+		}
+	};
 
 	const handleToggleNewsVisibility = async (id: string) => {
 		const idx = newsItems.findIndex(n => n.id === id);
@@ -410,6 +599,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	// Admin profile (parsed from sessionStorage currentAdmin)
 	const [adminProfile, setAdminProfile] = useState<{initials?:string; surname?:string; email?:string}>({});
 	const [showProfile, setShowProfile] = useState(false);
+	const [notificationsOpen, setNotificationsOpen] = useState(false);
+	const [unreadCount, setUnreadCount] = useState(3); // dummy unread count
+	const notificationsRef = useRef<HTMLDivElement | null>(null);
 	useEffect(()=>{
 		try{
 			const raw = sessionStorage.getItem('currentAdmin');
@@ -418,6 +610,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 	},[]);
 	const openProfile = () => setShowProfile(true);
 	const closeProfile = () => setShowProfile(false);
+	// click outside to close notifications
+	useEffect(()=>{
+		const handler = (e: MouseEvent) => { if (notificationsRef.current && !notificationsRef.current.contains(e.target as Node)) setNotificationsOpen(false); };
+		document.addEventListener('mousedown', handler);
+		return () => document.removeEventListener('mousedown', handler);
+	}, []);
 
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col">
@@ -436,6 +634,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 							<div className="flex flex-col items-start leading-tight select-none">
 								<span className="text-sm font-mono text-gray-700 tabular-nums" aria-label="Current time">{currentTime}</span>
 								<span className="text-[11px] font-medium text-gray-500" aria-label="Current date">{currentDate}</span>
+							</div>
+							{/* Notifications dropdown */}
+							<div className="relative" ref={notificationsRef}>
+								<button onClick={() => setNotificationsOpen(o=>!o)} aria-label="Notifications" className="relative p-2 rounded-md hover:bg-gray-100">
+									<Bell className="w-5 h-5 text-gray-600" />
+									{unreadCount > 0 && <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white bg-red-600 rounded-full">{unreadCount}</span>}
+								</button>
+								{notificationsOpen && (
+									<div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top duration-200 origin-top-right">
+										<div className="p-3 border-b border-gray-100 flex items-center justify-between">
+											<strong className="text-sm">Notifications</strong>
+											<button onClick={() => { setUnreadCount(0); setNotificationsOpen(false); pushToast('success','Marked read','All notifications marked as read.'); }} className="text-xs text-blue-600 hover:underline">Mark all read</button>
+										</div>
+										<ul className="max-h-60 overflow-auto">
+											<li className="p-3 text-sm text-gray-700 border-b border-gray-50">No new notifications — you’re all caught up!</li>
+											<li className="p-3 text-sm text-gray-700 border-b border-gray-50">Feature announcements coming soon.</li>
+											<li className="p-3 text-sm text-gray-700">Tips and updates will appear here.</li>
+										</ul>
+										<div className="p-2 border-t border-gray-100 text-center text-xs text-gray-500">Notifications are coming soon — stay tuned!</div>
+									</div>
+								)}
 							</div>
 							{/* Profile avatar button (moved to right of time/date) */}
 							<button onClick={openProfile} className="relative group flex items-center gap-3 px-4 py-2 rounded-full bg-white border border-gray-200 hover:shadow transition">
@@ -463,6 +682,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 								</button>
 							); })}
 						</nav>
+						{/* Departments moved to its own tab — removed from sidebar */}
 					</div>
 					<div className="flex-1 min-h-full">
 						{activeTab === 'overview' && (
@@ -487,7 +707,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 									</div>
 									<div className="p-6">
 										<div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-											{newsItems.filter(n => n.isVisible !== false).slice(0,6).map(item => (
+											{dedupedNews.filter(n => n.isVisible !== false).slice(0,6).map(item => (
 												<div key={item.id} className="group relative rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 shadow-sm hover:shadow-md transition-all cursor-pointer" onClick={()=>{ handleEditNews(item); setActiveTab('news'); }}>
 													<div className="flex items-start justify-between gap-3">
 														<h3 className="text-sm font-semibold text-gray-900 pr-2 line-clamp-2" title={item.title}>{item.title}</h3>
@@ -511,7 +731,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout, onBackToHome:
 								</div>
 							</div>
 						)}
-						{activeTab === 'news' && (
+					{activeTab === 'departments' && (
+						<div className="space-y-6">
+							<DepartmentsSection departments={departmentsByCampus} />
+						</div>
+					)}
+					{activeTab === 'news' && (
 							<div className="space-y-6">
 								<NewsManagementSection
 									newsItems={newsItems}

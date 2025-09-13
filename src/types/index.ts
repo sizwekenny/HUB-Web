@@ -1,12 +1,20 @@
 export interface Department {
   id: string;
   name: string;
-  codes: string[];
-  description: string;
-  buildingNumber: string;
-  email: string;
-  contactNumber: string;
+  codes?: string[];
+  description?: string;
+  buildingNumber?: string;
+  email?: string;
+  contactNumber?: string;
   link?: string;
+  courses?: Course[];
+}
+
+export interface Course {
+  courseCode: string;
+  courseName: string;
+  duration?: string;
+  nqfLevel?: string;
 }
 
 export interface Service {

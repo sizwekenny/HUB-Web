@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { NewsItem } from '../../../types';
 
@@ -16,12 +16,14 @@ interface Props {
   onAdd: ()=>void;
   onPrev: ()=>void; onNext: ()=>void;
   onToggleVisibility: (id:string)=>void;
-  onEdit: (item:NewsItem)=>void;
+  // onEdit may receive a NewsItem or an object with an optional campuses array to preserve aggregated campuses
+  onEdit: (item: NewsItem | (NewsItem & { campuses?: string[] }))=>void;
   onDelete: (item:NewsItem)=>void;
 }
 
 const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, newsLoading, newsError, newsCampusFilter, search='', onSearchChange, newsFrom, newsTo, total, page, totalPages, onCampusFilterChange, onAdd, onPrev, onNext, onToggleVisibility, onEdit, onDelete }) => {
   const [viewItem, setViewItem] = useState<NewsItem | null>(null);
+  const [viewCampuses, setViewCampuses] = useState<string[] | null>(null);
 
   // Close on ESC
   useEffect(() => {
@@ -32,6 +34,49 @@ const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, news
 
   const openView = (item: NewsItem) => setViewItem(item);
   const closeView = () => setViewItem(null);
+
+  // Build grouping map across all newsItems to aggregate campuses for duplicates.
+  const grouping = useMemo(() => {
+  type Group = { representative: NewsItem; campuses: Set<string> };
+    const map = new Map<string, Group>();
+    const makeKey = (it: NewsItem) => {
+      // Prefer explicit id from backend (newsId) when available and non-empty
+      if (it.id) return `id:${it.id}`;
+      const title = (it.title || '').trim().toLowerCase();
+      const summary = (it.summary || '').trim().toLowerCase();
+      const category = (it.category || '').trim().toLowerCase();
+      const priority = (it.priority || '').trim().toLowerCase();
+      // Use date to day precision to avoid clock differences
+      const datePart = it.date ? new Date(it.date).toISOString().split('T')[0] : '';
+      return `${title}|${summary}|${category}|${priority}|${datePart}`;
+    };
+    for (const it of newsItems) {
+      const key = makeKey(it);
+      const campus = it.campus || 'All';
+      if (!map.has(key)) {
+        map.set(key, { representative: it, campuses: new Set([campus]) });
+      } else {
+        const g = map.get(key)!;
+        g.campuses.add(campus);
+        // keep earliest representative (existing)
+      }
+    }
+    return { map, makeKey } as { map: Map<string, Group>; makeKey: (it: NewsItem) => string };
+  }, [newsItems]);
+
+  // Prepare deduplicated list for current page (preserve order of paginatedNews)
+  const dedupedPage = useMemo(() => {
+    const seen = new Set<string>();
+    const result: Array<{ item: NewsItem; campuses: string[] }> = [];
+    for (const it of paginatedNews) {
+      const key = grouping.makeKey(it);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const group = grouping.map.get(key);
+      result.push({ item: group?.representative || it, campuses: group ? Array.from(group.campuses) : [it.campus || 'All'] });
+    }
+    return result;
+  }, [paginatedNews, grouping]);
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm">
@@ -78,25 +123,33 @@ const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, news
               </thead>
               <tbody>
                 {newsLoading && newsItems.length === 0 && <tr><td colSpan={7} className="py-8 text-center text-gray-500 text-sm">Loading news...</td></tr>}
-                {paginatedNews.map(item => (
-                  <tr key={item.id} onClick={() => openView(item)} className="cursor-pointer border-b border-gray-100 hover:bg-gray-50">
+                {dedupedPage.map(({ item, campuses }) => (
+                  <tr key={item.id} onClick={() => { openView(item); setViewCampuses(campuses); }} className="cursor-pointer border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 px-2 max-w-xs">
                       <p className="font-medium text-gray-900 line-clamp-1" title={item.title}>{item.title}</p>
                       <p className="text-xs text-gray-500 line-clamp-1" title={item.summary}>{item.summary}</p>
                     </td>
-                    <td className="py-3 px-2"><span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium capitalize">{item.campus || 'All'}</span></td>
+                    <td className="py-3 px-2">
+                      <div className="flex flex-wrap gap-1">
+                        {campuses.slice(0,5).map(c => (
+                          <span key={`${item.id}-${c}`} className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium capitalize">{c}</span>
+                        ))}
+                        {campuses.length > 5 && <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">+{campuses.length - 5} more</span>}
+                      </div>
+                    </td>
                     <td className="py-3 px-2"><span className="px-2 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">{item.category}</span></td>
                     <td className="py-3 px-2"><span className={`px-2 py-1 rounded-full text-xs font-medium ${item.priority==='high'?'bg-red-100 text-red-700':item.priority==='medium'?'bg-yellow-100 text-yellow-700':'bg-green-100 text-green-700'}`}>{item.priority}</span></td>
                     <td className="py-3 px-2"><span className={`px-2 py-1 rounded-full text-xs font-medium ${item.isVisible===false ? 'bg-gray-200 text-gray-700':'bg-green-100 text-green-700'}`}>{item.isVisible===false?'Hidden':'Visible'}</span></td>
                     <td className="py-3 px-2 whitespace-nowrap">{new Date(item.date).toLocaleDateString('en-ZA',{year:'numeric',month:'short',day:'numeric'})}</td>
                     <td className="py-3 px-2"><div className="flex items-center justify-end space-x-2">
                       <button onClick={(e)=>{e.stopPropagation(); onToggleVisibility(item.id);}} aria-label={item.isVisible===false?'Enable news item':'Disable news item'} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${item.isVisible===false?'bg-gray-300':'bg-green-500'}`}><span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${item.isVisible===false?'translate-x-1':'translate-x-6'}`}></span></button>
-                      <button onClick={(e)=>{e.stopPropagation(); onEdit(item);}} className="p-2 text-gray-400 hover:text-blue-600 transition-colors" aria-label="Edit news"><Edit className="w-4 h-4" /></button>
+                      {/* Pass aggregated campuses along with the item so parent can include CampusIds when updating */}
+                      <button onClick={(e)=>{e.stopPropagation(); onEdit({ ...item, campuses });}} className="p-2 text-gray-400 hover:text-blue-600 transition-colors" aria-label="Edit news"><Edit className="w-4 h-4" /></button>
                       <button onClick={(e)=>{e.stopPropagation(); onDelete(item);}} className="p-2 text-gray-400 hover:text-red-600 transition-colors" aria-label="Delete news"><Trash2 className="w-4 h-4" /></button>
                     </div></td>
                   </tr>
                 ))}
-                {newsItems.length === 0 && <tr><td colSpan={6} className="py-10 text-center text-gray-500 text-sm">No news found for current filters.</td></tr>}
+                {newsItems.length === 0 && <tr><td colSpan={7} className="py-10 text-center text-gray-500 text-sm">No news found for current filters.</td></tr>}
               </tbody>
             </table>
           </div>
@@ -133,7 +186,9 @@ const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, news
           </div>
           <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
             <div className="flex flex-wrap gap-2 text-xs">
-              <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 font-medium capitalize">{viewItem.campus || 'All'}</span>
+              {(viewCampuses && viewCampuses.length>0 ? viewCampuses : [viewItem.campus || 'All']).map(c => (
+                <span key={c} className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 font-medium capitalize">{c}</span>
+              ))}
               <span className="px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-medium">{viewItem.category}</span>
               <span className={`px-2 py-1 rounded-full font-medium ${viewItem.priority==='high'?'bg-red-100 text-red-700':viewItem.priority==='medium'?'bg-yellow-100 text-yellow-700':'bg-green-100 text-green-700'}`}>{viewItem.priority}</span>
               {viewItem.isVisible===false && <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700 font-medium">Hidden</span>}
@@ -153,7 +208,7 @@ const NewsManagementSection: React.FC<Props> = ({ newsItems, paginatedNews, news
           </div>
           <div className="flex justify-end gap-3 p-6 border-t border-gray-100 bg-gray-50 rounded-b-xl">
             <button onClick={closeView} className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 text-sm font-medium">Close</button>
-            <button onClick={()=>{closeView(); onEdit(viewItem);}} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm font-medium">Edit</button>
+            <button onClick={()=>{ closeView(); onEdit({ ...viewItem, campuses: viewCampuses && viewCampuses.length>0 ? viewCampuses : [viewItem.campus || 'All'] }); }} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm font-medium">Edit</button>
           </div>
         </div>
       </div>

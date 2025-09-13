@@ -108,18 +108,19 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onBack, onLoginSuccess }) => {
 				overlayClassName="bg-gradient-to-br from-blue-950/80 via-indigo-950/70 to-purple-950/75"
 			/>
 			{/* Existing decorative gradients layered above slideshow for subtle texture */}
-			<div className="pointer-events-none absolute inset-0 mix-blend-overlay bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.25),transparent_60%),radial-gradient(circle_at_80%_70%,rgba(99,102,241,0.25),transparent_55%)]" />
-			<div className="absolute inset-0 bg-gradient-to-br from-slate-900/55 via-indigo-900/45 to-purple-900/50 backdrop-blur-[3px]" />
+			<div className="pointer-events-none absolute inset-0 mix-blend-overlay bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.18),transparent_60%),radial-gradient(circle_at_80%_70%,rgba(99,102,241,0.18),transparent_55%)]" />
+			{/* Dark semi-transparent overlay to dim slideshow but allow it to show through (slightly lighter) */}
+			<div className="absolute inset-0 bg-black/60 backdrop-blur-[3px]" />
 
 			{/* Top-left institutional full logo + styled back button */}
 			<div className="absolute top-4 left-4 z-20 flex flex-col items-start space-y-3">
-				<img src={tutFull} alt="TUT Full Logo" className="w-56 md:w-60 max-w-[260px] h-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)]" />
+				<img src={tutFull} alt="TUT Full Logo" className="w-48 md:w-52 max-w-[220px] h-auto drop-shadow-[0_4px_10px_rgba(0,0,0,0.35)]" />
 				<button
 					onClick={onBack}
-					className="group flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg shadow-black/30 hover:shadow-xl hover:brightness-110 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400"
+					className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-black/40 text-white text-sm hover:bg-black/30 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400"
+					aria-label="Back to home"
 				>
-					<ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
-					<span className="font-medium tracking-wide">Back to Home</span>
+					<ArrowLeft className="w-4 h-4" />
 				</button>
 			</div>
 
