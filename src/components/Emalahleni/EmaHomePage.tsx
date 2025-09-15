@@ -581,8 +581,8 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
           </div>
 
-          {/* Full Footer Component - Outside container for full width */}
-          <Footer />
+         
+       
         </div>
       )}
 
