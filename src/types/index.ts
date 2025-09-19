@@ -1,13 +1,14 @@
 export interface Department {
   id: string;
   name: string;
-  codes?: string[];
+  codes: string[];
   description?: string;
   buildingNumber?: string;
   email?: string;
   contactNumber?: string;
   link?: string;
   courses?: Course[];
+  
 }
 
 export interface Course {
