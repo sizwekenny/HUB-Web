@@ -2,7 +2,7 @@ export interface Department {
   id: string;
   name: string;
   codes: string[];
-  description?: string;
+  description: string;
   buildingNumber?: string;
   email?: string;
   contactNumber?: string;

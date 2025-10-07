@@ -166,18 +166,28 @@ const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600">
-        <div className="absolute inset-0 bg-black opacity-10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <section className="relative overflow-hidden" style={{ background: 'linear-gradient(90deg, #003884 0%, #1e2761 100%)' }}>
+        {/* Background Video */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          src="src/assets/hero.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{ objectFit: 'cover' }}
+        />
+        {/* Lower opacity gradient overlay */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, #003884cc 0%, #1e2761cc 100%)', opacity: 0.5, zIndex: 1 }}></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24" style={{ zIndex: 2 }}>
           <div className={`text-center transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="flex justify-center mb-8">
               <div className="p-4 bg-yellow-400 rounded-full shadow-lg">
-                <GraduationCap className="w-16 h-16 text-blue-900" />
+                <GraduationCap className="w-16 h-16 text-[#003884]" />
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
               FoICT(Sosha South Campus)
-              {/* <span className="block text-yellow-400">Information Hub</span> */}
             </h1>
             <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
               Your comprehensive guide to academic departments, student services, and essential information
@@ -186,39 +196,40 @@ const HomePage: React.FC<HomePageProps> = ({
             <div className="flex flex-col-3 sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => handleScrollTo('departments')}
-                className="px-8 py-4 bg-yellow-400 text-blue-900 font-semibold rounded-lg hover:bg-yellow-300 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                className="px-8 py-4 bg-yellow-400 text-[#003884] font-semibold rounded-lg hover:bg-yellow-300 transform hover:scale-105 transition-all duration-300 shadow-lg"
               >
                 Explore Departments
               </button>
               <button
                 onClick={() => handleScrollTo('services')}
-                className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-900 transform hover:scale-105 transition-all duration-300"
+                className="px-8 py-4 bg-white text-[#003884] font-semibold rounded-lg border-2 border-[#003884] hover:bg-[#003884] hover:text-white hover:border-white transform hover:scale-105 transition-all duration-300"
               >
                 Student Services
               </button>
               <button
                 onClick={() => setShowCampusVideo(true)}
-                className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-blue-600 hover:text-white hover:border-white border-2 border-transparent transform hover:scale-105 transition-all duration-300 shadow-lg"
+                className="px-8 py-4 bg-white text-[#003884] font-semibold rounded-lg hover:bg-[#003884] hover:text-white hover:border-white border-2 border-transparent transform hover:scale-105 transition-all duration-300 shadow-lg"
               >
                 Explore Our Campus
               </button>
             </div>
-
           </div>
         </div>
-
         {/* Animated background elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-32 h-32 bg-blue-300 rounded-full opacity-20 animate-bounce"></div>
-        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white rounded-full opacity-10 animate-ping"></div>
-        <div className="absolute top-32 right-32 w-14 h-14 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-32 left-32 w-24 h-24 bg-yellow-300 rounded-full opacity-20 animate-bounce"></div>
-        <div className="absolute top-10 right-1/2 w-10 h-10 bg-white rounded-full opacity-10 animate-ping"></div>
-        <div className="absolute bottom-10 left-1/2 w-12 h-12 bg-blue-400 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute top-1/3 left-3/4 w-16 h-16 bg-yellow-200 rounded-full opacity-20 animate-bounce"></div>
+        <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-400 rounded-full opacity-20 animate-pulse" style={{ zIndex: 3 }}></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32" style={{ backgroundColor: '#003884', borderRadius: '9999px', opacity: 0.2, zIndex: 3 }}></div>
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white rounded-full opacity-10 animate-ping" style={{ zIndex: 3 }}></div>
+        <div className="absolute top-32 right-32 w-14 h-14" style={{ backgroundColor: '#003884', borderRadius: '9999px', opacity: 0.2, zIndex: 3 }}></div>
+        <div className="absolute bottom-32 left-32 w-24 h-24 bg-yellow-300 rounded-full opacity-20 animate-bounce" style={{ zIndex: 3 }}></div>
+        <div className="absolute top-10 right-1/2 w-10 h-10 bg-white rounded-full opacity-10 animate-ping" style={{ zIndex: 3 }}></div>
+        <div className="absolute bottom-10 left-1/2 w-12 h-12" style={{ backgroundColor: '#003884', borderRadius: '9999px', opacity: 0.2, zIndex: 3 }}></div>
+        <div className="absolute top-1/3 left-3/4 w-16 h-16 bg-yellow-200 rounded-full opacity-20 animate-bounce" style={{ zIndex: 3 }}></div>
       </section>
-
-      {/* Latest News Section */}
+      {/* Latest News Section 
+      Blue: #003884
+      Red: #ce1127
+      Gold: #e6b012
+      */}
       <section className="relative py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -338,9 +349,9 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           <div className="text-center mt-12">
-            <button
+           <button
               onClick={handleViewAllNews}
-              className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="px-8 py-3 bg-[#003884] text-white font-semibold rounded-lg hover:bg-[#00245c] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               View All News
             </button>
@@ -450,12 +461,13 @@ const HomePage: React.FC<HomePageProps> = ({
                       </a>
                     )}
                   </div>
-                  <button
+                   <button
                     onClick={() => setSelectedNews(null)}
-                    className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                    className="px-6 py-2 bg-[#003884] text-white font-semibold rounded-lg hover:bg-[#00245c] transition-colors duration-200"
                   >
                     Close
                   </button>
+
                 </div>
               </div>
             </div>
@@ -473,7 +485,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 <div className="flex items-center mb-6">
                   <button
                     onClick={handleBackToHome}
-                    className="mr-6 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
+                    className="mr-6 bg-[#003884] hover:bg-[#00245c] text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
                     disabled={isExiting}
                   >
                     <ChevronLeft className="w-5 h-5" />
@@ -538,9 +550,9 @@ const HomePage: React.FC<HomePageProps> = ({
                       <div className="p-6 h-full flex flex-col">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center space-x-3">
-                            <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-600 transition-colors duration-300">
-                              <IconComponent className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors duration-300" />
-                            </div>
+                            <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-[#003884] transition-colors duration-300">
+                        <IconComponent className="w-8 h-8 text-[#003884] group-hover:text-white transition-colors duration-300" />
+                      </div>
                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getCategoryColor(news.category)}`}>
                               {news.category}
                             </span>
@@ -583,7 +595,7 @@ const HomePage: React.FC<HomePageProps> = ({
                                 <span>Download</span>
                               </a>
                             )}
-                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transform group-hover:translate-x-1 transition-all duration-300" />
+                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#003884] transform group-hover:translate-x-1 transition-all duration-300" />
                           </div>
                         </div>
                       </div>
@@ -732,14 +744,15 @@ const HomePage: React.FC<HomePageProps> = ({
               <div
                 id={`service-${service.id}`}
                 key={service.id}
-                className={`group bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 hover:shadow-xl transform transition-all duration-500 hover:scale-105 cursor-pointer border border-blue-100 hover:border-blue-300 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                className={`group bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 hover:shadow-xl transform transition-all duration-500 hover:scale-105 cursor-pointer border border-[#003884]/10 hover:border-[#003884]/40 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+
                 style={{ transitionDelay: `${index * 100}ms` }}
                 onClick={() => onServiceClick(service)}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center mb-2">
-                      <span className="px-3 py-1 bg-yellow-400 text-blue-900 text-xs font-semibold rounded-full">
+                      <span className="px-3 py-1 bg-yellow-400 text-[#003884] text-xs font-semibold rounded-full">
                         {service.category}
                       </span>
                     </div>

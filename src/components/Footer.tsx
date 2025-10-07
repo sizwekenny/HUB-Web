@@ -39,13 +39,14 @@ const Footer: React.FC = () => {
     { year: '2026', url: 'https://tut.ac.za/images/docs/2025/2026-AcademicCore-Calendar.pdf' },
   ];
 
+ 
   return (
-    <footer className="relative overflow-hidden text-center md:text-left py-12 bg-blue-600 text-white mt-16" style={{ marginTop: '0px' }}>
+    <footer className="relative overflow-hidden text-center md:text-left py-12" style={{ backgroundColor: '#333399', color: 'white', marginTop: '0px' }}>
       {/* Floating Background Elements */}
       <div className="absolute top-20 left-10 w-16 h-16 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-24 h-24 bg-blue-300 rounded-full opacity-20 animate-bounce"></div>
+      <div className="absolute bottom-20 right-10 w-24 h-24" style={{ backgroundColor: '#333399', borderRadius: '9999px', opacity: 0.2 }}></div>
       <div className="absolute top-1/2 left-1/4 w-12 h-12 bg-white rounded-full opacity-10 animate-ping"></div>
-      <div className="absolute top-32 right-32 w-10 h-10 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
+      <div className="absolute top-32 right-32 w-10 h-10" style={{ backgroundColor: '#333399', borderRadius: '9999px', opacity: 0.2 }}></div>
       <div className="absolute bottom-32 left-32 w-20 h-20 bg-yellow-300 rounded-full opacity-20 animate-bounce"></div>
 
       {/* Overlay */}
@@ -93,7 +94,6 @@ const Footer: React.FC = () => {
                   className="flex items-center gap-2 hover:text-yellow-500"
                 >
                   {social.icon}
-                  
                 </a>
               ))}
             </div>
@@ -140,6 +140,7 @@ const Footer: React.FC = () => {
       </div>
     </footer>
   );
+
 };
 
 export default Footer;
