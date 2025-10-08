@@ -79,7 +79,9 @@ export interface NewsItem {
   summary: string;
   content: string;
   date: string;
-  category: 'Registration' | 'Academic' | 'Announcement' | 'Deadline' | 'Event' | 'WIL';
+  category: 'Registration' | 'Academic' | 'Announcement' | 'Deadline' | 'Event' | 'WIL'| "Health"
+  | "Student Support"
+  | "Awareness & Safety";
   priority: 'high' | 'medium' | 'low';
   /** Optional department code/name this news item relates to */
   department?: string;
@@ -96,10 +98,10 @@ export interface NewsItem {
    */
   // Supported campuses currently: Soshanguve South (south), eMalahleni (emalahleni), Polokwane (polokwane)
   campus?: 'south' | 'emalahleni' | 'polokwane' | 'all';
-  downloadFile?: {
+ downloadFile?: {
     filename: string;
     url: string;
     type: 'pdf' | 'png' | 'jpg' | 'jpeg' | 'docx' | 'xlsx';
     size?: string;
-  };
+};
 }
