@@ -17,6 +17,7 @@ import EmaUserManual from './components/Emalahleni/emaUserManual';
 import PolHomePage from './components/Polokwane/PolHomePage';
 import PolDepartmentDetails from './components/Polokwane/PolDepartmentDetails';
 import PolServiceDetails from './components/Polokwane/PolServiceDetails';
+import CampusVideosPage from './components/CampusVideosPage';
 
 const departments: Department[] = [
   {
@@ -582,7 +583,7 @@ const emaServices: Service[] = [
   }
 ];
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'home' | 'department' | 'service' | 'manual' | 'adminLogin' | 'adminDashboard' | 'emaHome' | 'emaService' | 'emaManual' | 'polHome' | 'polManual'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'home' | 'department' | 'service' | 'manual' | 'adminLogin' | 'adminDashboard' | 'emaHome' | 'emaService' | 'emaManual' | 'polHome' | 'polManual' | 'campusVideos'>('landing');
 
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -601,7 +602,8 @@ function App() {
     adminLogin: '/admin/login',
     adminDashboard: '/admin/dashboard',
     emaHome: '/ema',
-    polHome: '/pol'
+    polHome: '/pol',
+    campusVideos: '/campus-videos'
   };
 
   const updateView = (view: typeof currentView) => {
@@ -668,17 +670,6 @@ function App() {
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Declarative routes (primary entry points) */}
-      <Routes>
-        <Route path="/" element={null} />
-        <Route path="/home" element={null} />
-        <Route path="/admin/login" element={null} />
-        <Route path="/admin/dashboard" element={null} />
-        <Route path="/ema" element={null} />
-        <Route path="/pol" element={null} />
-        {/* Fallback redirect for unknown paths */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
       {/* Navigation */}
       {!['landing', 'adminLogin', 'adminDashboard'].includes(currentView) && (
         currentView.startsWith('ema')
@@ -700,6 +691,41 @@ function App() {
             />
           )
       )}
+      {/* Declarative routes (primary entry points) */}
+      <Routes>
+         {/* <Route
+          path="/"
+          element={
+            <LandingPage
+              onSelect={(page: 'home' | 'manual' | 'emaHome' | 'polHome') => navigate(`/${page === 'home' ? 'home' : page}`)}
+              onLogin={handleLogin}
+            />
+          }
+        />*/}
+        {/* <Route
+          path="/home"
+          element={
+            <HomePage
+              departments={departments}
+              services={services}
+              selectedFilter={selectedFilter}
+              onDepartmentClick={handleDepartmentClick}
+              onServiceClick={(service) => handleServiceClick(service, false)}
+            />
+          }
+        />  */}
+        <Route path="/" element={null} />
+        <Route path="/home" element={null} />
+        <Route path="/admin/login" element={null} />
+        <Route path="/admin/dashboard" element={null} />
+        <Route path="/ema" element={null} />
+        <Route path="/pol" element={null} />
+         <Route path="/campus-videos" element={<CampusVideosPage />} />
+        {/* Fallback redirect for unknown paths */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+        
+      </Routes>
+      
 
 
       {/* Landing Page */}
@@ -784,7 +810,7 @@ function App() {
         />
       )}
 
-  
+
 
       {/* User Manual */}
       {currentView === 'manual' && (
