@@ -18,14 +18,40 @@ const videos: Video[] = [
   { name: "B5 NSFAS", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/b5-nsfas.mp4" },
 ];
 
+const qualityOptions = [
+  { label: 'Auto', value: 'auto' },
+  { label: '1080p', value: '1080' },
+  { label: '720p', value: '720' },
+  { label: '480p', value: '480' },
+  { label: '360p', value: '360' },
+];
+
 const CampusVideosPage: React.FC = () => {
   const [search, setSearch] = useState("");
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(videos[0]);
-    const navigate = useNavigate();
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [quality, setQuality] = useState('auto');
+  const navigate = useNavigate();
+  const videoRef = React.useRef<HTMLVideoElement>(null);
 
   const filteredVideos = videos.filter(video =>
     video.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Simulate quality switching by changing URL (if you have multiple sources per video)
+  // Here, we just reload the same video for demo, but you can adapt if you have quality-specific URLs
+  const getVideoUrl = (video: Video | null) => {
+    if (!video) return '';
+    if (quality === 'auto') return video.url;
+    return video.url.replace('.mp4', `-${quality}.mp4`);
+  };
+
+  // Update playback rate on video element
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate, selectedVideo]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -56,11 +82,28 @@ const CampusVideosPage: React.FC = () => {
       {/* Video Player */}
       {selectedVideo && (
         <div className="max-w-6xl mx-auto px-4 mb-6">
+          <div className="flex gap-4 items-center mb-2 flex-wrap">
+            <label className="font-medium">Speed:</label>
+            <select value={playbackRate} onChange={e => setPlaybackRate(Number(e.target.value))} className="rounded border-gray-300">
+              <option value={0.5}>0.5x</option>
+              <option value={1}>1x</option>
+              <option value={1.5}>1.5x</option>
+              <option value={2}>2x</option>
+            </select>
+            <label className="font-medium ml-4">Quality:</label>
+            <select value={quality} onChange={e => setQuality(e.target.value)} className="rounded border-gray-300">
+              {qualityOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
           <video
-            key={selectedVideo.url}
-            src={selectedVideo.url}
+            key={getVideoUrl(selectedVideo)}
+            ref={videoRef}
+            src={getVideoUrl(selectedVideo)}
             controls
             className="w-full h-[500px] rounded-lg shadow-lg object-cover"
+            style={{ background: '#000' }}
           />
           <h2 className="mt-2 text-xl font-semibold">{selectedVideo.name}</h2>
         </div>

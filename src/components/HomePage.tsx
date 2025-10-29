@@ -18,13 +18,13 @@ import {
 } from 'lucide-react';
 
 import { Department, Service, NewsItem } from '../types';
-import axios from 'axios';
-import { newsStore } from '../utils/newsStore';
-import { mapBackendNewsArray } from '../utils/newsMapper';
+// import axios from 'axios';
+// import { newsStore } from '../utils/newsStore';
+// import { mapBackendNewsArray } from '../utils/newsMapper';
 import Chatbot from './Chatbot';
 import { useNavigate } from "react-router-dom";
 import Footer from './Footer';
-import Navigation from './Navigation';
+// import Navigation from './Navigation';
 interface HomePageProps {
   departments: Department[];
   services: Service[];
@@ -37,6 +37,7 @@ interface HomePageProps {
 // TODO: Replace with API integration when backend available
 
 
+
 const HomePage: React.FC<HomePageProps> = ({
   departments,
   services,
@@ -44,59 +45,60 @@ const HomePage: React.FC<HomePageProps> = ({
   onDepartmentClick,
   onServiceClick
 }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+
+  // State declarations for modal/news logic and UI transitions
   const [showAllNews, setShowAllNews] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
-  // const [latestNews, setLatestNews] = useState<NewsItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+  const [latestNews] = useState<NewsItem[]>([
+    {
+      id: 'news-1',
+      title: 'Registration for 2026 Now Open',
+      category: 'Registration',
+      date: new Date('2025-10-01').toISOString(),
+      summary: 'All students are invited to register for the 2026 academic year. Early registration is encouraged to secure your place.',
+      priority: 'high',
+      isUrgent: true,
+      downloadFile: undefined,
+      content: '',
+    },
+    {
+      id: 'news-2',
+      title: 'ICT Career Fair This November',
+      category: 'Event',
+      date: new Date('2025-11-15').toISOString(),
+      summary: 'Meet top tech employers and explore internship opportunities at the annual ICT Career Fair.',
+      priority: 'medium',
+      isUrgent: false,
+      downloadFile: undefined,
+      content: '',
+    },
+    {
+      id: 'news-3',
+      title: 'New Computer Lab Opened',
+      category: 'Announcement',
+      date: new Date('2025-10-20').toISOString(),
+      summary: 'A state-of-the-art computer lab is now available for all ICT students in Building 82.',
+      priority: 'low',
+      isUrgent: false,
+      downloadFile: undefined,
+      content: '',
+    },
+    {
+      id: 'news-4',
+      title: 'Exam Timetable Released',
+      category: 'Academic',
+      date: new Date('2025-10-29').toISOString(),
+      summary: 'The final exam timetable for 2025 is now available. Please check your student portal for details.',
+      priority: 'medium',
+      isUrgent: false,
+      downloadFile: undefined,
+      content: '',
+    },
+  ]);
+  const navigate = useNavigate();
   const [showCampusVideo, setShowCampusVideo] = useState(false);
-   const navigate = useNavigate();
-const [latestNews, setLatestNews] = useState<NewsItem[]>([
-  {
-    id: "news1",
-    title: "Welcome to the New Semester!",
-    category: "Announcement",
-    date: new Date().toISOString(),
-    summary: "We are excited to welcome all new and returning students to the 2025 academic year. Check your emails for orientation details.",
-    priority: "high",
-    isUrgent: false,
-    downloadFile: undefined,
-    content: "",
-  },
-  {
-    id: "news2",
-    title: "Registration Deadline Extended",
-    category: "Deadline",
-    date: new Date().toISOString(),
-    summary: "The registration deadline has been extended to 15 October 2025. Please complete your registration online.",
-    priority: "medium",
-    isUrgent: true,
-    downloadFile: undefined,
-    content: "",
-  },
-  {
-    id: "news3",
-    title: "ICT Career Fair Next Week",
-    category: "Event",
-    date: new Date().toISOString(),
-    summary: "Join us for the annual ICT Career Fair on campus. Meet top employers and learn about internship opportunities.",
-    priority: "medium",
-    isUrgent: false,
-    downloadFile: undefined,
-    content: "",
-  },
-  {
-    id: "news4",
-    title: "New Lab Hours Announced",
-    category: "Academic",
-    date: new Date().toISOString(),
-    summary: "Computer labs will now be open from 8am to 8pm, Monday to Saturday. Remember to bring your student card for access.",
-    priority: "low",
-    isUrgent: false,
-    downloadFile: undefined,
-    content: "",
-  },
-]);
 
   // Handle transition to all news view
   const handleViewAllNews = () => {
@@ -111,9 +113,9 @@ const [latestNews, setLatestNews] = useState<NewsItem[]>([
       setIsExiting(false);
     }, 700); // Wait for animation to complete
   };
-useEffect(() => {
-  setIsLoaded(true);
-}, []);
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
   // useEffect(() => {
   //   setIsLoaded(true);
   //   let cancel = false;
@@ -154,15 +156,12 @@ useEffect(() => {
         }
       }
     };
-
     if (selectedNews || showAllNews) {
       document.addEventListener('keydown', handleEscapeKey);
-      // Prevent body scroll when modal or all news view is open
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
       document.body.style.overflow = 'unset';
@@ -298,7 +297,7 @@ useEffect(() => {
 
             <div className="flex animate-scroll space-x-8 pb-4 hover:animation-play-state-paused">
               {/* Duplicate the news array to create infinite scroll effect */}
-              {(latestNews.length > 3 ? [...latestNews, ...latestNews] : latestNews).map((news, index) => {
+              {(latestNews.length > 3 ? [...latestNews, ...latestNews] : latestNews).map((news: NewsItem, index: number) => {
                 const getCategoryIcon = (category: string) => {
                   switch (category) {
                     case 'Registration': return FileText;
@@ -475,22 +474,9 @@ useEffect(() => {
                 <h2 className="text-2xl font-bold text-gray-900">
                   {selectedNews.title}
                 </h2>
-
                 <div className="flex items-center text-gray-500 text-sm">
-                  <Clock className="w-4 h-4 mr-2" />
-                  <span>{new Date(selectedNews.date).toLocaleDateString('en-ZA', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}</span>
-                  <span className="mx-2">•</span>
-                  <span className={`font-medium ${selectedNews.priority === 'high' ? 'text-blue-600' :
-                      selectedNews.priority === 'medium' ? 'text-blue-500' : 'text-blue-400'
-                    }`}>
-                    {selectedNews.priority.charAt(0).toUpperCase() + selectedNews.priority.slice(1)} Priority
-                  </span>
+                  {/* Optionally, you can show date/priority here if needed, but for these cards, they are omitted */}
                 </div>
-
                 <div className="p-4 rounded-lg bg-blue-50 border-l-4 border-blue-500">
                   {/* Always show the textual summary first (preserve formatting) */}
                   <p className="text-gray-600 leading-relaxed whitespace-pre-line">
@@ -574,7 +560,7 @@ useEffect(() => {
 
               {/* News Grid */}
               <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ${isExiting ? 'animate-grid-exit' : 'animate-grid-entrance'}`}>
-                {latestNews.map((news, index) => {
+                {latestNews.map((news: NewsItem, index: number) => {
                   const getCategoryIcon = (category: string) => {
                     switch (category) {
                       case 'Registration': return FileText;
@@ -787,16 +773,40 @@ useEffect(() => {
    <div className="w-full max-w-4xl">
   <h4 className="font-semibold text-gray-800 mb-3">Services Offered:</h4>
   <div className="flex flex-nowrap justify-center gap-4 text-gray-600 text-sm overflow-x-auto">
-    <span className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2">
+    <span 
+      onClick={() => {
+        const service = services.find(s => s.id === 'Peer to Peer learning');
+        if (service) onServiceClick(service);
+      }}
+      className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2 hover:bg-blue-100 cursor-pointer transition-colors duration-300"
+    >
       <BookOpen className="w-4 h-4 text-blue-500" /> Peer Learning
     </span>
-    <span className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2">
+    <span 
+      onClick={() => {
+        const service = services.find(s => s.id === 'Mentorship & Tutoring program');
+        if (service) onServiceClick(service);
+      }}
+      className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2 hover:bg-blue-100 cursor-pointer transition-colors duration-300"
+    >
       <BookOpen className="w-4 h-4 text-blue-500" /> Mentorship
     </span>
-    <span className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2">
+    <span 
+      onClick={() => {
+        const service = services.find(s => s.id === 'Mentorship & Tutoring program');
+        if (service) onServiceClick(service);
+      }}
+      className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2 hover:bg-blue-100 cursor-pointer transition-colors duration-300"
+    >
       <BookOpen className="w-4 h-4 text-blue-500" /> Tutorship
     </span>
-    <span className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2">
+    <span 
+      onClick={() => {
+        const service = services.find(s => s.id === 'Studython');
+        if (service) onServiceClick(service);
+      }}
+      className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2 hover:bg-blue-100 cursor-pointer transition-colors duration-300"
+    >
       <BookOpen className="w-4 h-4 text-blue-500" /> Studythons
     </span>
   </div>

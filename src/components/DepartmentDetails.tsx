@@ -5,8 +5,7 @@ import {
   Database,
   Cpu,
   Globe,
-  BookOpen,
-  GraduationCap
+  BookOpen
 } from 'lucide-react';
 import { Department } from '../types';
 import Footer from './Footer';
