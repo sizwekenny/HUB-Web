@@ -122,14 +122,16 @@ const Navigation: React.FC<NavigationProps> = ({
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 placeholder="Search departments or student services..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"
+                style={{ '--tw-ring-color': '#1F4D7F' } as React.CSSProperties}
               />
               {searchResults.length > 0 && (
                 <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                   {searchResults.map((result) => (
                     <div
                       key={result.id}
-                      className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-sm"
+                      className="px-4 py-2 cursor-pointer text-sm hover:bg-opacity-10"
+                      style={{ backgroundColor: result.type === 'department' ? 'transparent' : 'transparent', '--tw-bg-opacity': '0.1' } as React.CSSProperties}
                       onClick={() => handleResultClick(result)}
                     >
                       <span className="font-medium">{result.name}</span>
@@ -160,9 +162,17 @@ const Navigation: React.FC<NavigationProps> = ({
                   }}
                   className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-lg"
-                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                      ? "text-white shadow-lg"
+                      : "text-gray-700 hover:bg-opacity-10"
                   }`}
+                  style={{
+                    backgroundColor: isActive ? '#1F4D7F' : 'transparent',
+                    '--tw-bg-opacity': '0.1',
+                    color: isActive ? 'white' : undefined,
+                    ':hover': {
+                      color: !isActive ? '#1F4D7F' : undefined
+                    }
+                  } as React.CSSProperties}
                 >
                   <IconComponent className="w-5 h-5 mr-2" />
                   {item.label}
@@ -182,7 +192,7 @@ const Navigation: React.FC<NavigationProps> = ({
               {showFilter && (
                 <div className="absolute mt-2 w-48 bg-white shadow-lg rounded-md z-50">
                   <button
-                    className="block w-full px-4 py-2 text-left hover:bg-blue-50"
+                    className="block w-full px-4 py-2 text-left transition-colors duration-300 hover:bg-[#1F4D7F] hover:bg-opacity-10"
                     onClick={() => {
                       onFilterChange("all");
                       setShowFilter(false);
@@ -192,7 +202,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     All Students
                   </button>
                   <button
-                    className="block w-full px-4 py-2 text-left hover:bg-blue-50"
+                    className="block w-full px-4 py-2 text-left transition-colors duration-300 hover:bg-[#1F4D7F] hover:bg-opacity-10"
                     onClick={() => {
                       onFilterChange("newcomer");
                       setShowFilter(false);
@@ -202,7 +212,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     Newcomers
                   </button>
                   <button
-                    className="block w-full px-4 py-2 text-left hover:bg-blue-50"
+                    className="block w-full px-4 py-2 text-left transition-colors duration-300 hover:bg-[#1F4D7F] hover:bg-opacity-10"
                     onClick={() => {
                       onFilterChange("senior");
                       setShowFilter(false);

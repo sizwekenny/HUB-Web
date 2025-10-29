@@ -52,7 +52,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
       />
       <button
         onClick={onLogin}
-        className="absolute top-12 right-10 z-30 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition"
+        className="absolute top-12 right-10 z-30 text-white px-6 py-2 rounded-lg hover:bg-[#163c66] transition"
+        style={{ backgroundColor: '#1F4D7F' }}
       >
         Admin
       </button>
@@ -112,7 +113,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full max-w-4xl">
           <button
             onClick={() => onSelect('home')}
-            className="bg-indigo-600 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md hover:bg-indigo-700 transform hover:scale-105 transition"
+            className="text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md transform hover:scale-105 transition hover:bg-[#163c66]"
+            style={{ backgroundColor: '#1F4D7F' }}
           >
             South Campus
           </button>

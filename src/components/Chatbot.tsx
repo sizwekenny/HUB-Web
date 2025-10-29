@@ -139,7 +139,8 @@ const Chatbot: React.FC = () => {
       {/* Toggle button */}
       <button
         onClick={toggleChatbot}
-        className="bg-blue-600 text-white p-4 rounded-full shadow-xl hover:bg-blue-700 transition duration-300" style={{border: "2px solid white"}}
+        className="text-white p-4 rounded-full shadow-xl transition duration-300 hover:bg-[#163c66]" 
+        style={{backgroundColor: '#1F4D7F', border: "2px solid white"}}
       >
         <MessageSquare size={24} />
       </button>
@@ -147,10 +148,10 @@ const Chatbot: React.FC = () => {
       {/* Chat container */}
       {isOpen && (
         <div className="bg-white shadow-2xl rounded-xl p-4 mt-3 w-80 max-h-[36rem] flex flex-col animate-fade-in border border-gray-200">
-          <div className="font-bold text-lg mb-2 text-blue-700">ICT Faculty Assistant</div>
+          <div className="font-bold text-lg mb-2" style={{color: '#1F4D7F'}}>ICT Faculty Assistant</div>
           <div className="flex-1 overflow-y-auto border rounded-lg p-3 space-y-2 text-sm bg-gray-50 mb-2 h-64">
             {messages.map((msg, i) => (
-              <div key={i} className={msg.startsWith('Bot:') ? 'text-gray-700' : 'text-right text-blue-600'}>
+              <div key={i} className={msg.startsWith('Bot:') ? 'text-gray-700' : 'text-right'} style={{color: msg.startsWith('Bot:') ? '#4B5563' : '#1F4D7F'}}>
                 {msg}
               </div>
             ))}
@@ -164,7 +165,8 @@ const Chatbot: React.FC = () => {
             onKeyDown={(e) => {
               if (e.key === 'Enter') sendMessage(input);
             }}
-            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2"
+            style={{ '--tw-ring-color': '#1F4D7F' } as React.CSSProperties}
           />
         </div>
       )}

@@ -215,7 +215,7 @@ const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden" style={{ background: 'linear-gradient(90deg, #003884 0%, #1e2761 100%)' }}>
+      <section className="relative overflow-hidden" style={{ background: 'linear-gradient(90deg, #1F4D7F 0%, #1e2761 100%)' }}>
         
         {/* Background Video */}
         <video
@@ -228,7 +228,7 @@ const HomePage: React.FC<HomePageProps> = ({
           style={{ objectFit: 'cover' }}
         />
         {/* Lower opacity gradient overlay */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, #003884cc 0%, #1e2761cc 100%)', opacity: 0.5, zIndex: 1 }}></div>
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, #1F4D7Fcc 0%, #1e2761cc 100%)', opacity: 0.5, zIndex: 1 }}></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24" style={{ zIndex: 2 }}>
           <div className={`text-center transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="flex justify-center mb-8">
@@ -252,7 +252,7 @@ const HomePage: React.FC<HomePageProps> = ({
               </button>
               <button
                 onClick={() => handleScrollTo('services')}
-                className="px-8 py-4 bg-white text-[#003884] font-semibold rounded-lg border-2 border-[#003884] hover:bg-[#003884] hover:text-white hover:border-white transform hover:scale-105 transition-all duration-300"
+                className="px-8 py-4 bg-white text-[#1F4D7F] font-semibold rounded-lg border-2 border-[#1F4D7F] hover:bg-[#1F4D7F] hover:text-white hover:border-white transform hover:scale-105 transition-all duration-300"
               >
                 Student Services
               </button>
@@ -401,7 +401,7 @@ const HomePage: React.FC<HomePageProps> = ({
           <div className="text-center mt-12">
            <button
               onClick={handleViewAllNews}
-              className="px-8 py-3 bg-[#003884] text-white font-semibold rounded-lg hover:bg-[#00245c] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="px-8 py-3 bg-[#1F4D7F] text-white font-semibold rounded-lg hover:bg-[#163c66] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               View All News
             </button>
@@ -524,7 +524,7 @@ const HomePage: React.FC<HomePageProps> = ({
                   </div>
                    <button
                     onClick={() => setSelectedNews(null)}
-                    className="px-6 py-2 bg-[#003884] text-white font-semibold rounded-lg hover:bg-[#00245c] transition-colors duration-200"
+                    className="px-6 py-2 bg-[#1F4D7F] text-white font-semibold rounded-lg hover:bg-[#163c66] transition-colors duration-200"
                   >
                     Close
                   </button>
@@ -697,12 +697,12 @@ const HomePage: React.FC<HomePageProps> = ({
                 >
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-500 transition-colors duration-300">
-                        <IconComponent className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors duration-300" />
+                      <div className="p-3 rounded-lg transition-colors duration-300" style={{ backgroundColor: 'rgba(31, 77, 127, 0.1)' }}>
+                        <IconComponent className="w-8 h-8 transition-colors duration-300" style={{ color: '#1F4D7F' }} />
                       </div>
-                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all duration-300" />
+                      <ChevronRight className="w-5 h-5 text-gray-400 transform group-hover:translate-x-1 transition-all duration-300" style={{ color: '#1F4D7F' }} />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#1F4D7F] transition-colors duration-300">
                       {department.name}
                     </h3>
                     <p className="text-gray-600 mb-4 text-sm">
@@ -710,7 +710,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {department.codes.slice(0, 3).map((code) => (
-                        <span key={code} className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+                        <span key={code} className="px-2 py-1 bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F] text-xs rounded-full">
                           {code}
                         </span>
                       ))}
@@ -735,8 +735,8 @@ const HomePage: React.FC<HomePageProps> = ({
   className="w-full min-h-[200px] bg-white rounded-2xl shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden flex flex-col items-center text-center"
 >
   {/* Header */}
-  <div className="bg-blue-50 w-full py-6 flex flex-col items-center">
-    <BookOpen className="w-10 h-10 text-blue-600 mb-2" />
+  <div className="w-full py-6 flex flex-col items-center" style={{ backgroundColor: 'rgba(31, 77, 127, 0.1)' }}>
+    <BookOpen className="w-10 h-10 mb-2" style={{ color: '#1F4D7F' }} />
     <h3 className="text-2xl font-bold text-gray-900">
       SASO: Student Academic Support Office
     </h3>
@@ -751,7 +751,8 @@ const HomePage: React.FC<HomePageProps> = ({
         href="https://sds.onlinewebshop.net/"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
+        className="flex items-center gap-2 hover:text-opacity-80 transition-colors duration-300"
+        style={{ color: '#1F4D7F' }}
       >
         <Globe className="w-4 h-4" /> SASO Website
       </a>
@@ -778,36 +779,36 @@ const HomePage: React.FC<HomePageProps> = ({
         const service = services.find(s => s.id === 'Peer to Peer learning');
         if (service) onServiceClick(service);
       }}
-      className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2 hover:bg-blue-100 cursor-pointer transition-colors duration-300"
+      className="px-3 py-1 bg-gray-50 rounded-full flex items-center gap-2 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
     >
-      <BookOpen className="w-4 h-4 text-blue-500" /> Peer Learning
+      <BookOpen className="w-4 h-4" style={{ color: '#1F4D7F' }} /> Peer Learning
     </span>
     <span 
       onClick={() => {
         const service = services.find(s => s.id === 'Mentorship & Tutoring program');
         if (service) onServiceClick(service);
       }}
-      className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2 hover:bg-blue-100 cursor-pointer transition-colors duration-300"
+      className="px-3 py-1 bg-gray-50 rounded-full flex items-center gap-2 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
     >
-      <BookOpen className="w-4 h-4 text-blue-500" /> Mentorship
+      <BookOpen className="w-4 h-4" style={{ color: '#1F4D7F' }} /> Mentorship
     </span>
     <span 
       onClick={() => {
         const service = services.find(s => s.id === 'Mentorship & Tutoring program');
         if (service) onServiceClick(service);
       }}
-      className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2 hover:bg-blue-100 cursor-pointer transition-colors duration-300"
+      className="px-3 py-1 bg-gray-50 rounded-full flex items-center gap-2 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
     >
-      <BookOpen className="w-4 h-4 text-blue-500" /> Tutorship
+      <BookOpen className="w-4 h-4" style={{ color: '#1F4D7F' }} /> Tutorship
     </span>
     <span 
       onClick={() => {
         const service = services.find(s => s.id === 'Studython');
         if (service) onServiceClick(service);
       }}
-      className="px-3 py-1 bg-blue-50 rounded-full flex items-center gap-2 hover:bg-blue-100 cursor-pointer transition-colors duration-300"
+      className="px-3 py-1 bg-gray-50 rounded-full flex items-center gap-2 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
     >
-      <BookOpen className="w-4 h-4 text-blue-500" /> Studythons
+      <BookOpen className="w-4 h-4" style={{ color: '#1F4D7F' }} /> Studythons
     </span>
   </div>
 </div>

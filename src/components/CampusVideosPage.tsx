@@ -57,14 +57,14 @@ const CampusVideosPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-[#003884] text-white p-6 shadow-md flex justify-center items-center">
-  <h1 className="text-3xl font-bold text-center">Campus Video Tour</h1>
+  <h1 className="text-3xl font-bold text-center">Explore our Campus</h1>
 </header>
 
       {/* Search Bar */}
       <div className="max-w-6xl mx-auto px-4 py-6">
              <button
     onClick={() => navigate('/home')}
-    className="px-4 py-2 bg-blue-600 text-white rounded whitespace-nowrap"
+    className="px-4 py-2 bg-[#003884] text-white rounded whitespace-nowrap"
   >
     Back to Home
   </button>
