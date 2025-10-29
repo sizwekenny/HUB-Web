@@ -132,7 +132,7 @@ const Navigation: React.FC<NavigationProps> = ({
                     if (item.id === 'home') {
                       window.location.href = '/';
                     } else if (item.id === 'manual') {
-                      onNavigate('emaManual' as any);
+                      onNavigate('manual');
                     }
                   }}
                   className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${

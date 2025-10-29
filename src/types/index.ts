@@ -8,7 +8,6 @@ export interface Department {
   contactNumber?: string;
   link?: string;
   courses?: Course[];
-  
 }
 
 export interface Course {
@@ -21,13 +20,16 @@ export interface Course {
 export interface Service {
   id: string;
   title: string;
-  category: 'Senior Students' | 'Newcomer Students' | 'All Students';
   description: string;
-  details: string;
-  statusLink?: string;
-  // Ordered procedural steps for this service (editable by admins)
+  details?: string;
+  category: string;
   steps?: string[];
+  statusLink?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  contactLocation?: string;
 }
+
 
 export interface Comment {
   id: string;
@@ -39,7 +41,7 @@ export interface Comment {
     id: string;
     name: string;
     avatar?: string;
-    role?: string; 
+    role?: string;
   };
 }
 
@@ -72,36 +74,68 @@ export interface Author {
   role?: string;
 }
 
-
 export interface NewsItem {
   id: string;
   title: string;
   summary: string;
   content: string;
   date: string;
-  category: 'Registration' | 'Academic' | 'Announcement' | 'Deadline' | 'Event' | 'WIL'| "Health"
-  | "Student Support"
-  | "Awareness & Safety";
+  category:
+    | 'Registration'
+    | 'Academic'
+    | 'Announcement'
+    | 'Deadline'
+    | 'Event'
+    | 'WIL'
+    | 'Health'
+    | 'Student Support'
+    | 'Awareness & Safety';
   priority: 'high' | 'medium' | 'low';
-  /** Optional department code/name this news item relates to */
   department?: string;
   isUrgent?: boolean;
-  /**
-   * Visibility flag. When false the item is considered disabled/hidden from public views
-   * but still appears in the admin panel for re‑activation. Undefined defaults to true.
-   */
   isVisible?: boolean;
-  /**
-   * Campus tag identifies which campus the news item applies to.
-   * If omitted, item is considered global (all campuses).
-   * Values should align with internal campus ids used in landing page.
-   */
-  // Supported campuses currently: Soshanguve South (south), eMalahleni (emalahleni), Polokwane (polokwane)
   campus?: 'south' | 'emalahleni' | 'polokwane' | 'all';
- downloadFile?: {
+  downloadFile?: {
     filename: string;
     url: string;
     type: 'pdf' | 'png' | 'jpg' | 'jpeg' | 'docx' | 'xlsx';
     size?: string;
-};
+  };
+}
+
+/* ----------------------------------------------------------------
+   Component Prop Interfaces
+   These fix missing-prop and implicit-any errors from your log
+---------------------------------------------------------------- */
+
+export interface NavigationProps {
+  departments: Department[];
+  services: Service[];
+  currentView: string;
+  onNavigate: (view: string) => void;
+  onFilterChange?: (filter: 'all' | 'senior' | 'newcomer') => void;
+}
+
+export interface DepartmentDetailsProps {
+  department: Department;
+  onBack: () => void;
+}
+
+export interface ServiceDetailsProps {
+  service: Service;
+  onBack: () => void;
+}
+
+export interface UserManualProps {
+  onBack: () => void;
+}
+
+export interface AdminLoginProps {
+  onBack: () => void;
+  onLoginSuccess: () => void;
+}
+
+export interface AdminDashboardProps {
+  onLogout: () => void;
+  onBackToHome: () => void;
 }

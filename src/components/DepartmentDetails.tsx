@@ -20,6 +20,9 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
   const [isLoaded, setIsLoaded] = useState(false);
   const [expandedCode, setExpandedCode] = useState<string | null>(null);
 
+  // Local lecturer type (office is optional)
+  type Lecturer = { name: string; email: string; office?: string };
+
   useEffect(() => {
     setIsLoaded(true);
     window.scrollTo(0, 0);
@@ -45,13 +48,13 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
       case 'fyf':
         return ['FYF101', 'FYF102', 'FYF103'];
       default:
-        return department.codes;
+        return department.codes || [];
     }
   };
 
   const getCodeDescription = (code: string) => {
     const descriptions: Record<string, string> = {
-        'DPMCF0': 'Diploma in Computer Science - Foundation',
+      'DPMCF0': 'Diploma in Computer Science - Foundation',
       'DPMC20': 'Diploma in Computer Science - MainStream',
       'ADMC20': 'Advanced Diploma in Computer Science',
       'DPRSF0': 'Diploma in Computer Science (Research) - Foundation',
@@ -75,7 +78,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
 
   const getProgramDuration = (code: string) => {
     const durations: Record<string, string> = {
-       'DPMCF0': '4 Years (Foundation)',
+      'DPMCF0': '4 Years (Foundation)',
       'DPMC20': '3 Years',
       'ADMC20': '2 Years',
       'DPRSF0': '4 Years (Foundation)',
@@ -97,67 +100,33 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
     return durations[code] || 'Varies';
   };
 
-  // Subjects per program for Informatics
-  const getProgramSubjects = (programCode: string) => {
+  const getProgramSubjects = (programCode: string): Array<{ subject: string; lecturers: Lecturer[] }> => {
     switch (programCode) {
-      case 'DPIFF0': // Foundation
+      case 'DPIFF0':
         return [
-          {
-            subject: 'BCMF15D',
-            lecturers: [
-              { name: 'Ms. Irene Abraham-Samgeorge ', email: 'abrahamia@tut.ac.za' },
-              
-            ]
-          },
-          {
-            subject: 'BFSF15D    ',
-            lecturers: [
-              { name: 'Mr. Dimakatso Malebana ', email: 'malebanadd@tut.ac.za' }
-            ]
-          }
+          { subject: 'BCMF15D', lecturers: [{ name: 'Ms. Irene Abraham-Samgeorge', email: 'abrahamia@tut.ac.za' }] },
+          { subject: 'BFSF15D', lecturers: [{ name: 'Mr. Dimakatso Malebana', email: 'malebanadd@tut.ac.za' }] }
         ];
-      case 'DPIF20': // Mainstream
+      case 'DPIF20':
         return [
-          {
-            subject: 'BCM115D ',
-            lecturers: [
-              { name: 'Ms. Irene Abraham-Samgeorge ', email: 'abrahamia@tut.ac.za' },
-            ]
-          },
-          {
-            subject: 'BFS115D ',
-            lecturers: [
-              { name: 'Mr. Dimakatso Malebana ', email: 'malebanadd@tut.ac.za' }
-            ]
-          }
+          { subject: 'BCM115D', lecturers: [{ name: 'Ms. Irene Abraham-Samgeorge', email: 'abrahamia@tut.ac.za' }] },
+          { subject: 'BFS115D', lecturers: [{ name: 'Mr. Dimakatso Malebana', email: 'malebanadd@tut.ac.za' }] }
         ];
-      case 'ADIF20': // Advanced Diploma
+      case 'ADIF20':
         return [
-          {
-            subject: 'KWM117V',
-            lecturers: [
-              { name: 'Dr. Cecile Kgoetiane ', email: 'kgwetianech@tut.ac.za' }
-            ]
-          },
-          {
-            subject: 'ITM117V',
-            lecturers: [
-              { name: 'Mr. Mashithishi Phurutsi ', email: 'phurutsimb@tut.ac.za' },
-              
-            ]
-          }
+          { subject: 'KWM117V', lecturers: [{ name: 'Dr. Cecile Kgoetiane', email: 'kgwetianech@tut.ac.za' }] },
+          { subject: 'ITM117V', lecturers: [{ name: 'Mr. Mashithishi Phurutsi', email: 'phurutsimb@tut.ac.za' }] }
         ];
       default:
         return [];
     }
   };
 
-  // FYF subjects (as before)
-  const getFyfSubjects = () => [
+  const getFyfSubjects = (): Array<{ subject: string; lecturers: Lecturer[] }> => [
     {
       subject: 'TROF05D/PPAF05D',
       lecturers: [
-        { name: 'Mr. VW Kambale (Module Coordinator', email: 'Kambalevw@tut.ac.za', office: '18-G07' },
+        { name: 'Mr. VW Kambale (Module Coordinator)', email: 'Kambalevw@tut.ac.za', office: '18-G07' },
         { name: 'Ms. Z Nzima', email: 'NzimaLZ@tut.ac.za', office: '12-108' }
       ]
     },
@@ -215,6 +184,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
           {/* Programs */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-lg p-8">
+              {/* FYF Department */}
               {department.id === 'fyf' ? (
                 <>
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Subjects & Lecturers</h2>
@@ -238,59 +208,63 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
                 <>
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Programs</h2>
                   <div className="space-y-4">
+                    {/* If department includes course objects, show them first */}
+                    {department.courses && department.courses.length > 0 && (
+                      <div className="mb-4">
+                        <h3 className="text-xl font-semibold mb-2">Programs / Courses</h3>
+                        <ul className="list-disc ml-6 space-y-1 text-gray-700">
+                          {department.courses.map((c) => (
+                            <li key={c.courseCode}>
+                              <span className="font-medium">{c.courseCode}</span> — {c.courseName} {c.duration && <span className="text-sm text-gray-500">({c.duration})</span>}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
                     {getDepartmentPrograms(department.id).map((code) => (
-                      <div
-                        key={code}
-                        className={`border border-gray-200 rounded-lg overflow-hidden transition-all duration-500 hover:shadow-md ${expandedCode === code ? 'bg-blue-50 border-blue-300' : 'bg-white hover:bg-gray-50'}`}
-                      >
-                        <div
-                          className="p-4 cursor-pointer flex items-center justify-between"
-                          onClick={() => setExpandedCode(expandedCode === code ? null : code)}
-                        >
-                          <div className="flex items-center">
-                            <div className="w-12 h-12 bg-yellow-400 rounded-lg flex items-center justify-center mr-4">
-                              <GraduationCap className="w-6 h-6 text-blue-900" />
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-semibold text-gray-900">{code}</h3>
-                              <p className="text-sm text-gray-600">Click to view details</p>
-                            </div>
+                      <div key={code} className={`border border-gray-200 rounded-lg overflow-hidden transition-all duration-500 hover:shadow-md ${expandedCode === code ? 'bg-blue-50 border-blue-300' : 'bg-white hover:bg-gray-50'}`}>
+                        <div className="p-4 flex items-center justify-between">
+                          <div>
+                            <div className="text-sm text-gray-500">Program Code</div>
+                            <div className="text-lg font-semibold text-gray-900">{code}</div>
+                            <div className="text-sm text-gray-600">{getCodeDescription(code)}</div>
                           </div>
-                          <ChevronLeft className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${expandedCode === code ? 'rotate-90' : '-rotate-90'}`} />
+                          <div className="text-right">
+                            <div className="text-sm text-gray-500">Duration</div>
+                            <div className="font-medium text-gray-900">{getProgramDuration(code)}</div>
+                            <button
+                              className="mt-3 inline-flex items-center text-blue-600 hover:text-blue-800"
+                              onClick={() => setExpandedCode(expandedCode === code ? null : code)}
+                            >
+                              {expandedCode === code ? 'Collapse' : 'View details'}
+                            </button>
+                          </div>
                         </div>
 
-                        <div className={`overflow-hidden transition-all duration-500 ${expandedCode === code ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                          <div className="px-4 pb-4 border-t border-gray-200">
-                            <div className="pt-4">
-                              <h4 className="font-semibold text-gray-900 mb-2">Program Description</h4>
-                              <p className="text-gray-700 mb-4">{getCodeDescription(code)}</p>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div className="bg-white p-4 rounded-lg border border-gray-100">
-                                  <h5 className="font-medium text-gray-900 mb-2">Duration</h5>
-                                  <p className="text-gray-600">{getProgramDuration(code)}</p>
-                                </div>
-                                <div className="bg-white p-4 rounded-lg border border-gray-100">
-                                  <h5 className="font-medium text-gray-900 mb-2">Level</h5>
-                                  <p className="text-gray-600">{code.startsWith('AD') ? 'Advanced Diploma' : 'Diploma'}</p>
-                                </div>
+                        {expandedCode === code && (
+                          <div className="p-4 border-t bg-white">
+                            <p className="text-gray-700 mb-3">{getCodeDescription(code)}</p>
+                            <p className="text-sm text-gray-600 mb-3">Duration: {getProgramDuration(code)}</p>
+                            <h4 className="font-semibold mb-2">Subjects</h4>
+                            {getProgramSubjects(code).length > 0 ? (
+                              <div className="space-y-2">
+                                {getProgramSubjects(code).map((s, i) => (
+                                  <div key={i} className="text-sm">
+                                    <div className="font-medium">{s.subject}</div>
+                                    <ul className="ml-4 list-disc text-gray-700">
+                                      {s.lecturers.map((lec, idx) => (
+                                        <li key={idx}>{lec.name} — <span className="text-blue-600">{lec.email}</span>{lec.office ? ` (Office: ${lec.office})` : ''}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                ))}
                               </div>
-
-                              {getProgramSubjects(code).map((subj, idx) => (
-                                <div key={idx} className="border-b pb-3 mb-3">
-                                  <h6 className="font-semibold text-gray-900">{subj.subject}</h6>
-                                  <ul className="ml-4 list-disc text-sm text-gray-700">
-                                    {subj.lecturers.map((lec, i) => (
-                                      <li key={i}>
-                                        <span className="font-medium">{lec.name}</span> —{" "}
-                                        <span className="text-blue-600">{lec.email}</span> 
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              ))}
-                            </div>
+                            ) : (
+                              <p className="text-sm text-gray-600">No subject details available for this program.</p>
+                            )}
                           </div>
-                        </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -317,9 +291,9 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg p-6 mt-6 text-blue-900">
               <h2 className="text-lg font-semibold text-gray-700 mb-4">Quick Information</h2>
               <ul className="space-y-2 text-sm text-gray-900">
-                <li><span className="font-medium">Building Number:</span> {department.buildingNumber}</li>
-                <li><span className="font-medium">Email:</span> {department.email}</li>
-                <li><span className="font-medium">Contact Number:</span> {department.contactNumber}</li>
+                {department.buildingNumber && <li><span className="font-medium">Building Number:</span> {department.buildingNumber}</li>}
+                {department.email && <li><span className="font-medium">Email:</span> {department.email}</li>}
+                {department.contactNumber && <li><span className="font-medium">Contact Number:</span> {department.contactNumber}</li>}
               </ul>
             </div>
           </div>

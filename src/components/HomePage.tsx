@@ -23,15 +23,16 @@ import { newsStore } from '../utils/newsStore';
 import { mapBackendNewsArray } from '../utils/newsMapper';
 import Chatbot from './Chatbot';
 import { useNavigate } from "react-router-dom";
+import Footer from './Footer';
+import Navigation from './Navigation';
 interface HomePageProps {
   departments: Department[];
   services: Service[];
-  selectedFilter: 'all' | 'senior' | 'newcomer';
-  onDepartmentClick: (department: Department) => void;
+  selectedFilter: "all" | "senior" | "newcomer";
+  onDepartmentClick: (dept: Department) => void;
   onServiceClick: (service: Service) => void;
 }
-import Footer from './Footer';
-import Navigation from './Navigation';
+
 // Dynamic news items fetched from in-memory store (campus: south + global)
 // TODO: Replace with API integration when backend available
 
@@ -491,9 +492,19 @@ useEffect(() => {
                 </div>
 
                 <div className="p-4 rounded-lg bg-blue-50 border-l-4 border-blue-500">
+                  {/* Always show the textual summary first (preserve formatting) */}
                   <p className="text-gray-600 leading-relaxed whitespace-pre-line">
-                    {selectedNews.summary || selectedNews.content}
+                    {selectedNews.summary}
                   </p>
+
+                  {/* If content contains extra HTML (e.g., clickable button/link), render it below the summary */}
+                  {selectedNews.content && (
+                    <div
+                      className="mt-4 text-gray-600 leading-relaxed"
+                      // content contains a small trusted HTML snippet created in code
+                      dangerouslySetInnerHTML={{ __html: selectedNews.content }}
+                    />
+                  )}
                 </div>
 
                 {/* Modal Footer */}
@@ -899,13 +910,24 @@ It includes:
 
 📞 GBV Emergency Line: 0800 428 428  
 USSD: *120*7867#  
-SMS “help” to 31531  
-
-🌐 Visit: [https://gbv.org.za](https://gbv.org.za)`,
+SMS "help" to 31531`,
       priority: "high",
       isUrgent: true,
       downloadFile: undefined, // <-- Use undefined, not null
-      content: "",
+      // Provide HTML in `content` so the modal can render a clickable link/button
+      content: `
+        <div>
+          <p>For more information and resources visit the official GBV support website.</p>
+          <p style="margin-top:0.5rem">
+            <a href=\"https://gbv.org.za\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"display:inline-flex;align-items:center;padding:0.5rem 0.75rem;background-color:#2563eb;color:#fff;border-radius:0.5rem;text-decoration:none;\">
+              Visit our website for more info
+              <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" style=\"width:1rem;height:1rem;margin-left:0.5rem\">
+                <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M14 3h7m0 0v7m0-7L10 14\" />
+              </svg>
+            </a>
+          </p>
+        </div>
+      `,
     })
   }
       >

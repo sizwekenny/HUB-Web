@@ -1,13 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { Home, HelpCircle, Menu, X } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Home, HelpCircle, Menu, X } from "lucide-react";
 import logo from "../assets/TUT.png";
 
+// Types for Department and Service
+interface Department {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+interface Service {
+  id: string;
+  title: string;
+  description?: string;
+}
+
+// Props for the Navigation component
 interface NavigationProps {
   currentView: string;
-  onNavigate: (view: 'home' | 'manual') => void;
-  departments: { id: string; name: string; description: string }[];
-  services: { id: string; title: string; description: string }[];
-  onFilterChange: (filter: 'all' | 'newcomer' | 'senior') => void;
+  onNavigate: (view: string) => void;
+  departments: Department[];
+  services: Service[];
+  onFilterChange: React.Dispatch<
+    React.SetStateAction<"all" | "senior" | "newcomer">
+  >;
 }
 
 const Navigation: React.FC<NavigationProps> = ({
@@ -15,49 +31,58 @@ const Navigation: React.FC<NavigationProps> = ({
   onNavigate,
   departments,
   services,
-  onFilterChange
+  onFilterChange,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState<
-    { id: string; type: 'department' | 'service'; name: string }[]
+    { id: string; type: "department" | "service"; name: string }[]
   >([]);
 
   useEffect(() => {
-    if (searchText.trim() === '') {
+    if (searchText.trim() === "") {
       setSearchResults([]);
       return;
     }
 
     const departmentMatches = departments
-      .filter(dep => dep.name.toLowerCase().includes(searchText.toLowerCase()))
-      .map(dep => ({ id: dep.id, type: 'department' as const, name: dep.name }));
+      .filter((dep) => dep.name.toLowerCase().includes(searchText.toLowerCase()))
+      .map((dep) => ({
+        id: dep.id,
+        type: "department" as const,
+        name: dep.name,
+      }));
 
     const serviceMatches = services
-      .filter(srv => srv.title.toLowerCase().includes(searchText.toLowerCase()))
-      .map(srv => ({ id: srv.id, type: 'service' as const, name: srv.title }));
+      .filter((srv) =>
+        srv.title.toLowerCase().includes(searchText.toLowerCase())
+      )
+      .map((srv) => ({
+        id: srv.id,
+        type: "service" as const,
+        name: srv.title,
+      }));
 
     setSearchResults([...departmentMatches, ...serviceMatches]);
   }, [searchText, departments, services]);
 
   const handleResultClick = (result: { id: string; type: string; name: string }) => {
-    onNavigate('home');
-    if (result.type === 'service') {
-      localStorage.setItem('expandServices', 'true');
+    onNavigate("home");
+    if (result.type === "service") {
+      localStorage.setItem("expandServices", "true");
     }
     setTimeout(() => {
       const element = document.getElementById(`${result.type}-${result.id}`);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
         element.click();
       }
     }, 300);
-    setSearchText('');
+    setSearchText("");
     setSearchResults([]);
   };
 
-  // helper to scroll down to services section
   const scrollToServices = () => {
     setTimeout(() => {
       const servicesSection = document.getElementById("services-section");
@@ -68,8 +93,8 @@ const Navigation: React.FC<NavigationProps> = ({
   };
 
   const navItems = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'manual', label: 'User Guide', icon: HelpCircle }
+    { id: "home", label: "Home", icon: Home },
+    { id: "manual", label: "User Guide", icon: HelpCircle },
   ];
 
   return (
@@ -77,7 +102,10 @@ const Navigation: React.FC<NavigationProps> = ({
       <div className="w-full px-4">
         <div className="flex items-center h-16">
           {/* Logo */}
-          <div className="cursor-pointer mr-4" onClick={() => onNavigate('home')}>
+          <div
+            className="cursor-pointer mr-4"
+            onClick={() => onNavigate("home")}
+          >
             <img
               src={logo}
               alt="ICT Faculty Logo"
@@ -98,14 +126,16 @@ const Navigation: React.FC<NavigationProps> = ({
               />
               {searchResults.length > 0 && (
                 <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                  {searchResults.map(result => (
+                  {searchResults.map((result) => (
                     <div
                       key={result.id}
                       className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-sm"
                       onClick={() => handleResultClick(result)}
                     >
                       <span className="font-medium">{result.name}</span>
-                      <span className="text-gray-500 text-xs ml-2">({result.type})</span>
+                      <span className="text-gray-500 text-xs ml-2">
+                        ({result.type})
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -122,16 +152,16 @@ const Navigation: React.FC<NavigationProps> = ({
                 <button
                   key={item.id}
                   onClick={() => {
-                    if (item.id === 'home') {
-                      window.location.href = '/';
+                    if (item.id === "home") {
+                      window.location.href = "/";
                     } else {
-                      onNavigate(item.id as 'home' | 'manual');
+                      onNavigate(item.id);
                     }
                   }}
                   className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                      ? "bg-blue-600 text-white shadow-lg"
+                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                   }`}
                 >
                   <IconComponent className="w-5 h-5 mr-2" />
@@ -154,7 +184,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   <button
                     className="block w-full px-4 py-2 text-left hover:bg-blue-50"
                     onClick={() => {
-                      onFilterChange('all');
+                      onFilterChange("all");
                       setShowFilter(false);
                       scrollToServices();
                     }}
@@ -164,7 +194,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   <button
                     className="block w-full px-4 py-2 text-left hover:bg-blue-50"
                     onClick={() => {
-                      onFilterChange('newcomer');
+                      onFilterChange("newcomer");
                       setShowFilter(false);
                       scrollToServices();
                     }}
@@ -174,7 +204,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   <button
                     className="block w-full px-4 py-2 text-left hover:bg-blue-50"
                     onClick={() => {
-                      onFilterChange('senior');
+                      onFilterChange("senior");
                       setShowFilter(false);
                       scrollToServices();
                     }}
@@ -192,7 +222,11 @@ const Navigation: React.FC<NavigationProps> = ({
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>

@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { Service } from '../types';
 import Footer from './Footer';
+import Navigation from './Navigation';
+import { departments, services } from '../data/data';
 
 interface ServiceDetailsProps {
   service: Service;
@@ -177,7 +179,14 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({ service, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-16" style={{ paddingTop: '0px' }}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <Navigation
+        departments={departments}
+        services={services}
+        currentView="home"
+        onNavigate={(v) => window.location.href = `/${v}`}
+        onFilterChange={() => {}}
+      />
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
