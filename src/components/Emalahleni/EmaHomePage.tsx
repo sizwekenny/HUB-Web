@@ -19,6 +19,7 @@ import axios from 'axios';
 import { newsStore } from '../../utils/newsStore';
 import { mapBackendNewsArray } from '../../utils/newsMapper';
 import Chatbot from '../Chatbot';
+import EmalahleniCampusImg from '../../assets/emalahleni.jpg';
 
 interface HomePageProps {
   departments: Department[];
@@ -28,6 +29,7 @@ interface HomePageProps {
   onServiceClick: (service: Service) => void;
 }
 import Footer from '../Emalahleni/EmaFooter';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage: React.FC<HomePageProps> = ({
   departments,
@@ -40,7 +42,53 @@ const HomePage: React.FC<HomePageProps> = ({
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [showAllNews, setShowAllNews] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
-  const [latestNews, setLatestNews] = useState<NewsItem[]>([]);
+  const [latestNews] = useState<NewsItem[]>([
+    {
+      id: 'news-1',
+      title: 'Registration for 2026 Now Open',
+      category: 'Registration',
+      date: new Date('2025-10-01').toISOString(),
+      summary: 'All students are invited to register for the 2026 academic year. Early registration is encouraged to secure your place.',
+      priority: 'high',
+      isUrgent: true,
+      downloadFile: undefined,
+      content: '',
+    },
+    {
+      id: 'news-2',
+      title: 'ICT Career Fair This November',
+      category: 'Event',
+      date: new Date('2025-11-15').toISOString(),
+      summary: 'Meet top tech employers and explore internship opportunities at the annual ICT Career Fair.',
+      priority: 'medium',
+      isUrgent: false,
+      downloadFile: undefined,
+      content: '',
+    },
+    {
+      id: 'news-3',
+      title: 'New Computer Lab Opened',
+      category: 'Announcement',
+      date: new Date('2025-10-20').toISOString(),
+      summary: 'A state-of-the-art computer lab is now available for all ICT students in Building 82.',
+      priority: 'low',
+      isUrgent: false,
+      downloadFile: undefined,
+      content: '',
+    },
+    {
+      id: 'news-4',
+      title: 'Exam Timetable Released',
+      category: 'Academic',
+      date: new Date('2025-10-29').toISOString(),
+      summary: 'The final exam timetable for 2025 is now available. Please check your student portal for details.',
+      priority: 'medium',
+      isUrgent: false,
+      downloadFile: undefined,
+      content: '',
+    },
+  ]);
+  const navigate = useNavigate();
 
   // Handle transition to all news view
   const handleViewAllNews = () => {
@@ -153,7 +201,20 @@ const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-red-600 via--500 to-red-600">
+      {/* Hero Section */}
+      <section
+        className="relative overflow-hidden bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600"
+        style={{
+          backgroundImage: `url(${EmalahleniCampusImg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* Optional dark overlay for contrast */}
+        <div
+          className="absolute inset-0 bg-black opacity-60"
+        ></div>
         <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className={`text-center transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
@@ -184,7 +245,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 Student Services
               </button>
               <button
-                onClick={() => setShowCampusVideo(true)}
+                onClick={() => navigate('/ema-campus-videos')}
                 className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-yellow-600 hover:text-white hover:border-white border-2 border-transparent transform hover:scale-105 transition-all duration-300 shadow-lg"
               >
                 Explore Our Campus
@@ -195,14 +256,14 @@ const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         {/* Animated background elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
+        {/* <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-32 h-32 bg-blue-300 rounded-full opacity-20 animate-bounce"></div>
         <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white rounded-full opacity-10 animate-ping"></div>
         <div className="absolute top-32 right-32 w-14 h-14 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
         <div className="absolute bottom-32 left-32 w-24 h-24 bg-yellow-300 rounded-full opacity-20 animate-bounce"></div>
         <div className="absolute top-10 right-1/2 w-10 h-10 bg-white rounded-full opacity-10 animate-ping"></div>
         <div className="absolute bottom-10 left-1/2 w-12 h-12 bg-blue-400 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute top-1/3 left-3/4 w-16 h-16 bg-yellow-200 rounded-full opacity-20 animate-bounce"></div>
+        <div className="absolute top-1/3 left-3/4 w-16 h-16 bg-yellow-200 rounded-full opacity-20 animate-bounce"></div> */}
       </section>
 
       {/* Latest News Section */}
@@ -410,7 +471,7 @@ const HomePage: React.FC<HomePageProps> = ({
                   })}</span>
                   <span className="mx-2">•</span>
                   <span className={`font-medium ${selectedNews.priority === 'high' ? 'text-blue-600' :
-                      selectedNews.priority === 'medium' ? 'text-blue-500' : 'text-blue-400'
+                    selectedNews.priority === 'medium' ? 'text-blue-500' : 'text-blue-400'
                     }`}>
                     {selectedNews.priority.charAt(0).toUpperCase() + selectedNews.priority.slice(1)} Priority
                   </span>
@@ -581,8 +642,8 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
           </div>
 
-         
-       
+
+
         </div>
       )}
 
@@ -639,7 +700,456 @@ const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
       </section>
+      {/* Directorate of Health and Wellness - Modern Professional Design */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-slate-50 to-blue-50/30 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-blue-100/20 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-green-100/20 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
 
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl shadow-lg mb-6">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
+              </svg>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-4">
+              Health & Wellness
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Comprehensive support services for your physical and mental well-being.
+              Your health is our priority.
+            </p>
+          </div>
+
+          {/* Services Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {/* Campus Clinic Card */}
+            <div
+              className="group relative bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100/80 overflow-hidden"
+              onClick={() =>
+                setSelectedNews({
+                  id: "clinic-card",
+                  title: "Campus Clinic",
+                  category: "Health Services",
+                  date: new Date().toISOString(),
+                  summary: `Campus Clinic Services - Buildings 82 & 83
+
+MEDICAL SERVICES CONTACT:
+Head of Department: 012 382 0589
+Administration Office: 012 382 9184
+Nursing Services: 012 382 9089 / 012 382 9090
+Counseling Services: 012 382 9446
+
+OPERATING HOURS:
+Monday to Thursday: 08:30 – 15:30
+Friday: 08:30 – 13:00
+Emergency Services: 08:00 – 16:00 (Weekdays)
+
+AFTER-HOURS EMERGENCY CONTACTS:
+Campus Protection Services: 012 382 5101 / 012 382 4228
+ER24 Emergency Response: 084 124 or 010 205 3000
+National HIV Support Line: 0800 012 322 / 0860 448 911
+
+Our campus clinic provides comprehensive medical care, health consultations, and wellness support services for all students.`,
+                  priority: "medium",
+                  isUrgent: false,
+                  downloadFile: {
+                    url: "/assets/Student_Guide.pdf",
+                    filename: "Student_Guide.pdf",
+                    type: "pdf",
+                  },
+                  content: "",
+                })
+              }
+            >
+              {/* Background Elements */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/60 to-indigo-100/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute top-4 right-4 w-16 h-16 bg-blue-200/30 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+
+              {/* Content */}
+              <div className="relative z-10 p-8 h-full flex flex-col">
+                {/* Header Section */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-blue-500/20 rounded-2xl transform rotate-6 scale-110 group-hover:rotate-12 group-hover:scale-125 transition-transform duration-500"></div>
+                      <div className="relative w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+                        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                        Campus Clinic
+                      </h3>
+                      <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full mt-2">
+                        Medical Services
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-gray-600 mb-6 leading-relaxed flex-grow text-sm">
+                  Comprehensive medical services and healthcare support for all students.
+                  Professional medical staff available during operating hours.
+                </p>
+
+                {/* Key Information */}
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm text-gray-700">Buildings 82 & 83</span>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm text-gray-700">Mon-Thu: 08:30-15:30</span>
+                  </div>
+                </div>
+
+                {/* Services List */}
+                <div className="grid grid-cols-2 gap-2 mb-6">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Medical Care</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Emergency Services</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Health Education</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Counseling</span>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center space-x-1 text-gray-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-xs">Available Now</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-blue-600 font-semibold group-hover:text-blue-700 transition-colors duration-300">
+                    <span className="text-sm">View Details</span>
+                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hover Effect Border */}
+              <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 group-hover:w-full transition-all duration-500"></div>
+            </div>
+
+            {/* Peer Education Card */}
+            <div
+              className="group relative bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100/80 overflow-hidden"
+              onClick={() =>
+                setSelectedNews({
+                  id: "peer-education",
+                  title: "Peer Education Programme",
+                  category: "Student Support",
+                  date: new Date().toISOString(),
+                  summary: `Peer Education Programme
+
+PROGRAM OVERVIEW:
+Trained student volunteers promote positive health, lifestyle choices, and behaviour change among fellow students through peer-led initiatives.
+
+KEY FOCUS AREAS:
+• HIV/AIDS awareness and prevention
+• Mental health support and resources
+• Sexual and reproductive health education
+• Substance abuse prevention programs
+
+PROGRAM LOCATION:
+Directorate of Health & Wellness
+
+CONTACT INFORMATION:
+012 382 9446 / 012 382 9089
+
+Join our peer education program to make a positive impact on campus health awareness.`,
+                  priority: "medium",
+                  isUrgent: false,
+                  downloadFile: undefined,
+                  content: "",
+                })
+              }
+            >
+              {/* Background Elements */}
+              <div className="absolute inset-0 bg-gradient-to-br from-green-50/60 to-emerald-100/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute top-4 right-4 w-16 h-16 bg-green-200/30 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+
+              <div className="relative z-10 p-8 h-full flex flex-col">
+                {/* Header Section */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-green-500/20 rounded-2xl transform rotate-6 scale-110 group-hover:rotate-12 group-hover:scale-125 transition-transform duration-500"></div>
+                      <div className="relative w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+                        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
+                        Peer Education
+                      </h3>
+                      <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mt-2">
+                        Student Support
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-gray-600 mb-6 leading-relaxed flex-grow text-sm">
+                  Student-led health awareness initiatives promoting positive lifestyle choices
+                  and community well-being through peer support networks.
+                </p>
+
+                {/* Key Information */}
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm text-gray-700">Health & Wellness</span>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm text-gray-700">Student Volunteers</span>
+                  </div>
+                </div>
+
+                {/* Focus Areas */}
+                <div className="grid grid-cols-2 gap-2 mb-6">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Health Awareness</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Mental Health</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Prevention</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Community</span>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center space-x-1 text-gray-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span className="text-xs">Volunteer Program</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-green-600 font-semibold group-hover:text-green-700 transition-colors duration-300">
+                    <span className="text-sm">Learn More</span>
+                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hover Effect Border */}
+              <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-green-500 to-emerald-600 group-hover:w-full transition-all duration-500"></div>
+            </div>
+
+            {/* GBV Support Card */}
+            <div
+              className="group relative bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100/80 overflow-hidden"
+              onClick={() =>
+                setSelectedNews({
+                  id: "gbv-support",
+                  title: "Gender-Based Violence (GBV) Support",
+                  category: "Awareness & Safety",
+                  date: new Date().toISOString(),
+                  summary: `Gender-Based Violence Support Services
+
+UNDERSTANDING ABUSE:
+Abuse involves the misuse of power to control another person, manifesting in various forms:
+
+FORMS OF ABUSE:
+• Physical abuse: Physical harm including hitting, kicking, slapping
+• Sexual abuse: Non-consensual or forced sexual acts
+• Verbal abuse: Humiliation, threats, and verbal intimidation
+• Financial abuse: Restricting access to financial resources
+• Emotional abuse: Psychological manipulation, fear, and control
+
+EMERGENCY SUPPORT CHANNELS:
+GBV Emergency Helpline: 0800 428 428
+USSD Support: *120*7867#
+SMS Support: Text "help" to 31531
+
+Confidential support and safety resources available for all students.`,
+                  priority: "high",
+                  isUrgent: true,
+                  downloadFile: undefined,
+                  content: `
+<div class="space-y-4">
+  <div class="border-l-4 border-red-500 pl-4">
+    <h3 class="text-lg font-bold text-gray-900 mb-2">ADDITIONAL RESOURCES</h3>
+    <p class="text-gray-700">For comprehensive information and support resources, visit the official GBV support platform.</p>
+  </div>
+  <div class="bg-red-50 rounded-lg p-4">
+    <h4 class="font-semibold text-red-800 mb-2">IMMEDIATE ASSISTANCE</h4>
+    <p class="text-red-700 text-sm mb-3">If you or someone you know needs immediate help, contact our emergency lines.</p>
+    <a href="https://gbv.org.za" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200">
+      Access Support Resources
+      <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3h7m0 0v7m0-7L10 14" />
+      </svg>
+    </a>
+  </div>
+</div>
+`,
+                })
+              }
+            >
+              {/* Background Elements */}
+              <div className="absolute inset-0 bg-gradient-to-br from-red-50/60 to-orange-100/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute top-4 right-4 w-16 h-16 bg-red-200/30 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+
+              <div className="relative z-10 p-8 h-full flex flex-col">
+                {/* Header Section */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-red-500/20 rounded-2xl transform rotate-6 scale-110 group-hover:rotate-12 group-hover:scale-125 transition-transform duration-500"></div>
+                      <div className="relative w-14 h-14 bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl shadow-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+                        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-red-600 transition-colors duration-300">
+                        GBV Support
+                      </h3>
+                      <span className="inline-block px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full mt-2">
+                        Emergency Support
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-gray-600 mb-6 leading-relaxed flex-grow text-sm">
+                  Confidential support services and safety resources for gender-based violence situations.
+                  Immediate assistance and protective measures available.
+                </p>
+
+                {/* Key Information */}
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm text-gray-700">24/7 Emergency Line</span>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm text-gray-700">Confidential Support</span>
+                  </div>
+                </div>
+
+                {/* Support Channels */}
+                <div className="grid grid-cols-2 gap-2 mb-6">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Emergency Help</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Safety Planning</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Counseling</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                    <span className="text-xs text-gray-600">Resources</span>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center space-x-1 text-gray-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <span className="text-xs">Urgent Support</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-red-600 font-semibold group-hover:text-red-700 transition-colors duration-300">
+                    <span className="text-sm">Get Help</span>
+                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hover Effect Border */}
+              <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-red-500 to-orange-600 group-hover:w-full transition-all duration-500"></div>
+            </div>
+          </div>
+
+          {/* Bottom CTA */}
+          <div className="text-center mt-12">
+            <p className="text-gray-600 mb-4">
+              Need immediate assistance? We're here to help.
+            </p>
+            <button className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              Contact Health Services
+            </button>
+          </div>
+        </div>
+      </section>
       {/* Student Services */}
       <section ref={servicesRef} className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

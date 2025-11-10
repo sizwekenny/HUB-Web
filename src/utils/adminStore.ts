@@ -19,7 +19,7 @@ class AdminStore {
       id: '1',
       name: 'System',
       surname: 'Administrator',
-  email: 'admin@example.com',
+      email: 'admin@example.com',
       phone: '+27123456789',
       password: 'admin123',
       role: 'Super Admin',
@@ -50,24 +50,24 @@ class AdminStore {
       createdAt: new Date().toISOString().split('T')[0],
       lastLogin: 'Never'
     };
-    
+
     this.admins.push(newAdmin);
     return newAdmin;
   }
 
   // Authenticate admin
   authenticate(username: string, password: string): AdminCredentials | null {
-    const admin = this.admins.find(a => 
-      (a.email === username || a.email.split('@')[0] === username) && 
+    const admin = this.admins.find(a =>
+      (a.email === username || a.email.split('@')[0] === username) &&
       a.password === password
     );
-    
+
     if (admin) {
       // Update last login
       admin.lastLogin = new Date().toISOString();
       return admin;
     }
-    
+
     return null;
   }
 

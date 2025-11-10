@@ -17,6 +17,8 @@ import PolServiceDetails from "./components/Polokwane/PolServiceDetails";
 import AdminLogin from "./components/Admin/AdminLogin";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 import CampusVideosPage from "./components/CampusVideosPage";
+import EmaCampusVideosPage from "./components/Emalahleni/CampusVideosPage";
+import PolCampusVideosPage from "./components/Polokwane/CampusVideosPage";
 import {
   departments,
   emaDepartments,
@@ -179,6 +181,8 @@ export default function App() {
 
         {/* ---------- Shared Campus Pages ---------- */}
         <Route path="/campus-videos" element={<CampusVideosPage />} />
+        <Route path="/ema-campus-videos" element={<EmaCampusVideosPage />} />
+        <Route path="/pol-campus-videos" element={<PolCampusVideosPage />} />
 
         {/* ---------- Catch-all ---------- */}
         <Route

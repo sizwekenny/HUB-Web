@@ -26,16 +26,20 @@ interface Video {
 }
 
 const videos: Video[] = [
-  { name: "Small Gate Ruth First", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/small+gate-ruth+first.mp4", category: "Campus Entrances", duration: "2:30" },
-  { name: "Small Gate B5", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/small+gate-b5.mp4", category: "Campus Entrances", duration: "1:45" },
-  { name: "Ruth First Clinic", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/ruth+first+-clinic+.mp4", category: "Health Services", duration: "3:15" },
-  { name: "One Stop Res Admin", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/one+stop-+res+admin.mp4", category: "Administration", duration: "2:00" },
-  { name: "One Stop Cafeteria", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/one+stop-+cafeteria+.mp4", category: "Student Services", duration: "2:45" },
-  { name: "Main Gate B5", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/main+gate-+b5.mp4", category: "Campus Entrances", duration: "1:30" },
-  { name: "iCenter Exam", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/icenter-exam.mp4", category: "Academic Facilities", duration: "2:15" },
-  { name: "iCenter B10", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/icenter-b10.mp4", category: "Academic Facilities", duration: "3:00" },
-  { name: "B5 One Stop", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/b5-one+stop.mp4", category: "Student Services", duration: "1:50" },
-  { name: "B5 NSFAS", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/jay/b5-nsfas.mp4", category: "Student Services", duration: "2:20" },
+  { name: "ICT Faculty Offices (BLD 14)", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/BLD+14+-+ICT+FACULTY+OFFICES.mp4", category: "ICT Faculty", duration: "2:30" },
+  { name: "ICT Offices (BLD 14)", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/BLD+14-+ICT+OFFICES.mp4", category: "ICT Faculty", duration: "1:45" },
+  { name: "Building 18 to ICEP Office to Exam Hall to SGLD to CLIN", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/BLD+18+TO+ICEP+OFFICE+TO+EXAM+HALL+TO+SGLD+TO+CLIN.mp4", category: "Academic Buildings", duration: "3:15" },
+  { name: "Financial Aid - Cashiers (BLD 7)", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/BLD+7+-+FINANCIAL+AID+-+CASHIERS.mp4", category: "Student Services", duration: "2:00" },
+  { name: "Bus Entrance to Building 16 (Classes) to SDS to Lab", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/BUS+BUS+ENTRANCE+TO+BLD+16(CLASSES)+TO+SDS+TO+LAB.mp4", category: "Campus Navigation", duration: "2:45" },
+  { name: "Bus Entrance to Building 7", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/BUS+ENTRANCE+TO+BLD+7.mp4", category: "Campus Navigation", duration: "1:30" },
+  { name: "Bus Entrance to Building 18", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/BUS+ENTRANCE+TO+BUILDING+18.mp4", category: "Campus Navigation", duration: "2:15" },
+  { name: "Bus Entrance to Classes", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/BUS+ENTRANCE+TO+CLASSES.mp4", category: "Campus Navigation", duration: "3:00" },
+  { name: "Bus Entrance to Clinic", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/BUS+ENTRANCE+TO+CLINIC.mp4", category: "Health Services", duration: "1:50" },
+  { name: "Library - Building 7", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/LIBRARY+-+BUILDING+7.mp4", category: "Academic Buildings", duration: "2:20" },
+  { name: "Main to Building 18", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/MAIN+TO+BLD+18.mp4", category: "Campus Navigation", duration: "1:40" },
+  { name: "Main to Building 7", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/MAIN+TO+BUILDING+7.mp4", category: "Campus Navigation", duration: "2:50" },
+  { name: "Main to Library", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/MAIN+TO+LIBRARY.mp4", category: "Academic Buildings", duration: "1:35" },
+  { name: "SDS to Computer Lab", url: "https://ict-info-app.s3.eu-west-1.amazonaws.com/CampusTour/Emalahleni/SDS+TO+COMPUTER+LAB.mp4", category: "Student Services", duration: "2:10" },
 ];
 
 const qualityOptions = [
@@ -54,7 +58,7 @@ const playbackRates = [
   { label: '2x', value: 2 },
 ];
 
-const categories = ['All', 'Campus Entrances', 'Academic Facilities', 'Student Services', 'Health Services', 'Administration'];
+const categories = ['All', 'ICT Faculty', 'Academic Buildings', 'Student Services', 'Health Services', 'Campus Navigation'];
 
 const CampusVideosPage: React.FC = () => {
   const [search, setSearch] = useState("");
@@ -135,11 +139,11 @@ const CampusVideosPage: React.FC = () => {
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'Academic Facilities': return <Building className="w-3 h-3 sm:w-4 sm:h-4" />;
-      case 'Campus Entrances': return <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />;
-      case 'Student Services': return <GraduationCap className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case 'Academic Buildings': return <Building className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case 'ICT Faculty': return <GraduationCap className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case 'Student Services': return <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />;
       case 'Health Services': return <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />;
-      case 'Administration': return <Building className="w-3 h-3 sm:w-4 sm:h-4" />;
+      case 'Campus Navigation': return <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />;
       default: return <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />;
     }
   };
@@ -152,7 +156,7 @@ const CampusVideosPage: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2 sm:space-x-4">
               <button
-                onClick={() => navigate('/home')}
+                onClick={() => navigate('/emaHome')}
                 className="flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-4 sm:py-2 bg-[#003884] text-white rounded-lg hover:bg-[#00245c] transition-colors duration-200 text-sm sm:text-base"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -160,7 +164,7 @@ const CampusVideosPage: React.FC = () => {
               </button>
               <div className="h-6 w-px bg-gray-300 hidden sm:block"></div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">South Campus Tour</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Emalahleni Campus Tour</h1>
                 <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Virtual exploration of campus facilities</p>
               </div>
             </div>
@@ -203,7 +207,7 @@ const CampusVideosPage: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
               <input
                 type="text"
-                placeholder="Search South campus locations..."
+                placeholder="Search Emalahleni campus locations..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#003884] focus:border-transparent bg-white text-sm sm:text-base"
@@ -346,7 +350,7 @@ const CampusVideosPage: React.FC = () => {
                   </div>
                 )}
                 <p className="text-gray-600 text-sm sm:text-base">
-                  Explore the South campus through our immersive virtual tour experience.
+                  Explore the Emalahleni campus through our immersive virtual tour experience.
                 </p>
               </div>
             </div>

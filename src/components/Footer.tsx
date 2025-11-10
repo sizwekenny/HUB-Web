@@ -27,11 +27,11 @@ const Footer: React.FC = () => {
   ];
 
   const socialLinks = [
-    { name: 'Facebook', url: 'https://www.facebook.com/TUTCommunications', icon: <Facebook className="w-5 h-5" /> },
-    { name: 'Twitter', url: 'https://x.com/official_tut', icon: <Twitter className="w-5 h-5" /> },
-    { name: 'Instagram', url: 'https://www.instagram.com/tut_official2/#', icon: <Instagram className="w-5 h-5" /> },
-    { name: 'TikTok', url: 'https://www.tiktok.com/@tut_official1?lang=en', icon: <FaTiktok className="w-5 h-5" /> },
-    { name: 'Youtube', url: 'https://www.youtube.com/channel/UCD4jxDpRYTarILQjtsEQv9Q?view_as=subscriber', icon: <Youtube className="w-5 h-5" /> },
+    { name: 'Facebook', url: 'https://www.facebook.com/p/Faculty-of-ICT-Tshwane-University-of-Technology-61556755880834/', icon: <Facebook className="w-5 h-5" /> },
+    { name: 'Linkedin', url: 'https://www.linkedin.com/in/FacultyofICT_TUT', icon: <Linkedin className="w-5 h-5" /> },
+    { name: 'Instagram', url: 'https://www.instagram.com/FacultyofICT_TUT/#', icon: <Instagram className="w-5 h-5" /> },
+    // { name: 'TikTok', url: 'https://www.tiktok.com/@tut_official1?lang=en', icon: <FaTiktok className="w-5 h-5" /> },
+    { name: 'Youtube', url: 'https://www.youtube.com/@FacultyofICT_TUT', icon: <Youtube className="w-5 h-5" /> },
   ];
 
   const calendarLinks = [
@@ -43,11 +43,11 @@ const Footer: React.FC = () => {
   return (
     <footer className="relative overflow-hidden text-center md:text-left py-12" style={{ backgroundColor: '#1F4D7F', color: 'white', marginTop: '0px' }}>
       {/* Floating Background Elements */}
-      <div className="absolute top-20 left-10 w-16 h-16 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
+      {/* <div className="absolute top-20 left-10 w-16 h-16 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute bottom-20 right-10 w-24 h-24" style={{ backgroundColor: '#1F4D7F', borderRadius: '9999px', opacity: 0.2 }}></div>
       <div className="absolute top-1/2 left-1/4 w-12 h-12 bg-white rounded-full opacity-10 animate-ping"></div>
       <div className="absolute top-32 right-32 w-10 h-10" style={{ backgroundColor: '#1F4D7F', borderRadius: '9999px', opacity: 0.2 }}></div>
-      <div className="absolute bottom-32 left-32 w-20 h-20 bg-yellow-300 rounded-full opacity-20 animate-bounce"></div>
+      <div className="absolute bottom-32 left-32 w-20 h-20 bg-yellow-300 rounded-full opacity-20 animate-bounce"></div> */}
 
       {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-10 pointer-events-none"></div>

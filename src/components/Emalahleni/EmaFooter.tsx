@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
     },
     {
       name: 'Location',
-      url: 'https://maps.app.goo.gl/AxX3briwfHFjXuAL6',
+      url: 'https://maps.app.goo.gl/BbTJBogD4EJcSmwi7',
       icon: <MapPin className="w-4 h-4" />,
     },
   ];

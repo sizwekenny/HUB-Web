@@ -11,7 +11,6 @@ interface LandingPageProps {
   onLogin: () => void;
 }
 
-
 const questions = [
   "Need assistance with registration or student services?",
   "Want to know more about our campuses?",
@@ -42,27 +41,31 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
 
   return (
     <div className="relative min-h-screen bg-blue-900 overflow-hidden">
+      {/* Header Section */}
+      <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 py-4 flex justify-between items-center">
+        {/* Logo */}
+        <img
+          src={logo}
+          alt="ICT Faculty Logo"
+          className="w-24 sm:w-32 md:w-40 lg:w-48 xl:w-56 h-auto"
+        />
 
-      {/* Logo on top-left */}
-      <img
-        src={logo}
-        alt="ICT Faculty Logo"
-        className="absolute top-7 left-4 z-30"
-        style={{ width: '300px', height: 'auto' }}
-      />
-      <button
-        onClick={onLogin}
-        className="absolute top-12 right-10 z-30 text-white px-6 py-2 rounded-lg hover:bg-[#163c66] transition"
-        style={{ backgroundColor: '#1F4D7F' }}
-      >
-        Admin
-      </button>
+
+        {/* Admin Button */}
+        <button
+          onClick={onLogin}
+          className="text-white px-4 py-2 sm:px-5 sm:py-2 md:px-6 md:py-2 rounded-lg hover:bg-[#163c66] transition text-sm sm:text-base"
+          style={{ backgroundColor: '#1F4D7F' }}
+        >
+          Admin
+        </button>
+      </div>
+
       {/* Background Slideshow */}
       <div
         className="absolute top-0 left-0 right-0 z-0 overflow-hidden"
         style={{ height: heroHeight }}
       >
-
         {images.map((img, index) => (
           <img
             key={index}
@@ -74,12 +77,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
           />
         ))}
 
-        {/* Strong top & side gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30 pointer-events-none" />
+        {/* Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/40 pointer-events-none" />
 
-        {/* Floating bubbles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating bubbles - Hidden on mobile for performance */}
+        {/* <div className="hidden sm:block absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(10)].map((_, i) => (
             <div
               key={i}
@@ -94,49 +97,58 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
               }}
             />
           ))}
-        </div>
+        </div> */}
       </div>
 
-      {/* Content */}
+      {/* Main Content */}
       <div
-        className="relative z-20 flex flex-col items-center justify-center text-center px-4"
+        className="relative z-20 flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8"
         style={{ height: heroHeight }}
       >
-        <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-5 animate-fade-in">
+        {/* Main Heading */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 sm:mb-5 animate-fade-in leading-tight">
           Welcome to Our Faculty of ICT Hub Guide
         </h1>
-        <p className="text-lg md:text-2xl text-blue-100 max-w-3xl mb-10 animate-fade-in-up">
+
+        {/* Subtitle */}
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-blue-100 max-w-2xl sm:max-w-3xl mb-6 sm:mb-8 md:mb-10 animate-fade-in-up leading-relaxed px-2">
           Discover excellence across our four distinctive campuses, each offering unique opportunities for learning, growth, and innovation.
         </p>
 
         {/* Campus Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full max-w-4xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8 md:mb-10 w-full max-w-4xl">
+          {/* South Campus Button */}
           <button
             onClick={() => onSelect('home')}
-            className="text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md transform hover:scale-105 transition hover:bg-[#163c66]"
+            className="text-white px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg font-semibold rounded-lg shadow-md transform hover:scale-105 transition hover:bg-[#163c66] transition-all duration-300"
             style={{ backgroundColor: '#1F4D7F' }}
           >
             South Campus
           </button>
+
+          {/* eMalahleni Campus Button */}
           <button
             onClick={() => onSelect('emaHome')}
-            className="bg-red-600 text-white px-10 py-5 text-lg font-semibold rounded-lg hover:bg-red-700 transition shadow-lg"
+            className="bg-red-600 text-white px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg font-semibold rounded-lg hover:bg-red-700 transition shadow-lg transform hover:scale-105 transition-all duration-300"
           >
             eMalahleni Campus
           </button>
-          <button 
-          onClick={() => onSelect('polHome')}
-          className="bg-yellow-600 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-md hover:bg-yellow-700 transform hover:scale-105 transition">
+
+          {/* Polokwane Campus Button */}
+          <button
+            onClick={() => onSelect('polHome')}
+            className="bg-yellow-600 text-white px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg font-semibold rounded-lg shadow-md hover:bg-yellow-700 transform hover:scale-105 transition transition-all duration-300"
+          >
             Polokwane Campus
           </button>
         </div>
 
         {/* Rotating Questions */}
-        <div className="relative h-12 w-full max-w-2xl overflow-hidden">
+        <div className="relative h-12 sm:h-14 md:h-16 w-full max-w-xs sm:max-w-sm md:max-w-2xl overflow-hidden">
           {questions.map((q, index) => (
             <p
               key={index}
-              className={`absolute inset-0 text-xl font-medium text-white transition-opacity duration-700 ease-in-out
+              className={`absolute inset-0 text-sm sm:text-base md:text-lg lg:text-xl font-medium text-white transition-opacity duration-700 ease-in-out text-center px-2
                 ${index === currentQuestion ? 'opacity-100' : 'opacity-0'}`}
             >
               {q}
@@ -145,6 +157,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSelect, onLogin }) => {
         </div>
       </div>
 
+      {/* Footer */}
       <Footer />
     </div>
   );

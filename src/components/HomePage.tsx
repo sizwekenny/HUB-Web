@@ -13,18 +13,15 @@ import {
   Calendar,
   FileText,
   Megaphone,
-  X,MapPin, Phone, Mail,
+  X, MapPin, Phone, Mail,
   Download
 } from 'lucide-react';
 
 import { Department, Service, NewsItem } from '../types';
-// import axios from 'axios';
-// import { newsStore } from '../utils/newsStore';
-// import { mapBackendNewsArray } from '../utils/newsMapper';
 import Chatbot from './Chatbot';
 import { useNavigate } from "react-router-dom";
 import Footer from './Footer';
-// import Navigation from './Navigation';
+
 interface HomePageProps {
   departments: Department[];
   services: Service[];
@@ -33,11 +30,6 @@ interface HomePageProps {
   onServiceClick: (service: Service) => void;
 }
 
-// Dynamic news items fetched from in-memory store (campus: south + global)
-// TODO: Replace with API integration when backend available
-
-
-
 const HomePage: React.FC<HomePageProps> = ({
   departments,
   services,
@@ -45,8 +37,6 @@ const HomePage: React.FC<HomePageProps> = ({
   onDepartmentClick,
   onServiceClick
 }) => {
-
-  // State declarations for modal/news logic and UI transitions
   const [showAllNews, setShowAllNews] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -100,52 +90,37 @@ const HomePage: React.FC<HomePageProps> = ({
   const navigate = useNavigate();
   const [showCampusVideo, setShowCampusVideo] = useState(false);
 
-  // Handle transition to all news view
+  // TUT Color Scheme from Logo
+  const tutColors = {
+    primary: {
+      blue: '#003884',     // Dark blue from logo
+      gold: '#FFD100',     // Yellow/Gold from logo
+      lightBlue: '#1F4D7F', // Lighter blue variant
+    },
+    secondary: {
+      white: '#FFFFFF',
+      lightGray: '#F8FAFC',
+      gray: '#6B7280',
+      darkGray: '#374151'
+    }
+  };
+
   const handleViewAllNews = () => {
     setShowAllNews(true);
   };
 
-  // Handle transition back to home
   const handleBackToHome = () => {
     setIsExiting(true);
     setTimeout(() => {
       setShowAllNews(false);
       setIsExiting(false);
-    }, 700); // Wait for animation to complete
+    }, 700);
   };
+
   useEffect(() => {
     setIsLoaded(true);
   }, []);
-  // useEffect(() => {
-  //   setIsLoaded(true);
-  //   let cancel = false;
-  //   const campusId = 1; // Soshanguve South campus
 
-  //   const fetchCampusNews = async () => {
-  //     try {
-  //       let data: any[] = [];
-  //       try {
-  //         const res = await axios.get('/api/News/getNewsByCampus', { params: { CampusId: campusId } });
-  //         if (Array.isArray(res.data)) data = res.data; else if (res.data?.items) data = res.data.items;
-  //       } catch (campusErr: any) {
-  //         const resAll = await axios.get('/api/News/getAllNews');
-  //         data = Array.isArray(resAll.data) ? resAll.data : [];
-  //       }
-  //       // mapBackendNewsArray now also decodes backend docFile (base64 / bytes) into a blob URL for download
-  //       const southVisible = mapBackendNewsArray(data, 'south');
-  //       if (!cancel) setLatestNews(southVisible);
-  //     } catch (err) {
-  //       // offline / error fallback to local store
-  //       if (!cancel) setLatestNews(newsStore.list('south').filter(n => n.isVisible !== false));
-  //     }
-  //   };
-
-  //   fetchCampusNews();
-  //   const interval = setInterval(fetchCampusNews, 60000); // refresh every 60s
-  //   return () => { cancel = true; clearInterval(interval); };
-  // }, []);
-
-  // Close modal on Escape key press and handle body scroll
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -156,12 +131,14 @@ const HomePage: React.FC<HomePageProps> = ({
         }
       }
     };
+
     if (selectedNews || showAllNews) {
       document.addEventListener('keydown', handleEscapeKey);
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
+
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
       document.body.style.overflow = 'unset';
@@ -187,11 +164,12 @@ const HomePage: React.FC<HomePageProps> = ({
       localStorage.removeItem('expandServices');
     }
   }, []);
+
   useEffect(() => {
-  if (selectedFilter !== 'all') {
-    handleScrollTo('services');
-  }
-}, [selectedFilter]);
+    if (selectedFilter !== 'all') {
+      handleScrollTo('services');
+    }
+  }, [selectedFilter]);
 
   const handleScrollTo = (section: 'departments' | 'services') => {
     if (section === 'departments' && departmentsRef.current) {
@@ -202,102 +180,187 @@ const HomePage: React.FC<HomePageProps> = ({
     }
   };
 
-  // Filter services based on selectedFilter prop
   const filteredServices = selectedFilter === 'all'
     ? services
     : services.filter(service => {
       if (selectedFilter === 'senior') return service.category === 'Senior Students';
       if (selectedFilter === 'newcomer') return service.category === 'Newcomer Students';
-      return true; // fallback
+      return true;
     });
-
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden" style={{ background: 'linear-gradient(90deg, #1F4D7F 0%, #1e2761 100%)' }}>
-        
-        {/* Background Video */}
-        <video
-          className="absolute inset-0 w-full h-full object-cover z-0"
-          src="src/assets/ss.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{ objectFit: 'cover' }}
-        />
-        {/* Lower opacity gradient overlay */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, #1F4D7Fcc 0%, #1e2761cc 100%)', opacity: 0.5, zIndex: 1 }}></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24" style={{ zIndex: 2 }}>
+      {/* Hero Section - Updated with TUT Colors */}
+      <section
+        className="relative overflow-hidden bg-gradient-to-r from-[#003884] via-[#1F4D7F] to-[#003884]"
+        style={{
+          backgroundImage: `url(src/assets/sosh_south.png)`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* Optional dark overlay for contrast */}
+        <div className="absolute inset-0 bg-black opacity-60"></div>
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className={`text-center transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="flex justify-center mb-8">
-              <div className="p-4 bg-yellow-400 rounded-full shadow-lg">
+              <div className="p-4 bg-[#FFD100] rounded-full shadow-lg">
                 <GraduationCap className="w-16 h-16 text-[#003884]" />
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-              FoICT(Sosha South Campus)
+              FoICT (Soshanguve South Campus)
             </h1>
             <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
               Your comprehensive guide to academic departments, student services, and essential information
               for the Faculty of Information and Communication Technology.
             </p>
-            <div className="flex flex-col-3 sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => handleScrollTo('departments')}
-                className="px-8 py-4 bg-yellow-400 text-[#003884] font-semibold rounded-lg hover:bg-yellow-300 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                className="px-8 py-4 bg-[#FFD100] text-[#003884] font-semibold rounded-lg hover:bg-[#E6BC00] transform hover:scale-105 transition-all duration-300 shadow-lg"
               >
                 Explore Departments
               </button>
               <button
                 onClick={() => handleScrollTo('services')}
-                className="px-8 py-4 bg-white text-[#1F4D7F] font-semibold rounded-lg border-2 border-[#1F4D7F] hover:bg-[#1F4D7F] hover:text-white hover:border-white transform hover:scale-105 transition-all duration-300"
+                className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-[#003884] transform hover:scale-105 transition-all duration-300"
               >
                 Student Services
               </button>
-          <button
-  onClick={() => navigate('/campus-videos')}
-  className="px-8 py-4 bg-white text-[#003884] font-semibold rounded-lg hover:bg-[#003884] hover:text-white hover:border-white border-2 border-transparent transform hover:scale-105 transition-all duration-300 shadow-lg"
->
-  Explore Our Campus
-</button>
+              <button
+                onClick={() => navigate('/campus-videos')}
+                className="px-8 py-4 bg-white text-[#003884] font-semibold rounded-lg hover:bg-[#FFD100] hover:text-[#003884] border-2 border-transparent transform hover:scale-105 transition-all duration-300 shadow-lg"
+              >
+                Explore Our Campus
+              </button>
             </div>
           </div>
         </div>
-        {/* Animated background elements */}
-        {/* <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-400 rounded-full opacity-20 animate-pulse" style={{ zIndex: 3 }}></div>
-        <div className="absolute bottom-20 right-10 w-32 h-32" style={{ backgroundColor: '#003884', borderRadius: '9999px', opacity: 0.2, zIndex: 3 }}></div>
-        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white rounded-full opacity-10 animate-ping" style={{ zIndex: 3 }}></div>
-        <div className="absolute top-32 right-32 w-14 h-14" style={{ backgroundColor: '#003884', borderRadius: '9999px', opacity: 0.2, zIndex: 3 }}></div>
-        <div className="absolute bottom-32 left-32 w-24 h-24 bg-yellow-300 rounded-full opacity-20 animate-bounce" style={{ zIndex: 3 }}></div>
-        <div className="absolute top-10 right-1/2 w-10 h-10 bg-white rounded-full opacity-10 animate-ping" style={{ zIndex: 3 }}></div>
-        <div className="absolute bottom-10 left-1/2 w-12 h-12" style={{ backgroundColor: '#003884', borderRadius: '9999px', opacity: 0.2, zIndex: 3 }}></div>
-        <div className="absolute top-1/3 left-3/4 w-16 h-16 bg-yellow-200 rounded-full opacity-20 animate-bounce" style={{ zIndex: 3 }}></div> */}
       </section>
-      {/* Latest News Section 
-      Blue: #003884
-      Red: #ce1127
-      Gold: #e6b012
-      */}
-      <section className="relative py-20 bg-white overflow-hidden">
+
+      {/* Latest News Section - Updated Colors */}
+      <section className="relative py-12 md:py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Latest News & Updates</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Latest News & Updates</h2>
+            <p className="text-base md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
               Stay informed with the latest announcements and updates from the ICT Faculty
             </p>
           </div>
 
-          {/* Horizontal Scrolling News Cards */}
-          <div className="relative overflow-hidden">
-            {/* Fade gradients on sides */}
+          {/* Mobile: Vertical Scroll, Desktop: Horizontal Scroll */}
+          <div className="lg:hidden space-y-4">
+            {latestNews.slice(0, 3).map((news: NewsItem, index: number) => {
+              const getCategoryIcon = (category: string) => {
+                switch (category) {
+                  case 'Registration': return FileText;
+                  case 'Academic': return BookOpen;
+                  case 'Announcement': return Megaphone;
+                  case 'Deadline': return Clock;
+                  case 'Event': return Calendar;
+                  case 'WIL': return GraduationCap;
+                  default: return FileText;
+                }
+              };
+
+              const getCategoryColor = (category: string) => {
+                switch (category) {
+                  case 'Registration': return `bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F]`;
+                  case 'Academic': return `bg-[#003884] bg-opacity-10 text-[#003884]`;
+                  case 'Announcement': return `bg-[#1F4D7F] bg-opacity-5 text-[#1F4D7F]`;
+                  case 'Deadline': return 'bg-red-100 text-red-800';
+                  case 'Event': return `bg-[#FFD100] bg-opacity-20 text-[#003884]`;
+                  case 'WIL': return 'bg-indigo-100 text-indigo-800';
+                  default: return `bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F]`;
+                }
+              };
+
+              const getPriorityStyle = (priority: string) => {
+                switch (priority) {
+                  case 'high': return 'border-l-4 border-[#003884]';
+                  case 'medium': return 'border-l-4 border-[#1F4D7F]';
+                  case 'low': return 'border-l-4 border-blue-300';
+                  default: return 'border-l-4 border-[#1F4D7F]';
+                }
+              };
+
+              const IconComponent = getCategoryIcon(news.category);
+
+              return (
+                <div
+                  key={news.id}
+                  className={`group bg-white rounded-xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden w-full shadow-lg hover:shadow-xl ${getPriorityStyle(news.priority)} ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                  style={{ transitionDelay: `${index * 150}ms` }}
+                  onClick={() => setSelectedNews(news)}
+                >
+                  <div className="p-4 md:p-6 h-full flex flex-col">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-2">
+                        <div className="p-2 bg-[#1F4D7F] bg-opacity-10 rounded-lg group-hover:bg-[#003884] transition-colors duration-300">
+                          <IconComponent className="w-4 h-4 md:w-5 md:h-5 text-[#1F4D7F] group-hover:text-white transition-colors duration-300" />
+                        </div>
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getCategoryColor(news.category)}`}>
+                          {news.category}
+                        </span>
+                      </div>
+                      {news.isUrgent && (
+                        <div className="flex items-center space-x-1 px-2 py-1 bg-[#FFD100] text-[#003884] text-xs font-semibold rounded-full">
+                          <AlertTriangle className="w-3 h-3" />
+                          <span>Urgent</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#003884] transition-colors duration-300 line-clamp-2">
+                      {news.title}
+                    </h3>
+
+                    <p className="text-sm text-gray-600 mb-3 flex-grow line-clamp-2">
+                      {news.summary}
+                    </p>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-gray-500 text-xs">
+                        <Clock className="w-3 h-3 md:w-4 md:h-4 mr-1" />
+                        <span>{new Date(news.date).toLocaleDateString('en-ZA', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {news.downloadFile && (
+                          <a
+                            href={news.downloadFile.url}
+                            download={news.downloadFile.filename}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center space-x-1 px-2 py-1 bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F] text-xs font-medium rounded-full hover:bg-[#1F4D7F] hover:text-white transition-colors duration-200"
+                            title={`Download ${news.downloadFile.filename}`}
+                          >
+                            <Download className="w-3 h-3" />
+                            <span className="hidden sm:inline">Download</span>
+                          </a>
+                        )}
+                        <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-gray-400 group-hover:text-[#003884] transform group-hover:translate-x-1 transition-all duration-300" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Horizontal Scroll */}
+          <div className="hidden lg:block relative overflow-hidden">
             <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-white via-blue-50/50 to-transparent z-20 pointer-events-none"></div>
             <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-white via-blue-50/50 to-transparent z-20 pointer-events-none"></div>
 
-            <div className="flex animate-scroll space-x-8 pb-4 hover:animation-play-state-paused">
-              {/* Duplicate the news array to create infinite scroll effect */}
-              {(latestNews.length > 3 ? [...latestNews, ...latestNews] : latestNews).map((news: NewsItem, index: number) => {
+            <div className="flex animate-scroll space-x-6 pb-4 hover:animation-play-state-paused">
+              {[...latestNews, ...latestNews].map((news: NewsItem, index: number) => {
                 const getCategoryIcon = (category: string) => {
                   switch (category) {
                     case 'Registration': return FileText;
@@ -312,22 +375,22 @@ const HomePage: React.FC<HomePageProps> = ({
 
                 const getCategoryColor = (category: string) => {
                   switch (category) {
-                    case 'Registration': return 'bg-blue-100 text-blue-800';
-                    case 'Academic': return 'bg-blue-200 text-blue-900';
-                    case 'Announcement': return 'bg-blue-50 text-blue-700';
+                    case 'Registration': return `bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F]`;
+                    case 'Academic': return `bg-[#003884] bg-opacity-10 text-[#003884]`;
+                    case 'Announcement': return `bg-[#1F4D7F] bg-opacity-5 text-[#1F4D7F]`;
                     case 'Deadline': return 'bg-red-100 text-red-800';
-                    case 'Event': return 'bg-yellow-100 text-yellow-800';
+                    case 'Event': return `bg-[#FFD100] bg-opacity-20 text-[#003884]`;
                     case 'WIL': return 'bg-indigo-100 text-indigo-800';
-                    default: return 'bg-blue-100 text-blue-800';
+                    default: return `bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F]`;
                   }
                 };
 
                 const getPriorityStyle = (priority: string) => {
                   switch (priority) {
-                    case 'high': return 'border-l-4 border-blue-600';
-                    case 'medium': return 'border-l-4 border-blue-400';
+                    case 'high': return 'border-l-4 border-[#003884]';
+                    case 'medium': return 'border-l-4 border-[#1F4D7F]';
                     case 'low': return 'border-l-4 border-blue-300';
-                    default: return 'border-l-4 border-blue-400';
+                    default: return 'border-l-4 border-[#1F4D7F]';
                   }
                 };
 
@@ -335,30 +398,30 @@ const HomePage: React.FC<HomePageProps> = ({
 
                 return (
                   <div
-                    key={`${news.id}-${latestNews.length > 0 ? Math.floor(index / latestNews.length) : 0}`}
-                    className={`group bg-white rounded-xl transform transition-all duration-500 hover:scale-125 hover:z-20 cursor-pointer overflow-hidden flex-shrink-0 w-96 h-64 shadow-lg hover:shadow-2xl hover:shadow-blue-500/20 ${getPriorityStyle(news.priority)} ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
-                    style={{ transitionDelay: `${latestNews.length > 0 ? (index % latestNews.length) * 150 : 0}ms` }}
+                    key={`${news.id}-${Math.floor(index / latestNews.length)}`}
+                    className={`group bg-white rounded-xl transform transition-all duration-500 hover:scale-125 hover:z-20 cursor-pointer overflow-hidden flex-shrink-0 w-80 h-64 shadow-lg hover:shadow-2xl hover:shadow-[#003884]/20 ${getPriorityStyle(news.priority)} ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                    style={{ transitionDelay: `${(index % latestNews.length) * 150}ms` }}
                     onClick={() => setSelectedNews(news)}
                   >
                     <div className="p-6 h-full flex flex-col">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-3">
-                          <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-600 transition-colors duration-300">
-                            <IconComponent className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors duration-300" />
+                          <div className="p-2 bg-[#1F4D7F] bg-opacity-10 rounded-lg group-hover:bg-[#003884] transition-colors duration-300">
+                            <IconComponent className="w-5 h-5 text-[#1F4D7F] group-hover:text-white transition-colors duration-300" />
                           </div>
                           <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getCategoryColor(news.category)}`}>
                             {news.category}
                           </span>
                         </div>
                         {news.isUrgent && (
-                          <div className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                          <div className="flex items-center space-x-1 px-2 py-1 bg-[#FFD100] text-[#003884] text-xs font-semibold rounded-full">
                             <AlertTriangle className="w-3 h-3" />
                             <span>Urgent</span>
                           </div>
                         )}
                       </div>
 
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors duration-300 line-clamp-2">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#003884] transition-colors duration-300 line-clamp-2">
                         {news.title}
                       </h3>
 
@@ -381,14 +444,14 @@ const HomePage: React.FC<HomePageProps> = ({
                               href={news.downloadFile.url}
                               download={news.downloadFile.filename}
                               onClick={(e) => e.stopPropagation()}
-                              className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors duration-200"
+                              className="flex items-center space-x-1 px-2 py-1 bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F] text-xs font-medium rounded-full hover:bg-[#1F4D7F] hover:text-white transition-colors duration-200"
                               title={`Download ${news.downloadFile.filename}`}
                             >
                               <Download className="w-3 h-3" />
                               <span>Download</span>
                             </a>
                           )}
-                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transform group-hover:translate-x-1 transition-all duration-300" />
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#003884] transform group-hover:translate-x-1 transition-all duration-300" />
                         </div>
                       </div>
                     </div>
@@ -398,10 +461,10 @@ const HomePage: React.FC<HomePageProps> = ({
             </div>
           </div>
 
-          <div className="text-center mt-12">
-           <button
+          <div className="text-center mt-8 md:mt-12">
+            <button
               onClick={handleViewAllNews}
-              className="px-8 py-3 bg-[#1F4D7F] text-white font-semibold rounded-lg hover:bg-[#163c66] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="px-6 py-3 md:px-8 md:py-3 bg-[#003884] text-white font-semibold rounded-lg hover:bg-[#00245c] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm md:text-base"
             >
               View All News
             </button>
@@ -409,21 +472,20 @@ const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* News Modal */}
+      {/* News Modal - Updated Colors */}
       {selectedNews && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4 animate-in fade-in duration-300"
           onClick={() => setSelectedNews(null)}
         >
           <div
-            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform animate-in zoom-in-95 duration-300"
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform animate-in zoom-in-95 duration-300 mx-2"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-6">
-              {/* Modal Header */}
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex items-center space-x-3">
-                  <div className="p-3 bg-blue-100 rounded-lg">
+            <div className="p-4 md:p-6">
+              <div className="flex items-start justify-between mb-4 md:mb-6">
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  <div className="p-2 md:p-3 bg-[#1F4D7F] bg-opacity-10 rounded-lg">
                     {(() => {
                       const IconComponent = (() => {
                         switch (selectedNews.category) {
@@ -436,25 +498,25 @@ const HomePage: React.FC<HomePageProps> = ({
                           default: return FileText;
                         }
                       })();
-                      return <IconComponent className="w-6 h-6 text-blue-600" />;
+                      return <IconComponent className="w-5 h-5 md:w-6 md:h-6 text-[#1F4D7F]" />;
                     })()}
                   </div>
-                  <div>
-                    <span className={`px-3 py-1 text-sm font-semibold rounded-full ${(() => {
+                  <div className="flex flex-wrap gap-1 md:gap-2">
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${(() => {
                       switch (selectedNews.category) {
-                        case 'Registration': return 'bg-blue-100 text-blue-800';
-                        case 'Academic': return 'bg-blue-200 text-blue-900';
-                        case 'Announcement': return 'bg-blue-50 text-blue-700';
+                        case 'Registration': return 'bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F]';
+                        case 'Academic': return 'bg-[#003884] bg-opacity-10 text-[#003884]';
+                        case 'Announcement': return 'bg-[#1F4D7F] bg-opacity-5 text-[#1F4D7F]';
                         case 'Deadline': return 'bg-red-100 text-red-800';
-                        case 'Event': return 'bg-yellow-100 text-yellow-800';
+                        case 'Event': return 'bg-[#FFD100] bg-opacity-20 text-[#003884]';
                         case 'WIL': return 'bg-indigo-100 text-indigo-800';
-                        default: return 'bg-blue-100 text-blue-800';
+                        default: return 'bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F]';
                       }
                     })()}`}>
                       {selectedNews.category}
                     </span>
                     {selectedNews.isUrgent && (
-                      <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                      <span className="px-2 py-1 bg-[#FFD100] text-[#003884] text-xs font-semibold rounded-full">
                         <AlertTriangle className="w-3 h-3 inline mr-1" />
                         Urgent
                       </span>
@@ -463,72 +525,54 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
                 <button
                   onClick={() => setSelectedNews(null)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                  className="p-1 md:p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
                 >
-                  <X className="w-6 h-6 text-gray-400" />
+                  <X className="w-5 h-5 md:w-6 md:h-6 text-gray-400" />
                 </button>
               </div>
 
-              {/* Modal Content */}
-              <div className="space-y-4">
-                <h2 className="text-2xl font-bold text-gray-900">
+              <div className="space-y-3 md:space-y-4">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">
                   {selectedNews.title}
                 </h2>
-                <div className="flex items-center text-gray-500 text-sm">
-                  {/* Optionally, you can show date/priority here if needed, but for these cards, they are omitted */}
-                </div>
-                <div className="p-4 rounded-lg bg-blue-50 border-l-4 border-blue-500">
-                  {/* Always show the textual summary first (preserve formatting) */}
-                  <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+
+                <div className="p-3 md:p-4 rounded-lg bg-[#1F4D7F] bg-opacity-5 border-l-4 border-[#003884]">
+                  <p className="text-gray-600 leading-relaxed whitespace-pre-line text-sm md:text-base">
                     {selectedNews.summary}
                   </p>
 
-                  {/* If content contains extra HTML (e.g., clickable button/link), render it below the summary */}
                   {selectedNews.content && (
                     <div
-                      className="mt-4 text-gray-600 leading-relaxed"
-                      // content contains a small trusted HTML snippet created in code
+                      className="mt-3 md:mt-4 text-gray-600 leading-relaxed text-sm md:text-base"
                       dangerouslySetInnerHTML={{ __html: selectedNews.content }}
                     />
                   )}
                 </div>
 
-                {/* Modal Footer */}
-                <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pt-4 md:pt-6 border-t border-gray-200">
                   <div>
                     {selectedNews.downloadFile && (
                       <a
                         href={selectedNews.downloadFile.url}
                         download={selectedNews.downloadFile.filename}
-                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors duration-200"
+                        className="flex items-center space-x-2 px-3 py-2 bg-[#003884] text-white font-semibold rounded-lg hover:bg-[#00245c] transition-colors duration-200 text-sm md:text-base"
                       >
                         <Download className="w-4 h-4" />
-                        {selectedNews.downloadFile && (
-  <a
-    href={selectedNews.downloadFile.url}
-    download={selectedNews.downloadFile.filename}
-    className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors duration-200"
-  >
-    
-    {/* Show a custom label for the clinic guide */}
-    {selectedNews.id === "clinic-card" ? (
-      <span>Download Clinic Student Guide</span>
-    ) : (
-      <span>Download {selectedNews.downloadFile.type?.toUpperCase()}</span>
-    )}
-  </a>
-)}
-                        <span className="text-green-200 text-sm">({selectedNews.downloadFile.size})</span>
+                        <span>
+                          {selectedNews.id === "clinic-card"
+                            ? "Download Clinic Guide"
+                            : `Download ${selectedNews.downloadFile.type?.toUpperCase()}`
+                          }
+                        </span>
                       </a>
                     )}
                   </div>
-                   <button
+                  <button
                     onClick={() => setSelectedNews(null)}
-                    className="px-6 py-2 bg-[#1F4D7F] text-white font-semibold rounded-lg hover:bg-[#163c66] transition-colors duration-200"
+                    className="px-4 py-2 bg-[#003884] text-white font-semibold rounded-lg hover:bg-[#00245c] transition-colors duration-200 text-sm md:text-base w-full sm:w-auto"
                   >
                     Close
                   </button>
-
                 </div>
               </div>
             </div>
@@ -536,30 +580,28 @@ const HomePage: React.FC<HomePageProps> = ({
         </div>
       )}
 
-      {/* All News View */}
+      {/* All News View - Updated Colors */}
       {showAllNews && (
         <div className="fixed inset-x-0 top-16 bottom-0 bg-white z-40 overflow-y-auto animate-in fade-in duration-300">
-          <div className="min-h-screen py-8">
+          <div className="min-h-screen py-6 md:py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-in slide-in-from-bottom duration-500">
-              {/* Header */}
-              <div className="mb-8 pt-4">
-                <div className="flex items-center mb-6">
+              <div className="mb-6 md:mb-8 pt-4">
+                <div className="flex items-center mb-4 md:mb-6">
                   <button
                     onClick={handleBackToHome}
-                    className="mr-6 bg-[#003884] hover:bg-[#00245c] text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
+                    className="mr-4 md:mr-6 bg-[#003884] hover:bg-[#00245c] text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
                     disabled={isExiting}
                   >
-                    <ChevronLeft className="w-5 h-5" />
+                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                   </button>
                   <div className="flex-1 text-center">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">All News & Updates</h1>
-                    <p className="text-lg text-gray-600">Complete list of ICT Faculty announcements and updates</p>
+                    <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2">All News & Updates</h1>
+                    <p className="text-sm md:text-lg text-gray-600">Complete list of ICT Faculty announcements and updates</p>
                   </div>
                 </div>
               </div>
 
-              {/* News Grid */}
-              <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ${isExiting ? 'animate-grid-exit' : 'animate-grid-entrance'}`}>
+              <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 ${isExiting ? 'animate-grid-exit' : 'animate-grid-entrance'}`}>
                 {latestNews.map((news: NewsItem, index: number) => {
                   const getCategoryIcon = (category: string) => {
                     switch (category) {
@@ -575,22 +617,22 @@ const HomePage: React.FC<HomePageProps> = ({
 
                   const getCategoryColor = (category: string) => {
                     switch (category) {
-                      case 'Registration': return 'bg-blue-100 text-blue-800';
-                      case 'Academic': return 'bg-blue-200 text-blue-900';
-                      case 'Announcement': return 'bg-blue-50 text-blue-700';
+                      case 'Registration': return `bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F]`;
+                      case 'Academic': return `bg-[#003884] bg-opacity-10 text-[#003884]`;
+                      case 'Announcement': return `bg-[#1F4D7F] bg-opacity-5 text-[#1F4D7F]`;
                       case 'Deadline': return 'bg-red-100 text-red-800';
-                      case 'Event': return 'bg-yellow-100 text-yellow-800';
+                      case 'Event': return `bg-[#FFD100] bg-opacity-20 text-[#003884]`;
                       case 'WIL': return 'bg-indigo-100 text-indigo-800';
-                      default: return 'bg-blue-100 text-blue-800';
+                      default: return `bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F]`;
                     }
                   };
 
                   const getPriorityStyle = (priority: string) => {
                     switch (priority) {
-                      case 'high': return 'border-l-4 border-blue-600';
-                      case 'medium': return 'border-l-4 border-blue-400';
+                      case 'high': return 'border-l-4 border-[#003884]';
+                      case 'medium': return 'border-l-4 border-[#1F4D7F]';
                       case 'low': return 'border-l-4 border-blue-300';
-                      default: return 'border-l-4 border-blue-400';
+                      default: return 'border-l-4 border-[#1F4D7F]';
                     }
                   };
 
@@ -599,44 +641,38 @@ const HomePage: React.FC<HomePageProps> = ({
                   return (
                     <div
                       key={news.id}
-                      className={`group bg-white rounded-xl transform transition-all duration-300 hover:scale-105 hover:z-10 cursor-pointer overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-blue-500/20 h-64 ${getPriorityStyle(news.priority)} ${isExiting ? 'animate-card-fly-out' : 'animate-card-fly-in'}`}
-                      style={{
-                        '--start-x': `${(index % 4 - 2) * 200}px`,
-                        '--start-y': `${Math.floor(index / 4) * 100 - 200}px`,
-                        '--end-x': `${(index % 4 - 2) * 300}px`,
-                        '--end-y': `${Math.floor(index / 4) * 150 - 300}px`
-                      } as React.CSSProperties}
+                      className={`group bg-white rounded-xl transform transition-all duration-300 hover:scale-105 hover:z-10 cursor-pointer overflow-hidden shadow-lg hover:shadow-xl h-56 md:h-64 ${getPriorityStyle(news.priority)} ${isExiting ? 'animate-card-fly-out' : 'animate-card-fly-in'}`}
                       onClick={() => !isExiting && setSelectedNews(news)}
                     >
-                      <div className="p-6 h-full flex flex-col">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-[#003884] transition-colors duration-300">
-                        <IconComponent className="w-8 h-8 text-[#003884] group-hover:text-white transition-colors duration-300" />
-                      </div>
+                      <div className="p-4 md:p-6 h-full flex flex-col">
+                        <div className="flex items-start justify-between mb-3 md:mb-4">
+                          <div className="flex items-center space-x-2 md:space-x-3">
+                            <div className="p-2 md:p-3 bg-[#1F4D7F] bg-opacity-10 rounded-lg group-hover:bg-[#003884] transition-colors duration-300">
+                              <IconComponent className="w-5 h-5 md:w-8 md:h-8 text-[#1F4D7F] group-hover:text-white transition-colors duration-300" />
+                            </div>
                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getCategoryColor(news.category)}`}>
                               {news.category}
                             </span>
                           </div>
                           {news.isUrgent && (
-                            <div className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                            <div className="flex items-center space-x-1 px-2 py-1 bg-[#FFD100] text-[#003884] text-xs font-semibold rounded-full">
                               <AlertTriangle className="w-3 h-3" />
                               <span>Urgent</span>
                             </div>
                           )}
                         </div>
 
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors duration-300 line-clamp-3">
+                        <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#003884] transition-colors duration-300 line-clamp-3">
                           {news.title}
                         </h3>
 
-                        <p className="text-sm text-gray-600 mb-4 flex-grow line-clamp-2">
+                        <p className="text-sm text-gray-600 mb-3 md:mb-4 flex-grow line-clamp-2">
                           {news.summary}
                         </p>
 
                         <div className="flex items-center justify-between mt-auto">
                           <div className="flex items-center text-gray-500 text-xs">
-                            <Clock className="w-4 h-4 mr-1" />
+                            <Clock className="w-3 h-3 md:w-4 md:h-4 mr-1" />
                             <span>{new Date(news.date).toLocaleDateString('en-ZA', {
                               year: 'numeric',
                               month: 'short',
@@ -649,14 +685,14 @@ const HomePage: React.FC<HomePageProps> = ({
                                 href={news.downloadFile.url}
                                 download={news.downloadFile.filename}
                                 onClick={(e) => e.stopPropagation()}
-                                className="flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors duration-200"
+                                className="flex items-center space-x-1 px-2 py-1 bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F] text-xs font-medium rounded-full hover:bg-[#1F4D7F] hover:text-white transition-colors duration-200"
                                 title={`Download ${news.downloadFile.filename}`}
                               >
                                 <Download className="w-3 h-3" />
-                                <span>Download</span>
+                                <span className="hidden sm:inline">Download</span>
                               </a>
                             )}
-                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#003884] transform group-hover:translate-x-1 transition-all duration-300" />
+                            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-gray-400 group-hover:text-[#003884] transform group-hover:translate-x-1 transition-all duration-300" />
                           </div>
                         </div>
                       </div>
@@ -666,46 +702,42 @@ const HomePage: React.FC<HomePageProps> = ({
               </div>
             </div>
           </div>
-
-          {/* Full Footer Component - Outside container for full width */}
           <Footer />
         </div>
       )}
 
-      
-      {/* Academic Departments */}
-      <section ref={departmentsRef} className="py-20 bg-gray-50">
+      {/* Academic Departments - Updated Colors */}
+      <section ref={departmentsRef} className="py-12 md:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Academic Departments</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Academic Departments</h2>
+            <p className="text-base md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
               Discover our specialized departments offering cutting-edge programs in technology and computing.
             </p>
           </div>
 
-          {/* Flex container instead of grid */}
-          <div className="flex flex-wrap justify-between gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-items-center">
             {departments.map((department, index) => {
               const IconComponent = getDepartmentIcon(department.id);
               return (
                 <div
                   id={`department-${department.id}`}
                   key={department.id}
-                  className={`flex-1 min-w-[220px] max-w-[250px] group bg-white rounded-xl shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                  className={`group bg-white rounded-xl shadow-lg hover:shadow-xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden w-full max-w-xs ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
                   style={{ transitionDelay: `${index * 150}ms` }}
                   onClick={() => onDepartmentClick(department)}
                 >
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="p-3 rounded-lg transition-colors duration-300" style={{ backgroundColor: 'rgba(31, 77, 127, 0.1)' }}>
-                        <IconComponent className="w-8 h-8 transition-colors duration-300" style={{ color: '#1F4D7F' }} />
+                  <div className="p-4 md:p-6">
+                    <div className="flex items-center justify-between mb-3 md:mb-4">
+                      <div className="p-2 md:p-3 rounded-lg transition-colors duration-300 bg-[#1F4D7F] bg-opacity-10">
+                        <IconComponent className="w-6 h-6 md:w-8 md:h-8 transition-colors duration-300 text-[#1F4D7F]" />
                       </div>
-                      <ChevronRight className="w-5 h-5 text-gray-400 transform group-hover:translate-x-1 transition-all duration-300" style={{ color: '#1F4D7F' }} />
+                      <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-gray-400 transform group-hover:translate-x-1 transition-all duration-300 text-[#1F4D7F]" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#1F4D7F] transition-colors duration-300">
+                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 group-hover:text-[#003884] transition-colors duration-300">
                       {department.name}
                     </h3>
-                    <p className="text-gray-600 mb-4 text-sm">
+                    <p className="text-gray-600 mb-3 md:mb-4 text-xs md:text-sm">
                       {department.description}
                     </p>
                     <div className="flex flex-wrap gap-1">
@@ -724,272 +756,44 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
               );
             })}
-
-           
           </div>
         </div>
       </section>
-       {/* SASO Office Card */}
-    <div
-  id="department-bld18"
-  className="w-full min-h-[200px] bg-white rounded-2xl shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden flex flex-col items-center text-center"
->
-  {/* Header */}
-  <div className="w-full py-6 flex flex-col items-center" style={{ backgroundColor: 'rgba(31, 77, 127, 0.1)' }}>
-    <BookOpen className="w-10 h-10 mb-2" style={{ color: '#1F4D7F' }} />
-    <h3 className="text-2xl font-bold text-gray-900">
-      SASO: Student Academic Support Office
-    </h3>
-    <p className="text-gray-600 font-medium">Building 18 - Room 242</p>
-  </div>
 
-  {/* Body */}
-  <div className="p-6 w-full flex flex-col items-center">
-    {/* Contact Info */}
-    <div className="flex flex-wrap justify-center gap-4 text-gray-700 text-sm mb-4">
-      <a
-        href="https://sds.onlinewebshop.net/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 hover:text-opacity-80 transition-colors duration-300"
-        style={{ color: '#1F4D7F' }}
-      >
-        <Globe className="w-4 h-4" /> SASO Website
-      </a>
-      <span className="text-gray-400">|</span>
-      <span className="flex items-center gap-2">
-        <MapPin className="w-4 h-4 text-green-500" /> BLD 18-242
-      </span>
-      <span className="text-gray-400">|</span>
-      <span className="flex items-center gap-2">
-        <Mail className="w-4 h-4 text-red-500" /> general@tut.ac.za
-      </span>
-      <span className="text-gray-400">|</span>
-      <span className="flex items-center gap-2">
-        <Phone className="w-4 h-4 text-purple-500" /> 086 110 2421
-      </span>
-    </div>
 
-    {/* Services */}
-   <div className="w-full max-w-4xl">
-  <h4 className="font-semibold text-gray-800 mb-3">Services Offered:</h4>
-  <div className="flex flex-nowrap justify-center gap-4 text-gray-600 text-sm overflow-x-auto">
-    <span 
-      onClick={() => {
-        const service = services.find(s => s.id === 'Peer to Peer learning');
-        if (service) onServiceClick(service);
-      }}
-      className="px-3 py-1 bg-gray-50 rounded-full flex items-center gap-2 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
-    >
-      <BookOpen className="w-4 h-4" style={{ color: '#1F4D7F' }} /> Peer Learning
-    </span>
-    <span 
-      onClick={() => {
-        const service = services.find(s => s.id === 'Mentorship & Tutoring program');
-        if (service) onServiceClick(service);
-      }}
-      className="px-3 py-1 bg-gray-50 rounded-full flex items-center gap-2 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
-    >
-      <BookOpen className="w-4 h-4" style={{ color: '#1F4D7F' }} /> Mentorship
-    </span>
-    <span 
-      onClick={() => {
-        const service = services.find(s => s.id === 'Mentorship & Tutoring program');
-        if (service) onServiceClick(service);
-      }}
-      className="px-3 py-1 bg-gray-50 rounded-full flex items-center gap-2 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
-    >
-      <BookOpen className="w-4 h-4" style={{ color: '#1F4D7F' }} /> Tutorship
-    </span>
-    <span 
-      onClick={() => {
-        const service = services.find(s => s.id === 'Studython');
-        if (service) onServiceClick(service);
-      }}
-      className="px-3 py-1 bg-gray-50 rounded-full flex items-center gap-2 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
-    >
-      <BookOpen className="w-4 h-4" style={{ color: '#1F4D7F' }} /> Studythons
-    </span>
-  </div>
-</div>
-  </div>
-</div>
-{/* Directorate of Health and Wellness */}
-<section className="py-20 bg-gray-50">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
-      Directorate of Health and Wellness
-    </h2>
-
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
-
-      <div
-  className="bg-white rounded-xl shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer overflow-hidden w-full max-w-xs group"
-  onClick={() =>
-    setSelectedNews({
-      id: "clinic-card", // <-- Add this line
-      title: "Campus Clinic",
-      category: "Health",
-      date: new Date().toISOString(),
-      summary: `📍 Location: Building 82, 83
-📞 HOD: 012 382 0589
-• Administration: 012 382 9184
-• Nurses: 012 382 9089 / 012 382 9090
-• Counsellor: 012 382 9446
-
-🕓 Service Hours:
-Mon–Thu: 08:30–15:30 | Fri: 08:30–13:00
-Emergency: 08:00–16:00 (weekdays)
-
-After-hours:
-Campus Protection: 012 382 5101 / 4228
-ER24 (24h): 084 124 or 010 205 3000
-HIV 911: 0800 012 322 / 0860 448 911`,
-      priority: "medium",
-      isUrgent: false,
-      downloadFile: {
-        url: "/assets/Student_Guide.pdf",
-        filename: "Student_Guide.pdf",
-        type: "pdf",
-      },
-      content: "",
-    })
-  }
-      >
-        <div className="flex flex-col items-center text-center p-6">
-          <div className="p-4 bg-blue-100 rounded-full mb-4 group-hover:bg-blue-600 transition-colors duration-300">
-            <Monitor className="w-8 h-8 text-blue-600 group-hover:text-white transition-colors duration-300" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-            Campus Clinic
-          </h3>
-        </div>
-      </div>
-
-      {/* Peer Education Card */}
-     <div
-  className="bg-white rounded-xl shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer overflow-hidden w-full max-w-xs group"
-  onClick={() =>
-    setSelectedNews({
-      id: "peer-education", // <-- Add unique id
-      title: "Peer Education Programme",
-      category: "Student Support",
-      date: new Date().toISOString(),
-      summary: `Peer educators are trained student volunteers who promote positive health, lifestyle, and behaviour change among fellow students.
-
-They engage in:
-• HIV/AIDS awareness
-• Mental health support
-• Sexual and reproductive health
-• Substance abuse prevention
-
-📍 Location: Directorate of Health & Wellness
-📞 Contact: 012 382 9446 / 012 382 9089`,
-      priority: "medium",
-      isUrgent: false,
-      downloadFile: undefined, // <-- Use undefined, not null
-      content: "",
-    })
-  }
-      >
-        <div className="flex flex-col items-center text-center p-6">
-          <div className="p-4 bg-green-100 rounded-full mb-4 group-hover:bg-green-600 transition-colors duration-300">
-            <GraduationCap className="w-8 h-8 text-green-600 group-hover:text-white transition-colors duration-300" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">
-            Peer Education
-          </h3>
-        </div>
-      </div>
-
-      {/* GBV Card */}
-      <div
-  className="bg-white rounded-xl shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer overflow-hidden w-full max-w-xs group"
-  onClick={() =>
-    setSelectedNews({
-      id: "gbv-support", // <-- Add unique id
-      title: "Gender-Based Violence (GBV) Support",
-      category: "Awareness & Safety",
-      date: new Date().toISOString(),
-      summary: `Abuse is the misuse of power to control another person.
-It includes:
-• Physical abuse: hitting, kicking, slapping
-• Sexual abuse: forced or unwanted acts
-• Verbal abuse: humiliation, threats
-• Financial abuse: restricting access to money
-• Emotional abuse: manipulation, fear, control
-
-📞 GBV Emergency Line: 0800 428 428  
-USSD: *120*7867#  
-SMS "help" to 31531`,
-      priority: "high",
-      isUrgent: true,
-      downloadFile: undefined, // <-- Use undefined, not null
-      // Provide HTML in `content` so the modal can render a clickable link/button
-      content: `
-        <div>
-          <p>For more information and resources visit the official GBV support website.</p>
-          <p style="margin-top:0.5rem">
-            <a href=\"https://gbv.org.za\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"display:inline-flex;align-items:center;padding:0.5rem 0.75rem;background-color:#2563eb;color:#fff;border-radius:0.5rem;text-decoration:none;\">
-              Visit our website for more info
-              <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" style=\"width:1rem;height:1rem;margin-left:0.5rem\">
-                <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M14 3h7m0 0v7m0-7L10 14\" />
-              </svg>
-            </a>
-          </p>
-        </div>
-      `,
-    })
-  }
-      >
-        <div className="flex flex-col items-center text-center p-6">
-          <div className="p-4 bg-red-100 rounded-full mb-4 group-hover:bg-red-600 transition-colors duration-300">
-            <AlertTriangle className="w-8 h-8 text-red-600 group-hover:text-white transition-colors duration-300" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-800 group-hover:text-red-600 transition-colors duration-300">
-            GBV Support
-          </h3>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-     {/* Student Services */}
-      <section ref={servicesRef} className="py-20 bg-white">
+      {/* Student Services - Updated Colors */}
+      <section ref={servicesRef} className="py-12 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Student Services</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Student Services</h2>
+            <p className="text-base md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
               Comprehensive support services to help you succeed throughout your academic journey.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {filteredServices.map((service, index) => (
               <div
                 id={`service-${service.id}`}
                 key={service.id}
-                className={`group bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 hover:shadow-xl transform transition-all duration-500 hover:scale-105 cursor-pointer border border-[#003884]/10 hover:border-[#003884]/40 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
-
+                className={`group bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 md:p-6 hover:shadow-xl transform transition-all duration-500 hover:scale-105 cursor-pointer border border-[#003884]/10 hover:border-[#003884]/40 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
                 style={{ transitionDelay: `${index * 100}ms` }}
                 onClick={() => onServiceClick(service)}
               >
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start justify-between mb-3 md:mb-4">
                   <div className="flex-1">
                     <div className="flex items-center mb-2">
-                      <span className="px-3 py-1 bg-yellow-400 text-[#003884] text-xs font-semibold rounded-full">
+                      <span className="px-2 py-1 bg-[#FFD100] text-[#003884] text-xs font-semibold rounded-full">
                         {service.category}
                       </span>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                    <h3 className="text-base md:text-lg font-semibold text-gray-900 group-hover:text-[#003884] transition-colors duration-300">
                       {service.title}
                     </h3>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all duration-300 flex-shrink-0 ml-2" />
+                  <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-gray-400 group-hover:text-[#003884] transform group-hover:translate-x-1 transition-all duration-300 flex-shrink-0 ml-2" />
                 </div>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 text-xs md:text-sm">
                   {service.description}
                 </p>
               </div>
@@ -997,6 +801,7 @@ SMS "help" to 31531`,
           </div>
         </div>
       </section>
+
       {showCampusVideo && (
         <div
           className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[70] p-4"
@@ -1008,9 +813,9 @@ SMS "help" to 31531`,
           >
             <button
               onClick={() => setShowCampusVideo(false)}
-              className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full hover:bg-gray-200 transition-colors duration-200"
+              className="absolute top-2 right-2 md:top-4 md:right-4 z-10 p-2 bg-white rounded-full hover:bg-gray-200 transition-colors duration-200"
             >
-              <X className="w-6 h-6 text-black" />
+              <X className="w-4 h-4 md:w-6 md:h-6 text-black" />
             </button>
             <video
               className="w-full h-auto"
@@ -1023,6 +828,511 @@ SMS "help" to 31531`,
           </div>
         </div>
       )}
+
+       {/* Student Development and Support Section - Clean TUT Colors */}
+<section className="relative py-16 md:py-24 bg-white overflow-hidden">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {/* Section Header */}
+    <div className="text-center mb-16 md:mb-20">
+      <div className="inline-flex items-center justify-center w-20 h-20 bg-[#003884] rounded-3xl shadow-lg mb-6">
+        <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      </div>
+      <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#003884] mb-4 tracking-tight">
+        Student Development & Support
+      </h2>
+      <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        Empowering your academic journey with comprehensive support services and personal development opportunities
+      </p>
+    </div>
+
+    {/* Main Content Grid */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto">
+      {/* Left Column - Support Services */}
+      <div className="space-y-6">
+        {/* Main Support Card */}
+        <div className="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500 border border-gray-200 p-6 md:p-8">
+          <div className="flex items-start justify-between mb-6">
+            <h3 className="text-2xl md:text-3xl font-bold text-[#003884]">
+              Your Support Network
+            </h3>
+            <div className="w-12 h-12 bg-[#1F4D7F] bg-opacity-10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <svg className="w-6 h-6 text-[#1F4D7F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+          </div>
+
+          <p className="text-gray-600 mb-8 leading-relaxed text-lg">
+            You might face challenges or personal barriers that could have a negative impact on your
+            overall well-being and studies. At <strong className="font-semibold text-[#003884]">Student Development and Support</strong> we offer
+            comprehensive services that equip you with skills to overcome challenges positively.
+          </p>
+
+          <div className="space-y-6">
+            {/* Journey Support */}
+            <div className="flex items-start space-x-4 p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition-all duration-300">
+              <div className="flex-shrink-0 w-14 h-14 bg-white rounded-2xl shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-blue-200">
+                <GraduationCap className="w-7 h-7 text-[#1F4D7F]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 mb-2 text-lg">Academic Journey Support</h4>
+                <p className="text-gray-600 leading-relaxed text-sm md:text-base">
+                  SDS supports you throughout your academic journey from orientation to graduation.
+                </p>
+              </div>
+            </div>
+
+            {/* Mentor Program */}
+            <div className="flex items-start space-x-4 p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-all duration-300">
+              <div className="flex-shrink-0 w-14 h-14 bg-white rounded-2xl shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-green-200">
+                <svg className="w-7 h-7 text-[#1F4D7F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 mb-2 text-lg">Mentor Training Programme</h4>
+                <p className="text-gray-600 leading-relaxed text-sm md:text-base">
+                  We equip mentors for the vital role they play within the TUT family. Mentors are
+                  senior students who provide academic and emotional support to first-years.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column - Contact & Services */}
+      <div className="space-y-6">
+        {/* Contact Card */}
+        <div className="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500 border border-gray-200 p-6 md:p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl md:text-3xl font-bold text-[#003884]">
+              Get In Touch
+            </h3>
+            <div className="w-12 h-12 bg-[#1F4D7F] bg-opacity-10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <Phone className="w-6 h-6 text-[#1F4D7F]" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {/* Location */}
+            <div className="flex items-center space-x-4 p-4 rounded-xl bg-white shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300">
+              <div className="flex-shrink-0 w-12 h-12 bg-[#1F4D7F] bg-opacity-10 rounded-xl flex items-center justify-center">
+                <MapPin className="w-6 h-6 text-[#1F4D7F]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">South Campus Office</h4>
+                <p className="text-gray-600 text-sm">Building 5, 2nd Floor Room 215</p>
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="flex items-center space-x-4 p-4 rounded-xl bg-white shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300">
+              <div className="flex-shrink-0 w-12 h-12 bg-[#1F4D7F] bg-opacity-10 rounded-xl flex items-center justify-center">
+                <Mail className="w-6 h-6 text-[#1F4D7F]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">Email Booking</h4>
+                <p className="text-[#1F4D7F] text-sm font-medium break-all">counselling@tut.ac.za</p>
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className="flex items-center space-x-4 p-4 rounded-xl bg-white shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300">
+              <div className="flex-shrink-0 w-12 h-12 bg-[#1F4D7F] bg-opacity-10 rounded-xl flex items-center justify-center">
+                <Phone className="w-6 h-6 text-[#1F4D7F]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">Telephonic Booking</h4>
+                <p className="text-gray-600 text-sm">012 382 9863 / 012 382 9038</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Emergency Services Card */}
+        <div className="group bg-[#003884] rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 p-6 md:p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl md:text-3xl font-bold text-white">
+              24/7 Support
+            </h3>
+            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <AlertTriangle className="w-6 h-6 text-white" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {/* SADAG */}
+            <div className="flex items-center space-x-4 p-4 rounded-xl bg-white bg-opacity-10 hover:bg-white hover:bg-opacity-15 transition-all duration-300">
+              <div className="flex-shrink-0 w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-white text-sm md:text-base">SADAG Counselling</h4>
+                <p className="text-blue-100 text-sm font-medium">0800 687 888</p>
+              </div>
+            </div>
+
+            {/* ER24 */}
+            <div className="flex items-center space-x-4 p-4 rounded-xl bg-white bg-opacity-10 hover:bg-white hover:bg-opacity-15 transition-all duration-300">
+              <div className="flex-shrink-0 w-10 h-10 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-white text-sm md:text-base">ER24 Emergency</h4>
+                <p className="text-blue-100 text-sm font-medium">084 124</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Free Services Badge */}
+          <div className="mt-6 p-4 rounded-xl bg-white bg-opacity-10 border border-white border-opacity-20">
+            <p className="text-white text-center text-sm md:text-base font-semibold">
+              All services are <span className="text-[#FFD100]">FREE</span> for TUT students
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Life Skills Module Highlight */}
+    <div className="mt-12 md:mt-16 group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500 border border-gray-200 p-6 md:p-8 max-w-4xl mx-auto">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-6 lg:space-y-0 lg:space-x-8">
+        <div className="flex-shrink-0 w-20 h-20 bg-[#003884] rounded-2xl shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+          <BookOpen className="w-10 h-10 text-white" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-2xl md:text-3xl font-bold text-[#003884] mb-3">
+            Life Skills Module
+          </h3>
+          <p className="text-gray-600 mb-6 leading-relaxed text-lg">
+            A compulsory first-year module facilitated in a highly interactive and blended way,
+            addressing issues that most first-years struggle with like managing workload, making friends, and more.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <span className="px-4 py-2 bg-[#1F4D7F] bg-opacity-10 text-[#1F4D7F] text-sm font-semibold rounded-full border border-[#1F4D7F] border-opacity-20">
+              Compulsory First-year
+            </span>
+            <span className="px-4 py-2 bg-[#003884] bg-opacity-10 text-[#003884] text-sm font-semibold rounded-full border border-[#003884] border-opacity-20">
+              Interactive Learning
+            </span>
+            <span className="px-4 py-2 bg-green-100 text-green-700 text-sm font-semibold rounded-full border border-green-200">
+              Practical Skills
+            </span>
+            <span className="px-4 py-2 bg-[#FFD100] bg-opacity-20 text-[#003884] text-sm font-semibold rounded-full border border-[#FFD100] border-opacity-30">
+              Blended Format
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* CTA Section */}
+    <div className="text-center mt-12 md:mt-16">
+      <div className="inline-flex flex-col sm:flex-row gap-4 items-center">
+        <button className="group px-8 py-4 bg-[#003884] text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:bg-[#00245c] transform hover:scale-105 transition-all duration-300 flex items-center space-x-3">
+          <span>Get Support Today</span>
+          <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </button>
+        <button className="group px-8 py-4 bg-white text-gray-700 font-semibold rounded-2xl shadow-lg hover:shadow-xl border border-gray-300 hover:border-[#003884] transform hover:scale-105 transition-all duration-300 flex items-center space-x-3">
+          <span>Learn About Services</span>
+          <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+      {/* SASO Office Card - Updated Colors */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 md:mb-20">
+        <div
+          id="department-bld18"
+          className="w-full bg-white rounded-2xl shadow-lg hover:shadow-xl transform transition-all duration-500 hover:scale-105 cursor-pointer overflow-hidden flex flex-col items-center text-center"
+        >
+          <div className="w-full py-4 md:py-6 flex flex-col items-center bg-[#1F4D7F] bg-opacity-10">
+            <BookOpen className="w-8 h-8 md:w-10 md:h-10 mb-2 text-[#1F4D7F]" />
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 px-4">
+              SASO: Student Academic Support Office
+            </h3>
+            <p className="text-gray-600 font-medium text-sm md:text-base">Building 18 - Room 242</p>
+          </div>
+
+          <div className="p-4 md:p-6 w-full flex flex-col items-center">
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 md:gap-4 text-gray-700 text-xs md:text-sm mb-3 md:mb-4">
+              <a
+                href="https://sds.onlinewebshop.net/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 md:gap-2 hover:text-opacity-80 transition-colors duration-300 text-[#1F4D7F]"
+              >
+                <Globe className="w-3 h-3 md:w-4 md:h-4" /> SASO Website
+              </a>
+              <span className="hidden sm:inline text-gray-400">|</span>
+              <span className="flex items-center gap-1 md:gap-2">
+                <MapPin className="w-3 h-3 md:w-4 md:h-4 text-green-500" /> BLD 18-242
+              </span>
+              <span className="hidden sm:inline text-gray-400">|</span>
+              <span className="flex items-center gap-1 md:gap-2">
+                <Mail className="w-3 h-3 md:w-4 md:h-4 text-red-500" /> general@tut.ac.za
+              </span>
+              <span className="hidden sm:inline text-gray-400">|</span>
+              <span className="flex items-center gap-1 md:gap-2">
+                <Phone className="w-3 h-3 md:w-4 md:h-4 text-purple-500" /> 086 110 2421
+              </span>
+            </div>
+
+            <div className="w-full max-w-4xl">
+              <h4 className="font-semibold text-gray-800 mb-2 md:mb-3 text-sm md:text-base">Services Offered:</h4>
+              <div className="flex flex-wrap justify-center gap-2 text-gray-600 text-xs md:text-sm">
+                <span
+                  onClick={() => {
+                    const service = services.find(s => s.id === 'Peer to Peer learning');
+                    if (service) onServiceClick(service);
+                  }}
+                  className="px-2 py-1 bg-gray-50 rounded-full flex items-center gap-1 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
+                >
+                  <BookOpen className="w-3 h-3 md:w-4 md:h-4 text-[#1F4D7F]" /> Peer Learning
+                </span>
+                <span
+                  onClick={() => {
+                    const service = services.find(s => s.id === 'Mentorship & Tutoring program');
+                    if (service) onServiceClick(service);
+                  }}
+                  className="px-2 py-1 bg-gray-50 rounded-full flex items-center gap-1 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
+                >
+                  <BookOpen className="w-3 h-3 md:w-4 md:h-4 text-[#1F4D7F]" /> Mentorship
+                </span>
+                <span
+                  onClick={() => {
+                    const service = services.find(s => s.id === 'Mentorship & Tutoring program');
+                    if (service) onServiceClick(service);
+                  }}
+                  className="px-2 py-1 bg-gray-50 rounded-full flex items-center gap-1 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
+                >
+                  <BookOpen className="w-3 h-3 md:w-4 md:h-4 text-[#1F4D7F]" /> Tutorship
+                </span>
+                <span
+                  onClick={() => {
+                    const service = services.find(s => s.id === 'Studython');
+                    if (service) onServiceClick(service);
+                  }}
+                  className="px-2 py-1 bg-gray-50 rounded-full flex items-center gap-1 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
+                >
+                  <BookOpen className="w-3 h-3 md:w-4 md:h-4 text-[#1F4D7F]" /> Studythons
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{/* End User Computing Section */}
+<section className="py-16 md:py-24 bg-gray-50">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {/* Section Header */}
+    <div className="text-center mb-16">
+      <div className="inline-flex items-center justify-center w-16 h-16 bg-[#003884] rounded-2xl shadow-lg mb-6">
+        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <h2 className="text-4xl md:text-5xl font-bold text-[#003884] mb-4">
+        End User Computing
+      </h2>
+      <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        Soshanguve South Campus - Comprehensive support for essential computing modules
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+      {/* Left Column - Modules & Contact Info */}
+      <div className="space-y-8">
+        {/* Modules Card */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold text-[#003884]">Supported Modules</h3>
+            <div className="w-12 h-12 bg-[#1F4D7F] bg-opacity-10 rounded-xl flex items-center justify-center">
+              <BookOpen className="w-6 h-6 text-[#1F4D7F]" />
+            </div>
+          </div>
+          <p className="text-gray-600 mb-6">
+            Assists students in the following essential computing modules:
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {['CGA115D', 'CGB115D', 'CGBF15D', 'CPL115X', 'CPL115D', 'ATH115D'].map((module) => (
+              <div
+                key={module}
+                className="bg-[#1F4D7F] bg-opacity-5 border border-[#1F4D7F] border-opacity-20 rounded-lg px-4 py-3 text-center hover:bg-[#1F4D7F] hover:bg-opacity-10 transition-colors duration-200"
+              >
+                <span className="text-[#1F4D7F] font-semibold text-sm">{module}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* EUC Contact Card */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold text-[#003884]">EUC Contact</h3>
+            <div className="w-12 h-12 bg-[#1F4D7F] bg-opacity-10 rounded-xl flex items-center justify-center">
+              <Mail className="w-6 h-6 text-[#1F4D7F]" />
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#1F4D7F] bg-opacity-10 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#1F4D7F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">Dr MM Swanepoel</h4>
+                <p className="text-gray-600 text-sm">EUC Coordinator</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4 p-4 bg-white border border-gray-200 rounded-xl">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#1F4D7F] bg-opacity-10 rounded-lg flex items-center justify-center">
+                <Mail className="w-5 h-5 text-[#1F4D7F]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">Email</h4>
+                <a href="mailto:Swanepoelmm@tut.ac.za" className="text-[#1F4D7F] text-sm font-medium hover:underline break-all">
+                  Swanepoelmm@tut.ac.za
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4 p-4 bg-white border border-gray-200 rounded-xl">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#1F4D7F] bg-opacity-10 rounded-lg flex items-center justify-center">
+                <Phone className="w-5 h-5 text-[#1F4D7F]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">Phone</h4>
+                <p className="text-gray-600 text-sm">012 382 5857</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4 p-4 bg-white border border-gray-200 rounded-xl">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#1F4D7F] bg-opacity-10 rounded-lg flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-[#1F4D7F]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">Office</h4>
+                <p className="text-gray-600 text-sm">12-201 Soshanguve South</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column - HOD & Administration */}
+      <div className="space-y-8">
+        {/* HOD Card */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold text-[#003884]">Head of Department</h3>
+            <div className="w-12 h-12 bg-[#1F4D7F] bg-opacity-10 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-[#1F4D7F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#1F4D7F] bg-opacity-10 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#1F4D7F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">Dr Kgasi</h4>
+                <p className="text-gray-600 text-sm">Head of Department</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Administrator Card */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold text-[#003884]">Administration</h3>
+            <div className="w-12 h-12 bg-[#1F4D7F] bg-opacity-10 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-[#1F4D7F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#1F4D7F] bg-opacity-10 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-[#1F4D7F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">A.M Mokwena</h4>
+                <p className="text-gray-600 text-sm">Administrator</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4 p-4 bg-white border border-gray-200 rounded-xl">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#1F4D7F] bg-opacity-10 rounded-lg flex items-center justify-center">
+                <Mail className="w-5 h-5 text-[#1F4D7F]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">Email</h4>
+                <a href="mailto:Mokwenaam@tut.ac.za" className="text-[#1F4D7F] text-sm font-medium hover:underline break-all">
+                  Mokwenaam@tut.ac.za
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4 p-4 bg-white border border-gray-200 rounded-xl">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#1F4D7F] bg-opacity-10 rounded-lg flex items-center justify-center">
+                <Phone className="w-5 h-5 text-[#1F4D7F]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-gray-900 text-sm md:text-base">Office Phone</h4>
+                <p className="text-gray-600 text-sm">012 382 9399</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions Card */}
+        <div className="bg-[#003884] rounded-2xl shadow-lg p-6 md:p-8 text-white">
+          <h3 className="text-2xl font-bold mb-4">Need Assistance?</h3>
+          <p className="text-blue-100 mb-6">
+            Get support with your End User Computing modules and academic requirements.
+          </p>
+          <div className="space-y-3">
+            <button className="w-full bg-white text-[#003884] font-semibold py-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 flex items-center justify-center space-x-2">
+              <Mail className="w-4 h-4" />
+              <span>Email EUC Support</span>
+            </button>
+            <button className="w-full bg-[#1F4D7F] text-white font-semibold py-3 rounded-lg hover:bg-[#163c66] transition-colors duration-200 flex items-center justify-center space-x-2">
+              <Phone className="w-4 h-4" />
+              <span>Call Office</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Footer */}
       <Footer />
