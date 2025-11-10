@@ -161,7 +161,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
     }
   ];
 
-  // Administrator and HOD Information
+  // Administrator and HOD Information - Only for ICT & First Year Foundation
   const administratorInfo = {
     name: 'Sihle Dlamini',
     position: 'Administrator: ICT 1st Year and Foundation Unit',
@@ -183,7 +183,9 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
     email: 'PhurutsiMB@tut.ac.za',
     tel: '9796'
   };
-	
+
+  // Check if current department is ICT & First Year Foundation
+  const isICTFoundationDepartment = department.id === 'fyf';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-16">
@@ -214,7 +216,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 lg:gap-8">
+        <div className={`grid grid-cols-1 ${isICTFoundationDepartment ? 'xl:grid-cols-4' : 'xl:grid-cols-3'} gap-6 lg:gap-8`}>
           {/* Left Sidebar - Desktop only */}
           <div className="xl:col-span-1 space-y-6 hidden xl:block">
             {/* Quick Information Card */}
@@ -267,7 +269,7 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
           </div>
 
           {/* Main Content Area */}
-          <div className="xl:col-span-2">
+          <div className={`${isICTFoundationDepartment ? 'xl:col-span-2' : 'xl:col-span-2'}`}>
             {/* Programs Section */}
             <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8 border border-gray-100">
               {/* FYF Department */}
@@ -426,151 +428,243 @@ const PolDepartmentDetails: React.FC<PolDepartmentDetailsProps> = ({ department,
             </div>
           </div>
 
-          {/* Right Sidebar */}
-          <div className="xl:col-span-1 space-y-6">
-            {/* Administrator Card */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-blue-200">
-              <div className="relative h-40 bg-gradient-to-br from-blue-100 to-blue-200">
-                {administratorInfo.imageUrl ? (
-                  <img 
-                    src={administratorInfo.imageUrl} 
-                    alt={administratorInfo.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-blue-100">
-                    <User className="w-16 h-16 text-blue-400" />
+          {/* Right Sidebar - Only show for ICT & First Year Foundation */}
+          {isICTFoundationDepartment && (
+            <div className="xl:col-span-1 space-y-6">
+              {/* Administrator Card */}
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-blue-200">
+                <div className="relative h-40 bg-gradient-to-br from-blue-100 to-blue-200">
+                  {administratorInfo.imageUrl ? (
+                    <img 
+                      src={administratorInfo.imageUrl} 
+                      alt={administratorInfo.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-blue-100">
+                      <User className="w-16 h-16 text-blue-400" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-6">
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">{administratorInfo.name}</h3>
+                    <p className="text-blue-600 font-semibold text-sm">{administratorInfo.position}</p>
+                  </div>
+
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center space-x-3 text-sm text-gray-700 bg-blue-50 rounded-lg p-3">
+                      <MapPin className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                      <div>
+                        <div className="font-semibold">Office Location</div>
+                        <div className="text-blue-700">{administratorInfo.office}</div>
+                        <div className="text-gray-600 text-xs">{administratorInfo.contactLocation}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <h4 className="font-semibold text-gray-900 mb-3 text-sm flex items-center">
+                      <Clock className="w-4 h-4 mr-2 text-blue-600" />
+                      Services Provided
+                    </h4>
+                    <ul className="space-y-2 text-sm text-gray-700">
+                      {administratorInfo.services.map((service, index) => (
+                        <li key={index} className="flex items-start space-x-2 p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                          <span className="leading-relaxed">{service}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* HOD Card */}
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white">
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
+                    <User className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">{hodInfo.name}</h3>
+                    <p className="text-blue-100 text-sm">{hodInfo.position}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center space-x-3 bg-white/10 rounded-lg p-3">
+                    <MapPin className="w-4 h-4 text-blue-200" />
+                    <div>
+                      <div className="font-medium">Office</div>
+                      <div>{hodInfo.office}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 bg-white/10 rounded-lg p-3">
+                    <Mail className="w-4 h-4 text-blue-200" />
+                    <div>
+                      <div className="font-medium">Email</div>
+                      <a href={`mailto:${hodInfo.email}`} className="hover:text-blue-200 transition-colors">
+                        {hodInfo.email}
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 bg-white/10 rounded-lg p-3">
+                    <Phone className="w-4 h-4 text-blue-200" />
+                    <div>
+                      <div className="font-medium">Telephone</div>
+                      <div>{hodInfo.tel}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Mobile Only Cards */}
+          <div className="xl:hidden space-y-6">
+            {/* Quick Information Card */}
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <Building className="w-5 h-5 mr-2 text-blue-600" />
+                Department Info
+              </h3>
+              <div className="space-y-3">
+                {department.buildingNumber && (
+                  <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                    <span className="text-sm font-medium text-gray-600">Building</span>
+                    <span className="text-sm font-semibold text-gray-900">{department.buildingNumber}</span>
                   </div>
                 )}
-                {/* <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                  <span>Available</span>
-                </div> */}
+                {department.email && (
+                  <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                    <span className="text-sm font-medium text-gray-600">Email</span>
+                    <span className="text-sm font-semibold text-blue-600">{department.email}</span>
+                  </div>
+                )}
+                {department.contactNumber && (
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-sm font-medium text-gray-600">Contact</span>
+                    <span className="text-sm font-semibold text-gray-900">{department.contactNumber}</span>
+                  </div>
+                )}
               </div>
+            </div>
 
-              <div className="p-6">
-                <div className="text-center mb-4">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{administratorInfo.name}</h3>
-                  <p className="text-blue-600 font-semibold text-sm">{administratorInfo.position}</p>
+            {/* Quick Action Card */}
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <Download className="w-5 h-5 mr-2 text-blue-600" />
+                Resources
+              </h3>
+              <p className="text-gray-700 mb-4 text-sm leading-relaxed">
+                Download the official ICT prospectus for detailed curriculum information.
+              </p>
+              <a
+                href="https://tut.ac.za/images/prospectus/Part6_ICT_Prospectus.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full inline-flex items-center justify-center bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                View ICT Prospectus
+              </a>
+            </div>
+
+            {/* Mobile: Show Administrator and HOD cards only for ICT Foundation */}
+            {isICTFoundationDepartment && (
+              <>
+                {/* Administrator Card - Mobile */}
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-blue-200">
+                  <div className="relative h-40 bg-gradient-to-br from-blue-100 to-blue-200">
+                    {administratorInfo.imageUrl ? (
+                      <img 
+                        src={administratorInfo.imageUrl} 
+                        alt={administratorInfo.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-blue-100">
+                        <User className="w-16 h-16 text-blue-400" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-6">
+                    <div className="text-center mb-4">
+                      <h3 className="text-xl font-bold text-gray-900 mb-1">{administratorInfo.name}</h3>
+                      <p className="text-blue-600 font-semibold text-sm">{administratorInfo.position}</p>
+                    </div>
+
+                    <div className="space-y-3 mb-4">
+                      <div className="flex items-center space-x-3 text-sm text-gray-700 bg-blue-50 rounded-lg p-3">
+                        <MapPin className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                        <div>
+                          <div className="font-semibold">Office Location</div>
+                          <div className="text-blue-700">{administratorInfo.office}</div>
+                          <div className="text-gray-600 text-xs">{administratorInfo.contactLocation}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t pt-4">
+                      <h4 className="font-semibold text-gray-900 mb-3 text-sm flex items-center">
+                        <Clock className="w-4 h-4 mr-2 text-blue-600" />
+                        Services Provided
+                      </h4>
+                      <ul className="space-y-2 text-sm text-gray-700">
+                        {administratorInfo.services.map((service, index) => (
+                          <li key={index} className="flex items-start space-x-2 p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                            <span className="leading-relaxed">{service}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-3 mb-4">
-                  <div className="flex items-center space-x-3 text-sm text-gray-700 bg-blue-50 rounded-lg p-3">
-                    <MapPin className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                {/* HOD Card - Mobile */}
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
+                      <User className="w-7 h-7 text-white" />
+                    </div>
                     <div>
-                      <div className="font-semibold">Office Location</div>
-                      <div className="text-blue-700">{administratorInfo.office}</div>
-                      <div className="text-gray-600 text-xs">{administratorInfo.contactLocation}</div>
+                      <h3 className="font-bold text-lg">{hodInfo.name}</h3>
+                      <p className="text-blue-100 text-sm">{hodInfo.position}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center space-x-3 bg-white/10 rounded-lg p-3">
+                      <MapPin className="w-4 h-4 text-blue-200" />
+                      <div>
+                        <div className="font-medium">Office</div>
+                        <div>{hodInfo.office}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3 bg-white/10 rounded-lg p-3">
+                      <Mail className="w-4 h-4 text-blue-200" />
+                      <div>
+                        <div className="font-medium">Email</div>
+                        <a href={`mailto:${hodInfo.email}`} className="hover:text-blue-200 transition-colors">
+                          {hodInfo.email}
+                        </a>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3 bg-white/10 rounded-lg p-3">
+                      <Phone className="w-4 h-4 text-blue-200" />
+                      <div>
+                        <div className="font-medium">Telephone</div>
+                        <div>{hodInfo.tel}</div>
+                      </div>
                     </div>
                   </div>
                 </div>
-
-                <div className="border-t pt-4">
-                  <h4 className="font-semibold text-gray-900 mb-3 text-sm flex items-center">
-                    <Clock className="w-4 h-4 mr-2 text-blue-600" />
-                    Services Provided
-                  </h4>
-                  <ul className="space-y-2 text-sm text-gray-700">
-                    {administratorInfo.services.map((service, index) => (
-                      <li key={index} className="flex items-start space-x-2 p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                        <span className="leading-relaxed">{service}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* HOD Card */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white">
-              <div className="flex items-center space-x-4 mb-4">
-                <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
-                  <User className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">{hodInfo.name}</h3>
-                  <p className="text-blue-100 text-sm">{hodInfo.position}</p>
-                </div>
-              </div>
-
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center space-x-3 bg-white/10 rounded-lg p-3">
-                  <MapPin className="w-4 h-4 text-blue-200" />
-                  <div>
-                    <div className="font-medium">Office</div>
-                    <div>{hodInfo.office}</div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3 bg-white/10 rounded-lg p-3">
-                  <Mail className="w-4 h-4 text-blue-200" />
-                  <div>
-                    <div className="font-medium">Email</div>
-                    <a href={`mailto:${hodInfo.email}`} className="hover:text-blue-200 transition-colors">
-                      {hodInfo.email}
-                    </a>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3 bg-white/10 rounded-lg p-3">
-                  <Phone className="w-4 h-4 text-blue-200" />
-                  <div>
-                    <div className="font-medium">Telephone</div>
-                    <div>{hodInfo.tel}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Only Cards */}
-            <div className="xl:hidden space-y-6">
-              {/* Quick Information Card */}
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                  <Building className="w-5 h-5 mr-2 text-blue-600" />
-                  Department Info
-                </h3>
-                <div className="space-y-3">
-                  {department.buildingNumber && (
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                      <span className="text-sm font-medium text-gray-600">Building</span>
-                      <span className="text-sm font-semibold text-gray-900">{department.buildingNumber}</span>
-                    </div>
-                  )}
-                  {department.email && (
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                      <span className="text-sm font-medium text-gray-600">Email</span>
-                      <span className="text-sm font-semibold text-blue-600">{department.email}</span>
-                    </div>
-                  )}
-                  {department.contactNumber && (
-                    <div className="flex items-center justify-between py-2">
-                      <span className="text-sm font-medium text-gray-600">Contact</span>
-                      <span className="text-sm font-semibold text-gray-900">{department.contactNumber}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Quick Action Card */}
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                  <Download className="w-5 h-5 mr-2 text-blue-600" />
-                  Resources
-                </h3>
-                <p className="text-gray-700 mb-4 text-sm leading-relaxed">
-                  Download the official ICT prospectus for detailed curriculum information.
-                </p>
-                <a
-                  href="https://tut.ac.za/images/prospectus/Part6_ICT_Prospectus.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  View ICT Prospectus
-                </a>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </div>
