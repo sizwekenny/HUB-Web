@@ -1,12 +1,26 @@
+// export interface Department {
+//   id: string;
+//   name: string;
+//   codes: string[];
+//   description: string;
+//   buildingNumber?: string;
+//   email?: string;
+//   contactNumber?: string;
+//   link?: string;
+//   courses?: Course[];
+// }
+
+
 export interface Department {
   id: string;
   name: string;
-  codes: string[];
-  description: string;
-  buildingNumber?: string;
+  department_code?: string;
+  description?: string;
+  building_number?: string;
   email?: string;
-  contactNumber?: string;
-  link?: string;
+  contact_number?: string;
+  website_link?: string;
+  is_active?: boolean;
   courses?: Course[];
 }
 
@@ -17,18 +31,32 @@ export interface Course {
   nqfLevel?: string;
 }
 
+// export interface Service {
+//   id: string;
+//   title: string;
+//   description: string;
+//   details?: string;
+//   category: string;
+//   steps?: string[];
+//   statusLink?: string;
+//   contactPhone?: string;
+//   contactEmail?: string;
+//   contactLocation?: string;
+// }
 export interface Service {
   id: string;
   title: string;
+  category: string;
   description: string;
   details?: string;
-  category: string;
   steps?: string[];
   statusLink?: string;
-  contactPhone?: string;
-  contactEmail?: string;
-  contactLocation?: string;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  category_id?: number;
 }
+
 
 
 export interface Comment {
@@ -138,4 +166,88 @@ export interface AdminLoginProps {
 export interface AdminDashboardProps {
   onLogout: () => void;
   onBackToHome: () => void;
+}
+
+
+
+
+
+// In your types.ts file, update RealDepartment interface:
+export interface RealDepartment {
+  id: string;
+  name: string;
+  department_code: string;
+  description: string;
+  building_number: string;
+  email: string;
+  contact_number: string;
+  website_link: string;
+  is_active: boolean;
+  campus_name: string;
+  campus_id?: number | string; // Add this line
+  programs: Program[];
+  courses: Course[];
+  lecturers: Lecturer[];
+}
+
+export interface Program {
+  program_id: string;
+  program_code: string;
+  program_name: string;
+  description: string;
+  duration: string;
+  is_active: boolean;
+}
+
+export interface Course {
+  course_id: string;
+  course_code: string;
+  course_name: string;
+  description: string;
+  nqf_level: string;
+  credits: string;
+  duration: string;
+  is_active: boolean;
+}
+
+export interface Lecturer {
+  lecturer_id: string;
+  name: string;
+  email: string;
+  office: string;
+  phone: string;
+  position: string;
+  is_active: boolean;
+}
+
+// Your existing interfaces remain the same
+export interface Department {
+  id: string;
+  name: string;
+  description: string;
+  codes: string[];
+  icon: string;
+}
+
+export interface Service {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+}
+
+export interface NewsItem {
+  id: string;
+  title: string;
+  category: string;
+  date: string;
+  summary: string;
+  content: string;
+  priority: string;
+  isUrgent: boolean;
+  downloadFile?: {
+    url: string;
+    filename: string;
+    type: string;
+  };
 }

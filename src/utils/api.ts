@@ -1,6 +1,6 @@
 // Simple API client wrapper for backend endpoints
 // BASE_URL can be configured via Vite env var (VITE_API_BASE_URL)
-const BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'https://localhost:7022';
+const BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'https://localhost:4000';
 
 interface RequestOptions {
   method?: string;
